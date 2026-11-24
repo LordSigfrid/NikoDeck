@@ -154,7 +154,8 @@ test('stack editor changes child options, enabled state and ordering', async ({ 
 });
 
 test('two counters in a stack keep separate values after reload', async ({ page }) => {
-  await layout(page, [widget('stack', { widgets: [{ type: 'counter' }, { type: 'counter' }] })]);
+  // no rules and no idle return: a page-switch notice ("Stay / Go now") must not cover the counters mid-test
+  await layout(page, [widget('stack', { widgets: [{ type: 'counter' }, { type: 'counter' }] })], { rules: [], display: { idleReturnSec: 0 } });
   await page.locator('.stack-item.active').getByRole('button', { name: '+', exact: true }).click();
   await page.locator('.stack-dot').nth(1).click();
   await page.locator('.stack-item.active').getByRole('button', { name: '+', exact: true }).click({ clickCount: 2 });
