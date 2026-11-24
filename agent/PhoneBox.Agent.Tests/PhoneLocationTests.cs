@@ -153,17 +153,92 @@ public class PhoneLocationTests
     }
 
     [Fact]
-    public void ANewTownNameNearbyIsSaved()
+    public void ANameFlipWithATinyMoveDoesNotRewriteTheSettings()
     {
         var (cfg, path) = Make();
         try
         {
-            var r = PhoneLocation.Apply(cfg, At(59.44, 24.75, "Kesklinn"));
-            Assert.True(r.Updated);
-            Assert.Equal("Kesklinn", cfg.Get().Weather.City);
+            var before = cfg.Version;
+            // the Geocoder names the district this time; the point moved about 0.6 km (jitter, not a trip)
+            var r = PhoneLocation.Apply(cfg, At(59.44, 24.76, "Kesklinn"));
+            Assert.False(r.Updated);
+            Assert.Equal("unchanged", r.Reason);
+            Assert.False(PhoneLocation.Apply(cfg, At(59.44, 24.75, "Kesklinn")).Updated); // same spot, other name
+            Assert.Equal("Tallinn", cfg.Get().Weather.City);
+            Assert.Equal(before, cfg.Version);
         }
         finally { Cleanup(path); }
     }
+
+    [Fact]
+    public void AMoveUnderThreeKilometresWithTheSameNameIsJitter()
+    {
+        var (cfg, path) = Make();
+        try
+        {
+            // 59.46 is about 2.2 km north of 59.44
+            Assert.False(PhoneLocation.Apply(cfg, At(59.46, 24.75, "Tallinn")).Updated);
+            Assert.False(PhoneLocation.Apply(cfg, At(59.46, 24.75)).Updated);
+            Assert.Equal(59.44, cfg.Get().Weather.Lat);
+        }
+        finally { Cleanup(path); }
+    }
+
+    [Fact]
+    public void AMoveOfThreeKilometresOrMoreIsSaved()
+    {
+        var (cfg, path) = Make();
+        try
+        {
+            // 59.47 is about 3.3 km north: saved even under the same town name
+            var r = PhoneLocation.Apply(cfg, At(59.47, 24.75, "Tallinn"));
+            Assert.True(r.Updated);
+            Assert.Equal(59.47, cfg.Get().Weather.Lat);
+            Assert.Equal("Tallinn", cfg.Get().Weather.City);
+        }
+        finally { Cleanup(path); }
+    }
+
+    [Fact]
+    public void ANewTownAfterAKilometreIsSaved()
+    {
+        var (cfg, path) = Make();
+        try
+        {
+            // 59.45 is about 1.1 km north, under another name: a real change of place, below the move threshold
+            Assert.True(PhoneLocation.DistanceKm(59.44, 24.75, 59.45, 24.75) is >= PhoneLocation.MinRenameMoveKm and < PhoneLocation.MinMoveKm);
+            var r = PhoneLocation.Apply(cfg, At(59.45, 24.75, "Pirita"));
+            Assert.True(r.Updated);
+            Assert.Equal("Pirita", cfg.Get().Weather.City);
+            Assert.Equal(59.45, cfg.Get().Weather.Lat);
+        }
+        finally { Cleanup(path); }
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("59.44, 24.75")]
+    [InlineData("-23.55,-46.63")]
+    public void AFirstNameReplacesAPlaceholderOnTheSameSpot(string stored)
+    {
+        var (cfg, path) = Make(city: stored);
+        try
+        {
+            var r = PhoneLocation.Apply(cfg, At(59.44, 24.75, "Tallinn"));
+            Assert.True(r.Updated);
+            Assert.Equal("Tallinn", cfg.Get().Weather.City);
+        }
+        finally { Cleanup(path); }
+    }
+
+    [Theory]
+    [InlineData(null, true)]
+    [InlineData("  ", true)]
+    [InlineData("58.38, 26.72", true)]
+    [InlineData("-0.5,180", true)]
+    [InlineData("Tallinn", false)]
+    [InlineData("10 Downing St, 5", false)]
+    public void PlaceholderNames(string? city, bool placeholder) => Assert.Equal(placeholder, PhoneLocation.IsPlaceholderCity(city));
 
     [Fact]
     public void ANewPlaceWithoutANameShowsItsCoordinates()
@@ -178,6 +253,9 @@ public class PhoneLocationTests
             // no name and no move: the saved name stays
             Assert.False(PhoneLocation.Apply(cfg, At(58.381, 26.721)).Updated);
             Assert.Equal("58.38, 26.72", cfg.Get().Weather.City);
+            // the Geocoder answers on a later fix at the same spot: the name replaces the coordinates
+            Assert.True(PhoneLocation.Apply(cfg, At(58.38, 26.72, "Tartu")).Updated);
+            Assert.Equal("Tartu", cfg.Get().Weather.City);
         }
         finally { Cleanup(path); }
     }

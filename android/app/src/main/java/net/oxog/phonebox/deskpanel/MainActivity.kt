@@ -75,8 +75,10 @@ class MainActivity : Activity(), SensorEventListener {
     private var destroyed = false
     private val dictation by lazy { Dictation(this) { script -> if (!destroyed) web.evaluateJavascript(script, null) } }
     private lateinit var link: AgentLink
-    /** Settings › Weather › automatic: the phone's approximate location for the weather (asked for once, coarse only). */
-    private val location by lazy { PhoneLocation(this, link, panelPreferences, ::askLocation) }
+    /** Settings › Weather › automatic: the phone's approximate location for the weather (coarse only).
+     *  Through [locationLazy] so onPause/onDestroy can tell whether it was ever created. */
+    private val locationLazy = lazy { PhoneLocation(this, link, panelPreferences, ::askLocation) }
+    private val location by locationLazy
     private lateinit var stream: AgentStream
     @Volatile private var resumed = false
     @Volatile private var volumeKeysFlipPages = true
@@ -357,7 +359,7 @@ class MainActivity : Activity(), SensorEventListener {
         if (requestCode == Dictation.PERMISSION_REQUEST)
             dictation.onPermission(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
         if (requestCode == PhoneLocation.PERMISSION_REQUEST)
-            location.onPermission(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
+            location.onPermission(grantResults.firstOrNull()?.let { it == PackageManager.PERMISSION_GRANTED })
     }
 
     override fun onPause() {
@@ -365,7 +367,7 @@ class MainActivity : Activity(), SensorEventListener {
         dictation.cancel(0) // the microphone is never left open behind another app or a dark screen
         sensors?.unregisterListener(this)
         stream.stop()
-        if (hasWeb) location.pause()
+        if (locationLazy.isInitialized()) location.pause()
         // WebView.onPause() leaves JavaScript running: tell the panel to stop polling and refreshing while nobody sees it
         if (hasWeb) {
             web.evaluateJavascript("window.onAppPause && window.onAppPause(true)", null)
@@ -380,7 +382,7 @@ class MainActivity : Activity(), SensorEventListener {
         dictation.cancel(0)
         sensors?.unregisterListener(this)
         stream.stop()
-        if (hasWeb) location.close()
+        if (locationLazy.isInitialized()) location.close() // never created just to be closed
         link.trackpadSocket.close()
         link.close()
         if (hasWeb) {

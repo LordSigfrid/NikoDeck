@@ -14,8 +14,13 @@ public static class PhoneLocation
 {
     public const int MaxCity = 80;
     /// <summary>A move shorter than this keeps the saved location, so a phone on the desk doesn't rewrite config.json
-    /// every half hour (each save also makes every panel and the settings page reload the settings).</summary>
-    public const double MinMoveKm = 1.0;
+    /// every half hour (each save also makes every panel and the settings page reload the settings). Network fixes
+    /// wander by a kilometre or two, so 3 km is a real move, not jitter.</summary>
+    public const double MinMoveKm = 3.0;
+    /// <summary>Another town name counts only with a move of at least this much: the Geocoder may name the same rounded
+    /// point after the district on one fix and the town on the next. A placeholder name (none, or coordinates) is
+    /// always replaced by a real one.</summary>
+    public const double MinRenameMoveKm = 1.0;
     /// <summary>A fix vaguer than this (a country-wide guess) would move the weather to the wrong town.</summary>
     public const double MaxAccuracyM = 25_000;
 
@@ -49,6 +54,13 @@ public static class PhoneLocation
         return clean.Length > 0 ? clean : null;
     }
 
+    /// <summary>A saved name that is no town: empty, or the "lat, lon" saved for a place the phone could not name.</summary>
+    public static bool IsPlaceholderCity(string? city) =>
+        string.IsNullOrWhiteSpace(city) || CoordinateName.IsMatch(city);
+
+    private static readonly System.Text.RegularExpressions.Regex CoordinateName =
+        new(@"^\s*-?\d{1,3}(\.\d+)?\s*,\s*-?\d{1,3}(\.\d+)?\s*$", System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
     /// <summary>Great-circle distance in km (haversine).</summary>
     public static double DistanceKm(double lat1, double lon1, double lat2, double lon2)
     {
@@ -72,7 +84,8 @@ public static class PhoneLocation
 
     /// <summary>
     /// Applies a report to the saved weather location when <see cref="WeatherConfig.Auto"/> is on and the phone moved
-    /// at least <see cref="MinMoveKm"/> or names another town. The caller holds the settings write lock
+    /// at least <see cref="MinMoveKm"/>, or names another town after a move of at least <see cref="MinRenameMoveKm"/>
+    /// (or in place of a placeholder name, <see cref="IsPlaceholderCity"/>). The caller holds the settings write lock
     /// (Program.IconCommit), as for a Note edit.
     /// </summary>
     public static Result Apply(ConfigStore cfg, Report? report)
@@ -85,8 +98,11 @@ public static class PhoneLocation
         var lat = Round(report.Lat!.Value);
         var lon = Round(report.Lon!.Value);
         var named = CleanCity(report.City);
-        var moved = DistanceKm(current.Lat, current.Lon, lat, lon) >= MinMoveKm;
-        var renamed = named is not null && !string.Equals(named, current.City, StringComparison.CurrentCultureIgnoreCase);
+        var distance = DistanceKm(current.Lat, current.Lon, lat, lon);
+        var moved = distance >= MinMoveKm;
+        // a name flip on the same spot (district one time, town the next) is not a reason to rewrite the settings
+        var renamed = named is not null && !string.Equals(named, current.City, StringComparison.CurrentCultureIgnoreCase)
+            && (distance >= MinRenameMoveKm || IsPlaceholderCity(current.City));
         if (!moved && !renamed) return new(200, Reason: "unchanged");
         // without a name from the phone, a new place is shown by its coordinates rather than under the old town's name
         var city = named ?? (moved ? string.Create(CultureInfo.InvariantCulture, $"{lat:0.00}, {lon:0.00}") : current.City);

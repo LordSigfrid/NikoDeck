@@ -33,9 +33,10 @@ Last updated: 2026-11-24 (after NikoDeck 1.0.0).
   while the weather follows the phone (below).
 - **Phone location for the weather** (on by default; **Settings › General › Weather › Use the phone's location**):
   while the panel is open, the phone app asks Android for its approximate location at most every 30 minutes, through
-  Android's own location service (no Google Play services). Android asks for the permission once, after the app says
-  why; if you refuse, nothing is sent and the app doesn't ask again (allow Location for NikoDeck in Android's app
-  settings to change your mind). The coordinates are rounded to two decimals (about 1 km) on the phone and go only to
+  Android's own location service (no Google Play services). Android asks for the permission after the app says
+  why; without it nothing is sent. "Not now" in the app's explanation is not asked again for a week; after Android's
+  "Deny" the app asks again on a later start only while Android still allows another prompt, and never after Android
+  treats the refusal as final (allow Location for NikoDeck in Android's app settings to change your mind). The coordinates are rounded to two decimals (about 1 km) on the phone and go only to
   this computer's NikoDeck agent, over the same USB or paired Wi-Fi link as everything else. The town name comes from
   Android's Geocoder on the phone, which may ask the phone's location services provider (on most phones Google) with
   the rounded coordinates; without a Geocoder the coordinates are shown instead. The agent saves the place in

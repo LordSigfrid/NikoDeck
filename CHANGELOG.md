@@ -4,10 +4,11 @@
 
 **Weather**
 - The weather follows the phone: with **Settings › General › Weather › Use the phone's location** (on by default, also
-  for existing settings), the Android app asks once for approximate location and sends the place, rounded to about
+  for existing settings), the Android app asks for approximate location and sends the place, rounded to about
   1 km, with the town name from the phone's own Geocoder, to the agent at most every 30 minutes. The agent saves it as
-  the weather location only when it moved about 1 km or the town changed. Refusing the permission keeps the city you
-  chose; while the option is on, the settings page shows the last place received, read-only. See PRIVACY.md.
+  the weather location only when it moved 3 km, or 1 km into another town. "Not now" waits a week before asking
+  again, and after Android's "Deny" the app asks again only while Android allows it. Refusing the permission keeps
+  the city you chose; while the option is on, the settings page shows the last place received, read-only. See PRIVACY.md.
 
 ## 1.0.0 — 2026-11-24
 

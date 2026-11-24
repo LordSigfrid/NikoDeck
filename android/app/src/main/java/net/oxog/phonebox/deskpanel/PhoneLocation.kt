@@ -43,6 +43,24 @@ object LocationRules {
 
     fun fresh(ageMs: Long): Boolean = ageMs in 0 until INTERVAL_MS
 
+    /** After "Not now" in the app's explanation, it is not shown again for a week. */
+    const val NOT_NOW_COOLDOWN_MS = 7 * 24 * 60 * 60_000L
+
+    /**
+     * Whether to show the explanation (and then Android's prompt) while the permission is missing, on Android 6+.
+     * [notNowAt]: wall-clock time of the last "Not now" in the explanation, 0 for none. [requested]: Android's prompt
+     * was answered at least once. [lastGranted]: the permission was granted the last time the app saw it (a one-time
+     * "Only this time" that lapsed, or one taken back in Android's settings). [rationale]: Android's
+     * shouldShowRequestPermissionRationale, true while Android still allows another prompt after a denial.
+     */
+    fun shouldExplain(notNowAt: Long, now: Long, requested: Boolean, lastGranted: Boolean, rationale: Boolean): Boolean {
+        // a clock set back (negative age) ends the pause rather than stretching it
+        if (notNowAt > 0 && now - notNowAt in 0 until NOT_NOW_COOLDOWN_MS) return false
+        if (!requested) return true // never asked: Android's rationale is false here, but that is not a refusal
+        // denied and Android no longer offers the prompt: a permanent refusal, never asked again (settings still work)
+        return lastGranted || rationale
+    }
+
     /** The town for the weather line: the locality, else the district or the region; null when the Geocoder had none. */
     fun townName(vararg names: String?): String? =
         names.firstNotNullOfOrNull { n -> n?.filterNot { it.isISOControl() }?.trim()?.takeIf { it.isNotEmpty() } }?.take(MAX_CITY)
@@ -63,9 +81,11 @@ object LocationRules {
  * the phone has one. The coordinates are rounded to about 1 km before they are geocoded or sent, and go only to the
  * NikoDeck agent, over the same USB / paired Wi-Fi link as everything else (AgentLink).
  *
- * The permission is asked once, after a short explanation ([ask]); a refusal is remembered and not asked again (the
- * computer's settings page says how to allow it in Android's app settings). Without the permission or a location,
- * nothing is sent and the agent keeps the location it has. Runs only while the panel is in front.
+ * The permission is asked after a short explanation ([ask]), at most once per app start: "Not now" there pauses it for a
+ * week; after Android's "Deny" it is asked again on a later start only while Android still allows it
+ * ([LocationRules.shouldExplain]), and never after a permanent refusal (the computer's settings page says how to allow
+ * it in Android's app settings, which works at once). Without the permission or a location, nothing is sent and the
+ * agent keeps the location it has. Runs only while the panel is in front; pausing cancels a fix in progress.
  */
 class PhoneLocation(
     private val activity: Activity,
@@ -80,44 +100,79 @@ class PhoneLocation(
     private var auto = false
     private var resumed = false
     private var asking = false
+    private var askedThisStart = false // the explanation is shown at most once per app start
     private var busy = false
     private var nextAt = 0L // SystemClock.elapsedRealtime(); 0 = as soon as possible (the first run after the app starts)
     private val tick = Runnable { run() }
+    /** Stops the fix in progress on the worker (any thread; set and cleared by [current]). */
+    private val stopFix = AtomicReference<(() -> Unit)?>()
+    /** Bumped by [cancelFix]: a run started under an older value sends nothing. */
+    @Volatile private var generation = 0
 
     /** From the panel (any thread): whether the agent's settings have the automatic location on. */
     fun setAuto(on: Boolean) = main.post {
         if (on == auto) return@post
         auto = on
-        if (on) start() else main.removeCallbacks(tick)
+        if (on) start() else { main.removeCallbacks(tick); cancelFix() }
     }
 
     fun resume() = main.post { resumed = true; start() }
 
-    fun pause() = main.post { resumed = false; main.removeCallbacks(tick) }
+    fun pause() = main.post { resumed = false; main.removeCallbacks(tick); cancelFix() }
 
     fun close() {
         main.removeCallbacks(tick)
+        cancelFix()
         worker.shutdownNow()
     }
 
-    /** From MainActivity.onRequestPermissionsResult. */
-    fun onPermission(granted: Boolean) = main.post { asking = false; if (granted) start() }
+    /** Ends a fix in progress at once: the worker then sends nothing and the next resume tries again. */
+    private fun cancelFix() {
+        generation++ // written on the main thread only (close() from onDestroy too)
+        stopFix.getAndSet(null)?.invoke()
+    }
+
+    /** From MainActivity.onRequestPermissionsResult; null when the prompt was interrupted without an answer. */
+    fun onPermission(granted: Boolean?) = main.post {
+        asking = false
+        if (granted == null) return@post
+        prefs.edit().putBoolean(REQUESTED, true).putBoolean(GRANTED, granted).apply()
+        if (granted) start()
+    }
 
     private fun granted() = Build.VERSION.SDK_INT < 23 ||
         activity.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     private fun start() {
         if (!auto || !resumed || activity.isFinishing) return
-        if (granted()) { main.removeCallbacks(tick); main.post(tick); return }
-        if (asking || prefs.getBoolean(ASKED, false) || Build.VERSION.SDK_INT < 23) return
+        if (granted()) {
+            // allowed here or in Android's settings: remembered, so a later withdrawal ("Only this time") asks again
+            if (!prefs.getBoolean(GRANTED, false)) prefs.edit().putBoolean(GRANTED, true).apply()
+            main.removeCallbacks(tick); main.post(tick); return
+        }
+        if (asking || askedThisStart || Build.VERSION.SDK_INT < 23) return
+        val explain = LocationRules.shouldExplain(
+            notNowAt = prefs.getLong(NOT_NOW_AT, 0L),
+            now = System.currentTimeMillis(),
+            requested = prefs.getBoolean(REQUESTED, false),
+            lastGranted = prefs.getBoolean(GRANTED, false),
+            rationale = Build.VERSION.SDK_INT >= 23 &&
+                activity.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION),
+        )
+        if (!explain) return
         asking = true
+        askedThisStart = true
         ask { go ->
-            // remembered either way: "Not now" or Android's "Deny" are not asked again on every start
-            prefs.edit().putBoolean(ASKED, true).apply()
             asking = false
-            if (go && Build.VERSION.SDK_INT >= 23 && !activity.isFinishing) {
-                asking = true // until onPermission
-                activity.requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), PERMISSION_REQUEST)
+            if (!go) {
+                // only this explicit "Not now" is remembered; Android's own answer comes back in onPermission
+                prefs.edit().putLong(NOT_NOW_AT, System.currentTimeMillis()).apply()
+            } else {
+                prefs.edit().remove(NOT_NOW_AT).apply()
+                if (Build.VERSION.SDK_INT >= 23 && !activity.isFinishing) {
+                    asking = true // until onPermission
+                    activity.requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), PERMISSION_REQUEST)
+                }
             }
         }
     }
@@ -129,12 +184,14 @@ class PhoneLocation(
         if (busy || now < nextAt) { main.postDelayed(tick, maxOf(60_000L, nextAt - now)); return }
         busy = true
         nextAt = now + LocationRules.INTERVAL_MS
+        val gen = generation
         try {
             worker.execute {
-                val reached = try { report() } catch (e: Exception) { Log.w("NikoDeck", "location: ${e.javaClass.simpleName}"); true }
+                val reached = try { report(gen) } catch (e: Exception) { Log.w("NikoDeck", "location: ${e.javaClass.simpleName}"); true }
                 main.post {
                     busy = false
-                    if (!reached) nextAt = SystemClock.elapsedRealtime() + LocationRules.RETRY_MS
+                    if (gen != generation) nextAt = 0L // cut short by a pause: the next resume tries again at once
+                    else if (!reached) nextAt = SystemClock.elapsedRealtime() + LocationRules.RETRY_MS
                     if (auto && resumed) main.postDelayed(tick, maxOf(60_000L, nextAt - SystemClock.elapsedRealtime()))
                 }
             }
@@ -142,8 +199,9 @@ class PhoneLocation(
     }
 
     /** Finds the location and sends it. False only when the agent could not be reached, so the next try comes sooner. */
-    private fun report(): Boolean {
-        val loc = locate() ?: return true // no location: nothing is sent, the agent keeps the one it has
+    private fun report(gen: Int): Boolean {
+        val loc = locate(gen) ?: return true // no location: nothing is sent, the agent keeps the one it has
+        if (gen != generation) return true // paused meanwhile: nothing is sent
         val lat = LocationRules.round2(loc.latitude)
         val lon = LocationRules.round2(loc.longitude)
         val body = LocationRules.body(lat, lon, townName(lat, lon), if (loc.hasAccuracy()) loc.accuracy.toDouble() else null)
@@ -153,7 +211,7 @@ class PhoneLocation(
     }
 
     @SuppressLint("MissingPermission") // granted() is checked before every run
-    private fun locate(): Location? {
+    private fun locate(gen: Int): Location? {
         val lm = activity.getSystemService(Context.LOCATION_SERVICE) as? LocationManager ?: return null
         val known = PROVIDERS.mapNotNull { p ->
             // with coarse location only, Android before 12 refuses the GPS provider: a SecurityException, skipped
@@ -161,31 +219,41 @@ class PhoneLocation(
         }
         val newest = known.maxByOrNull { it.elapsedRealtimeNanos }
         if (newest != null && LocationRules.fresh(age(newest))) return newest
-        return current(lm) ?: newest
+        return current(lm, gen) ?: newest
     }
 
     private fun age(l: Location) = (SystemClock.elapsedRealtimeNanos() - l.elapsedRealtimeNanos) / 1_000_000
 
-    /** One new fix, waiting at most [FIX_TIMEOUT_MS]; on the worker thread. */
+    /**
+     * One new fix, waiting at most [FIX_TIMEOUT_MS]; on the worker thread. The request is always withdrawn on the way
+     * out (a fix, the timeout, a pause through [stopFix], or close() interrupting the wait).
+     */
     @SuppressLint("MissingPermission")
-    private fun current(lm: LocationManager): Location? {
+    private fun current(lm: LocationManager, gen: Int): Location? {
         val provider = listOf(LocationManager.NETWORK_PROVIDER, LocationManager.GPS_PROVIDER)
             .firstOrNull { p -> try { lm.isProviderEnabled(p) } catch (_: Exception) { false } } ?: return null
         val got = AtomicReference<Location?>()
         val done = CountDownLatch(1)
+        val cancel = CancellationSignal() // used from Android 11, where getCurrentLocation exists
+        val listener = SingleFix { l -> got.set(l); done.countDown() } // used before Android 11
+        val stop = { if (Build.VERSION.SDK_INT >= 30) cancel.cancel() else lm.removeUpdates(listener) }
         try {
             if (Build.VERSION.SDK_INT >= 30) {
-                val cancel = CancellationSignal()
                 lm.getCurrentLocation(provider, cancel, java.util.concurrent.Executor { it.run() }) { l: Location? -> got.set(l); done.countDown() }
-                if (!done.await(FIX_TIMEOUT_MS, TimeUnit.MILLISECONDS)) cancel.cancel()
             } else {
-                val listener = SingleFix { l -> got.set(l); done.countDown() }
                 @Suppress("DEPRECATION")
                 lm.requestSingleUpdate(provider, listener, Looper.getMainLooper())
-                if (!done.await(FIX_TIMEOUT_MS, TimeUnit.MILLISECONDS)) lm.removeUpdates(listener)
             }
         } catch (_: SecurityException) { return null } catch (_: IllegalArgumentException) { return null }
-        return got.get()
+        val stopNow: () -> Unit = { try { stop() } catch (_: Exception) {}; done.countDown() }
+        stopFix.set(stopNow)
+        try {
+            if (gen == generation) done.await(FIX_TIMEOUT_MS, TimeUnit.MILLISECONDS) // else paused before it was set
+        } finally {
+            stopFix.compareAndSet(stopNow, null)
+            try { stop() } catch (_: Exception) {} // cancelling a finished request does nothing
+        }
+        return if (gen == generation) got.get() else null
     }
 
     /** Every method spelled out: Android before 11 has no default methods on LocationListener to fall back on. */
@@ -221,7 +289,12 @@ class PhoneLocation(
 
     companion object {
         const val PERMISSION_REQUEST = 42
-        private const val ASKED = "location-asked"
+        /** Wall-clock time of the last "Not now" in the explanation (absent: none). */
+        private const val NOT_NOW_AT = "location-not-now-at"
+        /** Android's prompt was answered at least once. */
+        private const val REQUESTED = "location-requested"
+        /** The permission was granted the last time the app saw it. */
+        private const val GRANTED = "location-granted"
         private const val FIX_TIMEOUT_MS = 30_000L
         private const val GEOCODE_TIMEOUT_MS = 10_000L
         private val PROVIDERS = listOf(LocationManager.NETWORK_PROVIDER, LocationManager.PASSIVE_PROVIDER, LocationManager.GPS_PROVIDER)
