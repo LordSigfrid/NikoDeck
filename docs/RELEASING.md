@@ -8,7 +8,8 @@
 5. Run the **release** workflow on that commit. Use a draft for artifact review, or publish after the gates pass.
 
 The release workflow reuses the build checks, then tests and smoke-runs the agent on native Windows x64,
-Linux x64/ARM64, and macOS ARM64/Intel runners. It builds the signed APK, signs the macOS agent with NikoDeck's own certificate, creates
+Linux x64/ARM64, and, while the repository variable `RELEASE_MACOS` is `true`, macOS ARM64/Intel runners (without it
+the release has no macOS zips or disk images, and the checksum step expects three agent zips instead of five). It builds the signed APK, signs the macOS agent with NikoDeck's own certificate, creates
 provenance attestations and SHA-256 checksums, and publishes the release notes from the changelog.
 The reusable artifact contract also checks the real upload/download boundary with transfer fixtures: exact release
 filenames and hashes, exclusion of debug intermediates, and the actual demo's Pages tar format. It never publishes
@@ -19,7 +20,8 @@ verifies the signature, compares the two requirements and smoke-runs the agent f
 throwaway certificate on every change. The DMG is not notarized (that needs an Apple Developer ID), so a copy downloaded to another Mac
 is blocked the first time and needs System Settings > Privacy & Security > Open Anyway (right-click > Open only works up to macOS 14).
 
-Published releases update the Scoop bucket and generate winget manifests in a follow-up commit.
+Published (not draft) releases run from `main` update the Scoop bucket and generate winget manifests in a follow-up
+commit pushed to `main`.
 Winget manifests are prepared for submission; generation alone does not mean the package is accepted into winget-pkgs.
 
 An agent running from `NikoDeck.app` updates itself from the release's DMG (`UpdateService.UpdateBundleAsync`): it downloads
@@ -34,11 +36,15 @@ release (`setup-dotnet` with `10.0.x` picks up the newest runtime). Single-file 
 purpose: the zip is barely smaller and a compressed bundle costs about 90 MB more memory in a process that runs all day.
 
 Required GitHub Actions secrets are `PHONEBOX_KEYSTORE_BASE64`, `PHONEBOX_STORE_PASSWORD`, `PHONEBOX_KEY_ALIAS`
-and `PHONEBOX_KEY_PASSWORD`. Keep the original Android signing key: an incompatible APK must fail the update
+and `PHONEBOX_KEY_PASSWORD`. The keystore may be JKS or PKCS12 (the JDK's default type reads both; the repository
+variable `PHONEBOX_STORE_TYPE` forces one); in a PKCS12 file made with openssl the key password equals the store
+password and the alias is the `-name` given to `openssl pkcs12 -export`. The release fails if the APK carries the
+debug key. Keep the original Android signing key: an incompatible APK must fail the update
 while preserving the installed app and its data. Never commit the key or its passwords.
 
 The macOS agent is signed with a self-signed certificate made once with `tools/make-macos-signing-cert.sh`
-(secrets `MACOS_SIGNING_P12_BASE64` and `MACOS_SIGNING_P12_PASSWORD`; the release stops without them). Every release
+(secrets `MACOS_SIGNING_P12_BASE64` and `MACOS_SIGNING_P12_PASSWORD`; with `RELEASE_MACOS` on, the release stops
+without them). Every release
 then has the same designated requirement, `identifier "com.lordsigfrid.nikodeck.agent"` plus that certificate, so macOS keeps
 the Accessibility permission across updates. Keep the certificate: a new one, a new identifier or the hardened runtime
 (library validation would refuse the native libraries next to the agent) makes every Mac user grant it again. The
