@@ -1,5 +1,6 @@
 import { $, API, D, LEVEL_COLOR, LOCALE, mediaHtml, METRICS, PANEL_HEADERS, PREVIEW, Q_STYLE, S_ORDER, ago, api, averageColor, buildLayout, buzz, cfg, chime, cfgVersion, chart, color, cssVar, currentProcessesSort, emit, fillIcon, fmtClock, clockPeriod, fmtDur, fmtHM, fmtMem, fmtReset, fmtTime, fmtValue, gotoProcesses, gpuMem, gpusOf, h, en, haptic, hasProcessesPage, hist, hour12, icon, keyButton, setKeyFace, labelled, levelOf, media, metricText, online, openSheet, paceInfo, pad, prRow, pushView, quotaProviders, r1, registerProcessesSorter, renderStatus, ringSvg, setArtColor, configMark, configReadSince, localWriteStored, setMediaState, setVolDragging, shortDur, shortGpu, store, t, tick, toast, volDragging, wxBlock, wxDeg, wxIcon, emo, rich, tp, tpv, quotaText, pages, curPage, gotoPageRef } from '../main.js';
 import { W } from '../registry.js';
+import { barWidths, carryBars, carryRing, tweenText } from '../motion.js';
 import { invalidateDeckState } from './controls.js';
 
 function bindProcessLink(box, sortTarget) {
@@ -307,7 +308,7 @@ W.stat = {
         const s = D.state;
         if (!s) return;
         const [v, u] = metricText(m, s);
-        val.textContent = v;
+        tweenText(val, v, u);
         unit.textContent = u;
         const pctVal = m.pct?.(s);
         lbl.textContent = pctVal != null && m.label === 'RAM' ? `RAM (${Math.round(pctVal)}%)` : tp(m.label);
@@ -328,6 +329,7 @@ W.gauge = {
     dial.append(pct);
     if (o.metric === 'cpu' || o.metric === 'ram') bindProcessLink(box, o.metric === 'cpu' ? 'cpu' : 'mem');
     let svg = null;
+    const num = document.createTextNode(''); // kept across updates, so the number can count to its new value
     return {
       update() {
         const s = D.state;
@@ -336,11 +338,14 @@ W.gauge = {
         const p = raw == null ? 0 : (raw / (m.pct ? 100 : m.max(s))) * 100;
         const warn = m.hot ? (raw > m.hot[1] ? '#ef4444' : raw > m.hot[0] ? '#f59e0b' : '') : (p >= 95 ? '#ef4444' : p >= 85 ? '#f59e0b' : '');
         dial.style.setProperty('--qc', warn || 'var(--q)');
-        if (svg) svg.remove();
+        const old = svg;
         dial.insertAdjacentHTML('afterbegin', ringSvg(p));
         svg = dial.firstElementChild;
+        carryRing(old, svg); // while the old ring is still in place, so a carry running on it can be read
+        old?.remove();
         const [v, u] = metricText(m, s);
-        pct.replaceChildren(v, h('small', null, u));
+        tweenText(num, v, u);
+        pct.replaceChildren(num, h('small', null, u));
         sub.replaceChildren(h('bdi', null, m.sub?.(s) || ''));
       },
     };
@@ -360,6 +365,7 @@ W.chart = {
     const head = h('div', 's-head', h('span', 's-label', label), h('span', 's-name', ''));
     const main = h('div', 's-main');
     const canvas = h('canvas');
+    const num = h('b'); // kept across updates, so the number can count to its new value
     box.append(head, main, canvas);
     if (keys.includes('cpu') || keys.includes('ram')) bindProcessLink(box, keys.includes('cpu') ? 'cpu' : 'mem');
     return {
@@ -368,7 +374,8 @@ W.chart = {
         if (!s) return;
         if (single) {
           const [v, u] = metricText(single, s);
-          main.replaceChildren(h('b', null, v), h('small', null, u), h('span', 'chips', single.sub?.(s) ? h('span', 'chip', h('bdi', null, single.sub(s))) : ''));
+          tweenText(num, v, u);
+          main.replaceChildren(num, h('small', null, u), h('span', 'chips', single.sub?.(s) ? h('span', 'chip', h('bdi', null, single.sub(s))) : ''));
           head.lastChild.textContent = single.title?.(s) || '';
         } else {
           main.replaceChildren(...keys.map((k) => {
@@ -415,7 +422,9 @@ W.meters = {
             `${r1(m.used)} / ${Math.round(m.total)} GB`, (m.used / m.total) * 100, cssVar('--gpu')));
         }
         const disks = h('div', 'disks', ...(pc.disks || []).map((dk) => meter(dk.name === '/' ? tp('DISK') : dk.name, Math.round((dk.usedGb / dk.totalGb) * 100) + '%', (dk.usedGb / dk.totalGb) * 100, '#94a3b8')));
+        const before = barWidths(list);
         list.replaceChildren(...rows, disks);
+        carryBars(list, before);
       },
     };
   },

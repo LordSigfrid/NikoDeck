@@ -1,6 +1,7 @@
 import { $, API, D, curPage, pages, PANEL_HEADERS, PREVIEW, LOCALE, Q_STYLE, api, bridge, cfg, cfgVersion, configMark, configReadSince, localWriteStored, loadConfig, color, cssVar, rulesPaused, toggleRulesPause, fillIcon, fmtDur, fmtHM, fmtMem, gotoPageRef, gpuMem, gpusOf, h, en, haptic, icon, openSheet, paceInfo, pad, pairedPcs, quotaProviders, r1, shortDur, shortGpu, store, switchPc, t, tick, toast, transport, emo, labelled, rich, tp, tpv, quotaText } from '../main.js';
 import { W } from '../registry.js';
 import { canKillAnywhere, dialEl, every } from './helpers.js';
+import { barWidths, carryBars, tweenText } from '../motion.js';
 
 // ---------------------------------------------------------------- phone & PC
 // Your own HTML / CSS / JavaScript in a sandboxed iframe (no access to the panel, the agent or the phone). It gets
@@ -1412,6 +1413,7 @@ W.gpu = {
     box.style.setProperty('--c', cssVar('--gpu'));
     const label = h('span', 's-label', 'GPU'), name = h('span', 's-name');
     const big = h('div', 'gd-big'), rows = h('div', 'meters gd-rows'), chips = h('div', 'chips gd-chips');
+    const load = h('b'); // kept across updates, so the number can count to its new value
     box.append(h('div', 's-head', label, name), big, rows, chips);
     const meter = (title, txt, pct, c) => {
       const e = h('div', 'meter', h('div', 'm-row', h('span', null, title), h('span', null, txt)), h('div', 'track', h('i')));
@@ -1437,7 +1439,8 @@ W.gpu = {
 
         const temps = [g.temp != null ? `${Math.round(g.temp)}°C` : null, g.hotSpot != null ? tpv('hot spot {n}°', { n: Math.round(g.hotSpot) }) : null,
           g.memTemp != null ? tpv('memory {n}°', { n: Math.round(g.memTemp) }) : null].filter(Boolean).join(' · ');
-        big.replaceChildren(h('b', null, g.util != null ? String(Math.round(g.util)) : '—'), h('small', null, tp('% load')), h('span', 'gd-temp', temps));
+        tweenText(load, g.util != null ? String(Math.round(g.util)) : '—', '%');
+        big.replaceChildren(load, h('small', null, tp('% load')), h('span', 'gd-temp', temps));
 
         const list = [];
         const mem = gpuMem(g);
@@ -1452,7 +1455,9 @@ W.gpu = {
           const max = g.tempMax || (g.hotSpot != null ? 110 : 100);
           list.push(meter(tp('Temperature'), `${Math.round(hottest)} / ${Math.round(max)}°C`, (hottest / max) * 100, heat(hottest, max)));
         }
+        const before = barWidths(rows);
         rows.replaceChildren(...list);
+        carryBars(rows, before);
 
         chips.replaceChildren(...[
           g.clock != null ? tpv('Core {n} MHz', { n: Math.round(g.clock) }) : null,

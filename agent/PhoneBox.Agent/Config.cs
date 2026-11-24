@@ -209,10 +209,10 @@ public sealed class DisplayConfig
     public bool VolumeKeys { get; set; } = true;
     /// <summary>landscape, portrait or auto (follow the phone). In portrait the widgets are arranged automatically.</summary>
     public string Orientation { get; set; } = "landscape";
-    /// <summary>default, amoled, midnight, warm or graphite.</summary>
-    public string Theme { get; set; } = "default";
-    /// <summary>Accent colour (background glow, page dots), e.g. "#2dd4bf".</summary>
-    public string Accent { get; set; } = "#2dd4bf";
+    /// <summary>niko (the default), default (the earlier look), amoled, midnight, warm or graphite.</summary>
+    public string Theme { get; set; } = "niko";
+    /// <summary>Accent colour (background glow, page dots), e.g. "#00afff" (Niko's blue).</summary>
+    public string Accent { get; set; } = "#00afff";
     /// <summary>Tint the background with the album art's colour while music plays.</summary>
     public bool ArtTint { get; set; } = true;
     /// <summary>Screen brightness follows the room (the phone's light sensor).</summary>

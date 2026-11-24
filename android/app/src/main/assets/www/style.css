@@ -11,6 +11,8 @@
   --ram: #a78bfa;
   --net: #f59e0b;
   --up: #60a5fa;
+  --temp: #f97316;
+  --cputemp: #fb7185;
   --ok: #22c55e;
   --err: #ef4444;
   --ambient: 45, 212, 191;
@@ -26,6 +28,30 @@ body[data-theme="midnight"] { --bg: #060a17; --card: rgba(120, 150, 255, 0.07); 
 body[data-theme="warm"] { --bg: #0e0907; --card: rgba(255, 196, 150, 0.06); --card-hi: rgba(255, 196, 150, 0.1); --line: rgba(255, 196, 150, 0.1); --text: #f6ede5; --muted: #a8968a; --dim: #6f6259; }
 body[data-theme="graphite"] { --bg: #16181c; --card: rgba(255, 255, 255, 0.06); --card-hi: rgba(255, 255, 255, 0.09); --line: rgba(255, 255, 255, 0.1); }
 body[data-theme="graphite"]::before { opacity: .45; }
+/* Niko, the default: near black with electric blue panels and a cyan glow. Its colours sit on <html>, not <body>, because
+   the widgets read the metric colours (--cpu, --ram…) from the root element. The cards stay translucent so the
+   wallpaper and the album-art tint show through; over --bg they come out as #07182a and #0b2238. Every glow is a
+   static shadow: nothing animates it. */
+:root[data-theme="niko"] {
+  --bg: #03070d; --card: rgba(14, 48, 84, 0.42); --card-hi: rgba(18, 56, 92, 0.6); --line: rgba(0, 175, 255, 0.22);
+  --text: #eaf6ff; --muted: #8db4d6; --dim: #6a8aa8;
+  --cpu: #00e5ff; --gpu: #00afff; --ram: #7b8cff; --net: #ffc247; --up: #4c9bff; --temp: #ff8a1e; --cputemp: #ffc247;
+  --ok: #00e6a0; --err: #ff365d;
+}
+:root[data-theme="niko"] #dots i.on { box-shadow: 0 0 6px rgba(0, 229, 255, 0.6); }
+:root[data-theme="niko"] #dots.paused { border-color: rgba(255, 138, 30, 0.55); }
+:root[data-theme="niko"] #dots.paused i.on { background: #ff8a1e; box-shadow: none; }
+:root[data-theme="niko"] .s-main b, :root[data-theme="niko"] .g-val { text-shadow: 0 0 14px rgba(0, 229, 255, 0.3); }
+:root[data-theme="niko"] .w-stat .t-val { text-shadow: 0 1px 6px rgba(0, 0, 0, .9), 0 0 14px rgba(0, 229, 255, 0.3); }
+:root[data-theme="niko"] .key:active, :root[data-theme="niko"] .ov-tile:active, :root[data-theme="niko"] .ap-tile:active,
+:root[data-theme="niko"] .ha-tile.can:active, :root[data-theme="niko"] .pb:active { box-shadow: 0 0 0 1px #00afff, 0 0 12px rgba(0, 229, 255, 0.35); }
+/* every shortcut tile in the one Niko blue: the theme wins over each shortcut's own colour (main.js sets --k inline) */
+:root[data-theme="niko"] .key { --k: #00afff !important; }
+:root[data-theme="niko"] .sess.busy .st { background: #ffc247; box-shadow: 0 0 8px #ffc247; }
+:root[data-theme="niko"] .sess.waiting { border-color: rgba(255, 138, 30, 0.5); background: rgba(255, 138, 30, 0.1); }
+:root[data-theme="niko"] .sess.waiting .st { background: #ff8a1e; box-shadow: 0 0 10px #ff8a1e; }
+:root[data-theme="niko"] .sess.waiting .ds { color: #ffc247; }
+:root[data-theme="niko"] .toast.warn { border-color: rgba(255, 138, 30, .5); color: #ffc247; }
 #dots i.on { background: color-mix(in srgb, var(--accent, #fff) 55%, white); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1583,3 +1609,26 @@ body.controls-top .ap-foot { order: -1; margin-bottom: 4px; }
 .ly-note[hidden] { display: none; }
 .w-lyrics:not(.timed):not(.plain) .ly-note { margin: auto; }
 .ly-credit { position: absolute; right: 10px; top: 9px; font-size: 9px; letter-spacing: .1em; color: var(--dim); }
+
+/* ---------- motion: short one-off animations (motion.js plays the page entrance, gauges, bars and numbers) ----------
+   Only transform and opacity move, and nothing repeats: each runs once and then costs no more frames. */
+.track > i { transform-origin: left center; } /* the bars grow with scaleX from their start (tracks stay left to right) */
+.w-stat canvas, .w-chart canvas { transform-origin: 50% 100%; } /* the charts rise from their base */
+/* A press goes down at once and eases back without overshooting (above 1 the border would clip); its highlight
+   fades out. A key's filter keeps its .2s both ways: a toggle key's on/off brightness uses the same transition. */
+.key { transition: transform .24s cubic-bezier(.25, 1, .5, 1), filter .2s; }
+.key:active { transition-duration: .07s, .2s; }
+.ic { transition: transform .24s cubic-bezier(.25, 1, .5, 1), background .4s ease-out; }
+.ic:active { transition-duration: .07s, 0s; }
+.pb, .ov-tile { transition: transform .24s cubic-bezier(.25, 1, .5, 1), filter .4s ease-out; }
+.pb:active, .ov-tile:active { filter: brightness(1.25); transition-duration: .07s, 0s; }
+/* A toast drops in from just above its place and fades out where it stands: its transform resets only after the fade. */
+.toast { transform: translate(-50%, -14px) scale(.97); transition: opacity .3s ease, transform 0s .3s; }
+.toast.on { transform: translate(-50%, 0); transition: opacity .2s ease-out, transform .32s cubic-bezier(.2, .8, .2, 1); }
+/* Less motion asked for: no movement, only the highlights and fades that say something happened (motion.js and the
+   page turns in main.js check the same query). */
+@media (prefers-reduced-motion: reduce) {
+  .key:active, .ic:active, .pb:active, .ov-tile:active { transform: none; }
+  .toast, .toast.on { transform: translate(-50%, 0); transition: opacity .15s; }
+  .g-dial .fg, .q-dial .fg, .track i { transition: none; }
+}

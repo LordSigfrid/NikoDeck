@@ -395,6 +395,7 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.display.title": "顯示",
       "s.display.theme": "主題",
       "s.display.theme.default": "默認",
+      "s.display.theme.niko": "Niko",
       "s.display.theme.amoled": "AMOLED黑色",
       "s.display.theme.midnight": "午夜藍",
       "s.display.theme.warm": "溫暖",

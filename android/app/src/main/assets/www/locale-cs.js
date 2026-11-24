@@ -395,6 +395,7 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.display.title": "Displej",
       "s.display.theme": "Téma",
       "s.display.theme.default": "Výchozí",
+      "s.display.theme.niko": "Niko",
       "s.display.theme.amoled": "AMOLED černá barva",
       "s.display.theme.midnight": "Půlnoční modrá",
       "s.display.theme.warm": "Teplo",

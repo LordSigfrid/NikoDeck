@@ -66,7 +66,7 @@
       deviceSerial: null, adbPath: null,
       weather: { city: 'Tallinn', lat: 59.437, lon: 24.745, unit: 'celsius', model: '' },
       night: { enabled: false, start: '00:30', end: '07:30', brightness: 0.02 },
-      display: { appearance: null, showSeconds: true, hour12: false, idleReturnSec: 0, vibrate: true, volumeKeys: true, orientation: 'landscape', theme: 'default', accent: '#2dd4bf',
+      display: { appearance: null, showSeconds: true, hour12: false, idleReturnSec: 0, vibrate: true, volumeKeys: true, orientation: 'landscape', theme: 'niko', accent: '#00afff',
         pixelShift: false, idleDimMin: 0,
         artTint: true, autoBrightness: false, nightWhenDark: false, nightWhenUnreachable: false, unreachableNightDelayMin: 5, proximityWake: true, pin: false, homeScreen: false, keepAwake: true, openOnConnect: true, followComputerLock: false,
         homePage: null, switchCountdownSec: 3, touchGraceSec: 20, minDwellSec: 15, holdMaxMin: 30 },
