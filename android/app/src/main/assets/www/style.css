@@ -1360,7 +1360,9 @@ body.waking::after { opacity: 0; pointer-events: auto; transition: opacity .2s e
 
 /* ---------- smart stack ---------- */
 .w-stack { position: relative; overflow: hidden; padding: 0; }
-.stack-wrap { position: relative; width: 100%; height: 100%; overflow: hidden; }
+/* clip, not just hidden: the cards waiting below (translateY) overflow the wrap, and a hidden overflow can still be
+   scrolled (focus, scrollIntoView), which shifts every card a few pixels up (Chrome 83-89 keep hidden) */
+.stack-wrap { position: relative; width: 100%; height: 100%; overflow: hidden; overflow: clip; }
 .stack-item {
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
@@ -1372,6 +1374,9 @@ body.waking::after { opacity: 0; pointer-events: auto; transition: opacity .2s e
   transition: opacity 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: opacity, transform;
 }
+/* The dots bar sits in a strip of its own at the bottom (6px + its 22px pause button): over a card it would cover the
+   card's own controls there (a counter's +, a timer's buttons), and take their taps. */
+.w-stack.stack-has-dots .stack-item { height: auto; bottom: 28px; }
 .stack-item.active {
   opacity: 1;
   pointer-events: auto;
@@ -1453,7 +1458,8 @@ body.waking::after { opacity: 0; pointer-events: auto; transition: opacity .2s e
 .stack-pause::before {
   content: '';
   position: absolute;
-  top: -6px; right: -8px; bottom: -6px; left: -2px;
+  /* a larger touch target, but not upwards: the strip under the cards ends 1px above the button */
+  top: -1px; right: -8px; bottom: -6px; left: -2px;
 }
 .stack-pause svg {
   width: 10px;
