@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
-# PhoneBox setup for Linux and macOS: installs the latest release, everything it needs, and the phone app.
+# Instalação do PhoneBox para Linux e macOS: instala a versão mais recente, tudo o que ela precisa e o app do celular.
 #
 #   curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
 #   curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash -s -- --no-phone
 #
-# Run it as yourself, not with sudo: it asks for sudo only to install packages, and asks first.
-# Running it again updates PhoneBox or repairs the installation; settings are kept.
+# Execute com o seu usuário, sem sudo: o sudo só é pedido para instalar pacotes, e sempre perguntando antes.
+# Executar de novo atualiza o PhoneBox ou repara a instalação; as configurações são mantidas.
 #
-# Options:
-#   --yes               answer every question with its default (unattended)
-#   --no-phone          do not install the app on a phone over USB (for a Wi-Fi-only phone)
-#   --serial <id>       the phone to use when several are connected (see "adb devices")
-#   --no-autostart      do not start PhoneBox at login
-#   --no-start          install only; do not start the agent
-#   --no-extras         do not offer the optional helpers (playerctl, xprintidle, nowplaying-cli ...)
-#   --version <x.y.z>   install this release instead of the latest
-#   --dry-run           download and check everything, show what would happen, change nothing
+# Opções:
+#   --yes               responde a todas as perguntas com o padrão (sem interação)
+#   --no-phone          não instala o app em um celular via USB (para um celular só no Wi-Fi)
+#   --serial <id>       o celular a usar quando há vários conectados (veja "adb devices")
+#   --no-autostart      não inicia o PhoneBox ao entrar na sessão
+#   --no-start          só instala; não inicia o agente
+#   --no-extras         não oferece os auxiliares opcionais (playerctl, xprintidle, nowplaying-cli ...)
+#   --version <x.y.z>   instala esta versão em vez da mais recente
+#   --dry-run           baixa e verifica tudo, mostra o que aconteceria e não altera nada
 set -euo pipefail
 
 repo="ersinkoc/phonebox"
@@ -32,8 +32,8 @@ info() { printf '    %s\n' "$1"; }
 ok() { printf '    %sOK  %s%s\n' "$c_ok" "$1" "$c_off"; }
 caution() { printf '    %s!   %s%s\n' "$c_warn" "$1" "$c_off"; }
 die() {
-  printf '\n%sSetup stopped: %s%s\n' "$c_err" "$1" "$c_off" >&2
-  printf '%sHelp: https://github.com/%s#quick-start  -  issues: https://github.com/%s/issues%s\n' "$c_err" "$repo" "$repo" "$c_off" >&2
+  printf '\n%sA instalação parou: %s%s\n' "$c_err" "$1" "$c_off" >&2
+  printf '%sAjuda: https://github.com/%s#quick-start  -  problemas: https://github.com/%s/issues%s\n' "$c_err" "$repo" "$repo" "$c_off" >&2
   exit 1
 }
 have() { command -v "$1" >/dev/null 2>&1; }
@@ -42,20 +42,20 @@ have() { command -v "$1" >/dev/null 2>&1; }
 tty_ok=0
 if (: </dev/tty) 2>/dev/null; then tty_ok=1; fi
 
-ask() { # ask "question" y|n -> 0 for yes
+ask() { # ask "question" y|n -> 0 for yes; Portuguese (s/sim, n/não) and English (y/yes, n/no) answers both work
   local question="$1" default="$2" hint answer
-  if [ "$default" = y ]; then hint="[Y/n]"; else hint="[y/N]"; fi
+  if [ "$default" = y ]; then hint="[S/n]"; else hint="[s/N]"; fi
   if [ "$yes" = 1 ] || [ "$tty_ok" = 0 ]; then
-    if [ "$default" = y ]; then info "$question $hint -> yes (default)"; return 0; fi
-    info "$question $hint -> no (default)"; return 1
+    if [ "$default" = y ]; then info "$question $hint -> sim (padrão)"; return 0; fi
+    info "$question $hint -> não (padrão)"; return 1
   fi
   while :; do
     printf '    %s %s ' "$question" "$hint" >/dev/tty
     IFS= read -r answer </dev/tty || answer=""
     case "$answer" in
       "") if [ "$default" = y ]; then return 0; else return 1; fi ;;
-      [Yy]|[Yy][Ee][Ss]) return 0 ;;
-      [Nn]|[Nn][Oo]) return 1 ;;
+      [SsYy]|[Ss][Ii][Mm]|[Yy][Ee][Ss]) return 0 ;;
+      [Nn]|[Nn][Aa][Oo]|[Nn]ão|[Nn]ÃO|[Nn][Oo]) return 1 ;;
     esac
   done
 }
@@ -94,15 +94,15 @@ check_sum() { # check_sum file sums-file
   name="$(basename "$1")"
   expected="$(awk -v n="$name" '{ f = $2; sub(/^\*/, "", f); if (f == n) { print tolower($1); exit } }' "$2")"
   if [ -z "$expected" ]; then
-    printf '%s\n' "$name is not listed in the release checksums." >&2
+    printf '%s\n' "$name não está na lista de checksums da versão." >&2
     return 1
   fi
   actual="$(sha256_of "$1" | tr 'A-F' 'a-f')"
   if [ "$actual" != "$expected" ]; then
-    printf '%s\n' "$name does not match the release checksum (expected $expected, got $actual)." >&2
+    printf '%s\n' "$name não confere com o checksum da versão (esperado $expected, obtido $actual)." >&2
     return 1
   fi
-  ok "$name matches the release checksum"
+  ok "$name confere com o checksum da versão"
 }
 
 version_ge() { # version_ge 2.93.1 2.93.0 -> 0 when the first is at least the second
@@ -121,22 +121,22 @@ version_ge() { # version_ge 2.93.1 2.93.0 -> 0 when the first is at least the se
 check_provenance() {
   local out ghv
   if ! have gh || ! gh auth status >/dev/null 2>&1; then
-    info "Build provenance not checked (needs the GitHub CLI, signed in): gh attestation verify $(basename "$1") --repo $repo"
+    info "Origem do build não verificada (requer o GitHub CLI com login): gh attestation verify $(basename "$1") --repo $repo"
     return
   fi
   # gh 2.92.0 and earlier send the GitHub token to the TUF mirrors during verification (GHSA-8xvp-7hj6-mcj9)
   ghv="$(gh --version 2>/dev/null | sed -n 's/^gh version \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p' | head -n1)" || ghv=""
   if [ -z "$ghv" ] || ! version_ge "$ghv" 2.93.0; then
-    caution "Build provenance not checked: GitHub CLI ${ghv:-(unknown version)} has a security problem in \"gh attestation\""
-    caution "(it sends your GitHub token to another server). Update it to 2.93.0 or later."
+    caution "Origem do build não verificada: o GitHub CLI ${ghv:-(versão desconhecida)} tem uma falha de segurança no \"gh attestation\""
+    caution "(ele envia seu token do GitHub para outro servidor). Atualize para a versão 2.93.0 ou mais recente."
     return
   fi
   if out="$(gh attestation verify "$1" --repo "$repo" 2>&1)"; then
-    ok "$(basename "$1") was built by this repository's release workflow (GitHub attestation)"
+    ok "$(basename "$1") foi gerado pelo fluxo de release deste repositório (atestado do GitHub)"
   elif printf '%s' "$out" | grep -qi 'unknown command'; then
-    info 'Build provenance not checked: this GitHub CLI is too old for "gh attestation".'
+    info 'Origem do build não verificada: este GitHub CLI é antigo demais para o "gh attestation".'
   else
-    die "the build provenance of $(basename "$1") could not be verified; nothing was installed. $out"
+    die "não foi possível verificar a origem do build de $(basename "$1"); nada foi instalado. $out"
   fi
 }
 
@@ -159,7 +159,7 @@ unzip_to() { # unzip_to zip dir
   if have unzip; then unzip -q -o "$1" -d "$2"
   elif have bsdtar; then bsdtar -xf "$1" -C "$2"
   elif have python3; then python3 -I -c 'import sys, zipfile; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])' "$1" "$2"
-  else die "cannot unpack the download: install unzip (for example: sudo apt install unzip) and run setup again."; fi
+  else die "não foi possível descompactar o arquivo baixado: instale o unzip (por exemplo: sudo apt install unzip) e execute a instalação de novo."; fi
 }
 
 # ---- packages ---------------------------------------------------------------------------------------------------
@@ -194,8 +194,8 @@ pkg_install() { # pkg_install package... (one at a time, so a missing one does n
 
 sudo_note() {
   if [ "$pm" != brew ] && [ "$(id -u)" != 0 ]; then
-    have sudo || { caution "sudo is not available, so packages cannot be installed."; return 1; }
-    info "This uses sudo ($pm); you may be asked for your password."
+    have sudo || { caution "o sudo não está disponível, então não é possível instalar pacotes."; return 1; }
+    info "Isto usa o sudo ($pm); sua senha pode ser pedida."
   fi
   return 0
 }
@@ -210,7 +210,7 @@ find_adb() {
 }
 
 install_adb() {
-  info 'adb (Android SDK Platform-Tools) is Google software under the Android SDK terms:'
+  info 'O adb (Android SDK Platform-Tools) é um software do Google sob os termos do Android SDK:'
   info 'https://developer.android.com/studio/releases/platform-tools'
   case "$pm" in
     brew) brew install --cask android-platform-tools >/dev/null || true ;;
@@ -223,8 +223,8 @@ install_adb() {
   local url dest
   if [ "$os" = osx ]; then url="https://dl.google.com/android/repository/platform-tools-latest-darwin.zip"; dest="$HOME/Library/Android/sdk"
   elif [ "$arch" = x64 ]; then url="https://dl.google.com/android/repository/platform-tools-latest-linux.zip"; dest="$HOME/Android/Sdk"
-  else caution "Google offers adb for x64 Linux only; install your distribution's adb / android-tools package."; return; fi
-  info "Downloading Google's platform tools to $dest/platform-tools ..."
+  else caution "O Google só oferece o adb para Linux x64; instale o pacote adb / android-tools da sua distribuição."; return; fi
+  info "Baixando as platform tools do Google para $dest/platform-tools ..."
   if download "$url" "$tmp/platform-tools.zip"; then unzip_to "$tmp/platform-tools.zip" "$dest"; fi
   chmod +x "$dest/platform-tools/adb" 2>/dev/null || true
 }
@@ -232,27 +232,27 @@ install_adb() {
 offer_extras() {
   local missing="" reasons=""
   if [ "$os" = osx ]; then
-    if ! have nowplaying-cli; then missing="nowplaying-cli"; reasons="nowplaying-cli (Now Playing for any app, with cover art)"; fi
+    if ! have nowplaying-cli; then missing="nowplaying-cli"; reasons="nowplaying-cli (Tocando agora para qualquer app, com capa)"; fi
     if [ -n "$missing" ] && [ "$pm" != brew ]; then
-      info "Optional: $reasons. Install Homebrew (https://brew.sh), then: brew install nowplaying-cli"
+      info "Opcional: $reasons. Instale o Homebrew (https://brew.sh) e depois: brew install nowplaying-cli"
       return
     fi
   else
-    if ! have playerctl; then missing="playerctl"; reasons="playerctl (Now Playing and its controls)"; fi
+    if ! have playerctl; then missing="playerctl"; reasons="playerctl (Tocando agora e seus controles)"; fi
     if ! have wpctl && ! have pactl; then
       case "$pm" in pacman) missing="$missing libpulse" ;; *) missing="$missing pulseaudio-utils" ;; esac
       reasons="$reasons, pactl (volume)"
     fi
-    if ! have xprintidle && [ -n "${DISPLAY:-}" ]; then missing="$missing xprintidle"; reasons="$reasons, xprintidle (idle time on X11)"; fi
-    if [ -n "$missing" ] && [ -z "$pm" ]; then info "Optional, from your package manager: ${reasons#, }"; return; fi
+    if ! have xprintidle && [ -n "${DISPLAY:-}" ]; then missing="$missing xprintidle"; reasons="$reasons, xprintidle (tempo ocioso no X11)"; fi
+    if [ -n "$missing" ] && [ -z "$pm" ]; then info "Opcional, pelo seu gerenciador de pacotes: ${reasons#, }"; return; fi
   fi
-  [ -n "$missing" ] || { ok "All optional helpers are installed"; return; }
-  info "Optional helpers for more widgets: ${reasons#, }"
-  if [ "$dry" = 1 ]; then info "Would offer to install: $missing"; return; fi
-  if ask "Install them now?" y; then
+  [ -n "$missing" ] || { ok "Todos os auxiliares opcionais estão instalados"; return; }
+  info "Auxiliares opcionais para mais widgets: ${reasons#, }"
+  if [ "$dry" = 1 ]; then info "Ofereceria instalar: $missing"; return; fi
+  if ask "Instalar agora?" y; then
     # shellcheck disable=SC2086 # one package name per word
-    if sudo_note && pkg_install $missing; then ok "Installed: $missing"
-    else caution "Some could not be installed (not every distribution packages all of them); PhoneBox works without them."; fi
+    if sudo_note && pkg_install $missing; then ok "Instalados: $missing"
+    else caution "Alguns não puderam ser instalados (nem toda distribuição empacota todos); o PhoneBox funciona sem eles."; fi
   fi
 }
 
@@ -266,11 +266,11 @@ remove_autostart() {
   if [ "$os" = linux ] && [ -f "$unit" ]; then
     systemctl --user disable phonebox.service >/dev/null 2>&1 || true
     rm -f "$unit"
-    info 'Removed the login service; PhoneBox no longer starts at login.'
+    info 'Serviço de login removido; o PhoneBox não inicia mais ao entrar na sessão.'
   fi
   if [ "$os" = osx ] && [ -f "$plist" ]; then
     rm -f "$plist"
-    info 'Removed the login item; PhoneBox no longer starts at login.'
+    info 'Item de login removido; o PhoneBox não inicia mais ao entrar na sessão.'
   fi
 }
 
@@ -293,8 +293,8 @@ stop_agent() {
 write_autostart() {
   if [ "$os" = linux ]; then
     if ! systemd_user; then
-      caution "No systemd user session here, so PhoneBox cannot start at login automatically."
-      caution "Add $app/PhoneBoxAgent to your desktop's startup applications instead."
+      caution "Não há sessão de usuário do systemd aqui, então o PhoneBox não pode iniciar sozinho ao entrar na sessão."
+      caution "Em vez disso, adicione $app/PhoneBoxAgent aos aplicativos de inicialização do seu ambiente de trabalho."
       return 1
     fi
     local unsafe=0
@@ -304,8 +304,8 @@ write_autostart() {
     # e.g. an AD home such as /home/o'brien@corp.example: the unit would be enabled but never start
     case "$app" in *'"'*|*"'"*|*[\\]*) unsafe=1 ;; esac
     if [ "$unsafe" = 1 ]; then
-      caution "The install or settings path contains \$, a quote, a backslash or a line break, which a systemd service cannot be given safely;"
-      caution "add $app/PhoneBoxAgent to your desktop's startup applications instead."
+      caution "O caminho da instalação ou das configurações contém \$, aspas, uma barra invertida ou uma quebra de linha, que não podem ser passados com segurança a um serviço do systemd;"
+      caution "em vez disso, adicione $app/PhoneBoxAgent aos aplicativos de inicialização do seu ambiente de trabalho."
       remove_autostart   # an older unit would otherwise start the previous install at login and in start_agent
       return 1
     fi
@@ -331,7 +331,7 @@ WantedBy=default.target
 EOF
     systemctl --user daemon-reload
     systemctl --user enable phonebox.service >/dev/null 2>&1
-    ok "systemd user service: $unit"
+    ok "Serviço de usuário do systemd: $unit"
   else
     mkdir -p "$(dirname "$plist")"
     cat > "$plist" <<EOF
@@ -347,7 +347,7 @@ EOF
   <key>KeepAlive</key><dict><key>SuccessfulExit</key><false/></dict>
 </dict></plist>
 EOF
-    ok "launchd agent: $plist"
+    ok "Agente do launchd: $plist"
   fi
 }
 
@@ -360,20 +360,20 @@ start_agent() {
 
 # ---- phone ------------------------------------------------------------------------------------------------------
 phone_help() {
-  info 'On the phone (Android 5.0 or later):'
-  info '  1. Settings > About phone: tap "Build number" seven times to turn on Developer options.'
-  info '  2. Settings > System > Developer options: turn on "USB debugging".'
-  info '     Xiaomi / Redmi / POCO: also turn on "Install via USB" and "USB debugging (Security settings)".'
-  info '  3. Connect it with a data cable (some cables only charge) and unlock the screen.'
-  info '  4. Answer "Allow USB debugging?" with Allow; tick "Always allow from this computer".'
+  info 'No celular (Android 5.0 ou mais recente):'
+  info '  1. Configurações > Sobre o telefone: toque 7 vezes em "Número da versão" para ativar as Opções do desenvolvedor.'
+  info '  2. Configurações > Sistema > Opções do desenvolvedor: ative a "Depuração USB".'
+  info '     Xiaomi / Redmi / POCO: ative também "Instalar via USB" e "Depuração USB (Configurações de segurança)".'
+  info '  3. Conecte o celular com um cabo de dados (alguns cabos só carregam) e desbloqueie a tela.'
+  info '  4. Em "Permitir a depuração USB?", toque em Permitir e marque "Sempre permitir neste computador".'
 }
 
 linux_usb_help() {
-  caution 'Linux does not let adb open the phone yet ("no permissions"). Usually one of these fixes it:'
-  caution '  - the udev rules: Debian/Ubuntu android-sdk-platform-tools-common, Arch android-udev, Fedora android-tools;'
-  caution "  - the plugdev group: sudo usermod -aG plugdev $USER, then log out and in again;"
-  caution '  - unplug the phone and plug it in again, then: adb kill-server'
-  caution '  Guide: https://developer.android.com/studio/run/device#setting-up'
+  caution 'O Linux ainda não deixa o adb acessar o celular ("no permissions"). Normalmente uma destas opções resolve:'
+  caution '  - as regras do udev: Debian/Ubuntu android-sdk-platform-tools-common, Arch android-udev, Fedora android-tools;'
+  caution "  - o grupo plugdev: sudo usermod -aG plugdev $USER, depois saia da sessão e entre de novo;"
+  caution '  - desconecte o celular e conecte de novo, depois: adb kill-server'
+  caution '  Guia: https://developer.android.com/studio/run/device#setting-up'
 }
 
 select_phone() { # prints the serial of the one authorised phone, or nothing to skip
@@ -387,29 +387,29 @@ select_phone() { # prints the serial of the one authorised phone, or nothing to 
     count="$(printf '%s' "$ready" | grep -c . || true)"
     if [ "$count" = 1 ]; then printf '%s' "$ready"; return; fi
     if [ "$count" -gt 1 ]; then
-      caution "Several phones are connected: $(printf '%s' "$ready" | tr '\n' ' ')" >&2
-      if [ "$yes" = 1 ] || [ "$tty_ok" = 0 ]; then caution 'Run setup again with --serial <id> to pick one; skipping the phone app.' >&2; return; fi
-      wanted="$(read_line 'Type the serial of the phone to use (empty to skip):')"
+      caution "Há vários celulares conectados: $(printf '%s' "$ready" | tr '\n' ' ')" >&2
+      if [ "$yes" = 1 ] || [ "$tty_ok" = 0 ]; then caution 'Execute a instalação de novo com --serial <id> para escolher um; o app do celular foi pulado.' >&2; return; fi
+      wanted="$(read_line 'Digite o número de série do celular a usar (vazio para pular):')"
       [ -n "$wanted" ] || return 0   # skipping is not an error: main runs under set -e
       continue
     fi
     if [ -z "$devices" ]; then
-      if [ -n "$wanted" ]; then caution "No phone with the serial $wanted is connected." >&2; else caution 'No phone is connected over USB yet.' >&2; fi
+      if [ -n "$wanted" ]; then caution "Nenhum celular com o número de série $wanted está conectado." >&2; else caution 'Nenhum celular conectado via USB ainda.' >&2; fi
       phone_help >&2
     else
       printf '%s\n' "$devices" | while IFS="$(printf '\t')" read -r s state; do
         case "$state" in
-          unauthorized) caution "$s: waiting for you to allow USB debugging on the phone (unlock it and tap Allow)." >&2 ;;
-          offline) caution "$s: offline. Unplug it and plug it in again." >&2 ;;
-          device) caution "$s: an emulator or a wireless connection, not used unless you pass --serial $s." >&2 ;;
+          unauthorized) caution "$s: aguardando você permitir a depuração USB no celular (desbloqueie e toque em Permitir)." >&2 ;;
+          offline) caution "$s: offline. Desconecte o cabo e conecte de novo." >&2 ;;
+          device) caution "$s: um emulador ou uma conexão sem fio; só é usado se você passar --serial $s." >&2 ;;
           no\ permissions*) linux_usb_help >&2 ;;
           *) caution "$s: $state" >&2 ;;
         esac
       done
     fi
-    if [ "$yes" = 1 ] || [ "$tty_ok" = 0 ]; then caution 'Skipping the phone app (no phone ready).' >&2; return; fi
-    answer="$(read_line 'Press Enter to check again, or type S to skip the phone:')"
-    case "$answer" in [Ss]|[Ss][Kk][Ii][Pp]) return ;; esac
+    if [ "$yes" = 1 ] || [ "$tty_ok" = 0 ]; then caution 'O app do celular foi pulado (nenhum celular pronto).' >&2; return; fi
+    answer="$(read_line 'Pressione Enter para verificar de novo, ou digite P para pular o celular:')"
+    case "$answer" in [Pp]|[Pp][Uu][Ll][Aa][Rr]|[Ss][Kk][Ii][Pp]) return ;; esac  # not a bare s: it means "sim" in the other prompts
     "$adb" reconnect offline >/dev/null 2>&1 || true
   done
 }
@@ -419,26 +419,26 @@ install_phone_app() { # install_phone_app apk serial -> 0 when installed
   level="$("$adb" -s "$device" shell getprop ro.build.version.sdk 2>/dev/null | tr -d '\r[:space:]')"
   case "$level" in ''|*[!0-9]*) level=0 ;; esac
   if [ "$level" -gt 0 ] && [ "$level" -lt 21 ]; then
-    caution "This phone runs Android API $level; PhoneBox needs Android 5.0 (API 21) or later. The app was not installed."
+    caution "Este celular tem Android API $level; o PhoneBox precisa do Android 5.0 (API 21) ou mais recente. O app não foi instalado."
     return 1
   fi
-  info "Installing $(basename "$apk") on $device (the phone may ask you to confirm) ..."
+  info "Instalando $(basename "$apk") em $device (o celular pode pedir confirmação) ..."
   out="$("$adb" -s "$device" install -r "$apk" 2>&1)" || true
   case "$out" in
     *INSTALL_FAILED_UPDATE_INCOMPATIBLE*)
-      caution 'The phone has a PhoneBox app signed with a different key (for example one you built yourself).'
-      caution 'It was left as it is, with its data. To switch to the release app, uninstall PhoneBox on the phone'
-      caution '(this deletes its settings) and run setup again.'
+      caution 'O celular tem um app PhoneBox assinado com outra chave (por exemplo, um que você mesmo compilou).'
+      caution 'Ele foi mantido como está, com seus dados. Para trocar pelo app oficial, desinstale o PhoneBox do celular'
+      caution '(isso apaga as configurações dele) e execute a instalação de novo.'
       return 1 ;;
-    *INSTALL_FAILED_VERSION_DOWNGRADE*) ok 'The phone already has a newer PhoneBox app; it was kept.'; return 0 ;;
+    *INSTALL_FAILED_VERSION_DOWNGRADE*) ok 'O celular já tem um app PhoneBox mais novo; ele foi mantido.'; return 0 ;;
     *INSTALL_FAILED_USER_RESTRICTED*|*INSTALL_FAILED_ABORTED*)
-      caution 'The phone refused the installation. Confirm it on the phone; Xiaomi / Redmi / POCO phones also need'
-      caution '"Install via USB" in Developer options. Then run setup again.'
+      caution 'O celular recusou a instalação. Confirme no celular; celulares Xiaomi / Redmi / POCO também precisam de'
+      caution '"Instalar via USB" nas Opções do desenvolvedor. Depois execute a instalação de novo.'
       return 1 ;;
     *Success*) ;;
-    *) caution "The app could not be installed: $(printf '%s' "$out" | tr '\n' ' ')"; return 1 ;;
+    *) caution "Não foi possível instalar o app: $(printf '%s' "$out" | tr '\n' ' ')"; return 1 ;;
   esac
-  ok 'PhoneBox app installed on the phone'
+  ok 'App PhoneBox instalado no celular'
   "$adb" -s "$device" shell am start -n "$package/.MainActivity" >/dev/null 2>&1 || true
   return 0
 }
@@ -449,27 +449,27 @@ main() {
     case "$1" in
       --yes|-y) yes=1 ;;
       --no-phone) phone=0 ;;
-      --serial) [[ $# -ge 2 && -n $2 && $2 != -* ]] || die "--serial needs a value"; serial="$2"; shift ;;
+      --serial) [[ $# -ge 2 && -n $2 && $2 != -* ]] || die "--serial precisa de um valor"; serial="$2"; shift ;;
       --no-autostart) autostart=0 ;;
       --no-start) start=0 ;;
       --no-extras) extras=0 ;;
-      --version) [[ $# -ge 2 && -n $2 && $2 != -* ]] || die "--version needs a value"; version="$2"; shift ;;
+      --version) [[ $# -ge 2 && -n $2 && $2 != -* ]] || die "--version precisa de um valor"; version="$2"; shift ;;
       --dry-run) dry=1 ;;
-      -h|--help) sed -n '2,19p' "$0" 2>/dev/null || echo "See https://github.com/$repo#quick-start"; exit 0 ;;
-      *) die "unknown option: $1 (see --help)" ;;
+      -h|--help) sed -n '2,19p' "$0" 2>/dev/null || echo "Veja https://github.com/$repo#quick-start"; exit 0 ;;
+      *) die "opção desconhecida: $1 (veja --help)" ;;
     esac
     shift
   done
 
-  printf '\n%sPhoneBox setup%s\n' "$c_step" "$c_off"
-  if [ "$dry" = 1 ]; then printf '%sDry run: downloads and checks everything, changes nothing.%s\n' "$c_warn" "$c_off"; fi
+  printf '\n%sInstalação do PhoneBox%s\n' "$c_step" "$c_off"
+  if [ "$dry" = 1 ]; then printf '%sSimulação: baixa e verifica tudo, sem alterar nada.%s\n' "$c_warn" "$c_off"; fi
 
-  step 'Checking this computer'
-  [ "$(id -u)" != 0 ] || die "do not run setup as root or with sudo. PhoneBox runs as you (its settings, autostart and phone pairing belong to your account); setup asks for sudo itself when it installs packages."
+  step 'Verificando este computador'
+  [ "$(id -u)" != 0 ] || die "não execute a instalação como root nem com sudo. O PhoneBox roda com o seu usuário (as configurações, a inicialização automática e o pareamento do celular pertencem à sua conta); a instalação pede o sudo sozinha quando instala pacotes."
   case "$(uname -s)" in
     Linux) os=linux ;;
     Darwin) os=osx ;;
-    *) die "this script is for Linux and macOS; on Windows run setup.ps1 (see https://github.com/$repo#quick-start)." ;;
+    *) die "este script é para Linux e macOS; no Windows, execute o setup.ps1 (veja https://github.com/$repo#quick-start)." ;;
   esac
   if [ "$os" = osx ]; then
     # a shell under Rosetta reports x86_64 on Apple silicon; the native build is the right one
@@ -478,37 +478,37 @@ main() {
     case "$(uname -m)" in
       x86_64|amd64) arch=x64 ;;
       aarch64|arm64) arch=arm64 ;;
-      *) die "there is no PhoneBox build for this CPU ($(uname -m)); x64 and arm64 are supported." ;;
+      *) die "não existe build do PhoneBox para este processador ($(uname -m)); x64 e arm64 são suportados." ;;
     esac
     if [ -f /etc/alpine-release ] || case "$(ldd --version 2>&1 || true)" in *musl*) true ;; *) false ;; esac; then
-      die "PhoneBox's Linux builds need glibc; musl systems such as Alpine are not supported yet."
+      die "os builds do PhoneBox para Linux precisam da glibc; sistemas com musl, como o Alpine, ainda não são suportados."
     fi
   fi
-  have curl || have wget || die "curl or wget is needed to download PhoneBox."
-  have sha256sum || have shasum || die "sha256sum (coreutils) or shasum is needed to check the download."
+  have curl || have wget || die "é preciso ter curl ou wget para baixar o PhoneBox."
+  have sha256sum || have shasum || die "é preciso ter sha256sum (coreutils) ou shasum para verificar o arquivo baixado."
   rid="$os-$arch"
   detect_pm
-  ok "$( [ "$os" = osx ] && echo "macOS $(sw_vers -productVersion 2>/dev/null)" || echo "Linux $(uname -r)"), $arch${pm:+, package manager: $pm}"
+  ok "$( [ "$os" = osx ] && echo "macOS $(sw_vers -productVersion 2>/dev/null)" || echo "Linux $(uname -r)"), $arch${pm:+, gerenciador de pacotes: $pm}"
 
-  step 'Finding the release'
+  step 'Procurando a versão'
   local tag ver base
   tag="${version:-$(latest_version)}"
-  [ -n "$tag" ] || die "could not find the latest release on GitHub. Check the internet connection, or pass --version 0.9.8."
+  [ -n "$tag" ] || die "não foi possível encontrar a versão mais recente no GitHub. Verifique a conexão com a internet ou use --version 0.9.8."
   ver="${tag#v}"
-  printf '%s' "$ver" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || die "unexpected version '$tag'."
+  printf '%s' "$ver" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || die "versão inesperada: '$tag'."
   base="https://github.com/$repo/releases/download/v$ver"
   ok "PhoneBox $ver ($rid)"
 
   tmp="$(mktemp -d "${TMPDIR:-/tmp}/phonebox-setup.XXXXXX")"
   trap 'rm -rf "$tmp"' EXIT
 
-  step "Downloading PhoneBox $ver"
+  step "Baixando o PhoneBox $ver"
   local zip_name="PhoneBoxAgent-$ver-$rid.zip" sums
   sums="$tmp/SHA256SUMS-$ver.txt"
-  download "$base/SHA256SUMS-$ver.txt" "$sums" || die "release $ver was not found ($base)."
-  info "$zip_name (about 45 MB) ..."
-  download "$base/$zip_name" "$tmp/$zip_name" || die "the download failed: $base/$zip_name"
-  check_sum "$tmp/$zip_name" "$sums" || die "the agent download could not be verified. Nothing was installed."
+  download "$base/SHA256SUMS-$ver.txt" "$sums" || die "a versão $ver não foi encontrada ($base)."
+  info "$zip_name (cerca de 45 MB) ..."
+  download "$base/$zip_name" "$tmp/$zip_name" || die "o download falhou: $base/$zip_name"
+  check_sum "$tmp/$zip_name" "$sums" || die "não foi possível verificar o agente baixado. Nada foi instalado."
   check_provenance "$tmp/$zip_name"
   unzip_to "$tmp/$zip_name" "$tmp/agent"
   chmod +x "$tmp/agent/PhoneBoxAgent"
@@ -520,58 +520,58 @@ main() {
   fi
   local out
   if ! out="$("$tmp/agent/PhoneBoxAgent" --print-install-dir 2>&1)"; then
-    die "this system cannot run the PhoneBox $rid build: $out"
+    die "este sistema não consegue executar o build $rid do PhoneBox: $out"
   fi
   app="$(printf '%s\n' "$out" | tail -n1)"
-  case "$app" in /*/PhoneBox/app) ;; *) die "unexpected install folder from the agent: $app" ;; esac
+  case "$app" in /*/PhoneBox/app) ;; *) die "pasta de instalação inesperada informada pelo agente: $app" ;; esac
   local installed=""
   if [ -x "$app/PhoneBoxAgent" ]; then installed="present"; fi
   if [ -f "$app/PhoneBoxAgent.dll" ]; then
-    info "Found a source install (scripts/install.sh): it is replaced by the self-contained release; settings stay."
+    info "Encontrada uma instalação a partir do código-fonte (scripts/install.sh): ela será substituída pela versão independente; as configurações ficam."
   elif [ -n "$installed" ]; then
-    info "Found an existing install in $app: it is replaced; settings stay."
+    info "Encontrada uma instalação existente em $app: ela será substituída; as configurações ficam."
   fi
   if [ "$os" = osx ]; then
-    info 'The agent is signed with its own certificate, not an Apple Developer ID, so macOS may ask about it the first'
-    info 'time: allow it to control Music or Spotify (Now Playing) and, once Wi-Fi is on, to accept incoming connections.'
+    info 'O agente é assinado com um certificado próprio, não com um Apple Developer ID, então o macOS pode perguntar sobre ele'
+    info 'na primeira vez: permita que ele controle o Música ou o Spotify (Tocando agora) e, com o Wi-Fi ativado, aceite conexões de entrada.'
     # macOS ties the Accessibility permission to the signature's designated requirement: the same from release to
     # release since 0.9.22, but different from an older (ad hoc) build's, which changed with every build (#269)
     if [ -n "$installed" ] && [ "$(designated "$app/PhoneBoxAgent")" != "$(designated "$tmp/agent/PhoneBoxAgent")" ]; then
-      info 'If you allowed it under Accessibility (shortcuts that press keys), allow it once more: macOS does not apply'
-      info 'that to this build. In System Settings › Privacy & Security › Accessibility, remove PhoneBoxAgent with −'
-      info 'and add it again. Later updates keep the permission.'
+      info 'Se você o autorizou em Acessibilidade (atalhos que pressionam teclas), autorize mais uma vez: o macOS não aplica'
+      info 'isso a este build. Em Ajustes do Sistema › Privacidade e Segurança › Acessibilidade, remova o PhoneBoxAgent com −'
+      info 'e adicione-o de novo. As próximas atualizações mantêm a permissão.'
     fi
   fi
 
-  step 'Checking adb (needed for the USB connection to the phone)'
+  step 'Verificando o adb (necessário para a conexão USB com o celular)'
   adb="$(find_adb)"
   if [ -n "$adb" ]; then ok "$adb"
   else
-    caution 'adb is not installed. Without it PhoneBox still works over Wi-Fi, but cannot reach the phone over USB'
-    caution '(wake it on plug-in, install and update the phone app, fall back to USB when Wi-Fi drops).'
-    if [ "$dry" = 1 ]; then info 'Would offer to install it.'
-    elif ask 'Install adb now?' y; then
+    caution 'O adb não está instalado. Sem ele o PhoneBox ainda funciona via Wi-Fi, mas não alcança o celular pelo USB'
+    caution '(acordar o celular ao conectar, instalar e atualizar o app do celular, usar o USB quando o Wi-Fi cair).'
+    if [ "$dry" = 1 ]; then info 'Ofereceria a instalação do adb.'
+    elif ask 'Instalar o adb agora?' y; then
       install_adb
       adb="$(find_adb)"
-      if [ -n "$adb" ]; then ok "adb installed: $adb"; else caution 'adb could not be installed; PhoneBox will work over Wi-Fi only until it is.'; fi
+      if [ -n "$adb" ]; then ok "adb instalado: $adb"; else caution 'Não foi possível instalar o adb; o PhoneBox vai funcionar só via Wi-Fi até ele ser instalado.'; fi
     fi
   fi
 
   if [ "$extras" = 1 ]; then
-    step 'Optional helpers'
+    step 'Auxiliares opcionais'
     offer_extras
   fi
 
   if [ "$dry" = 1 ]; then
-    step 'Dry run finished'
-    info "Would stop the running agent and install PhoneBox $ver to $app (settings stay)."
-    [ "$autostart" = 0 ] || info 'Would ask to start PhoneBox at login.'
-    [ "$phone" = 0 ] || info 'Would offer to install the app on a phone connected over USB.'
-    info 'Nothing was changed.'
+    step 'Simulação concluída'
+    info "Encerraria o agente em execução e instalaria o PhoneBox $ver em $app (as configurações ficam)."
+    [ "$autostart" = 0 ] || info 'Perguntaria se o PhoneBox deve iniciar ao entrar na sessão.'
+    [ "$phone" = 0 ] || info 'Ofereceria a instalação do app em um celular conectado via USB.'
+    info 'Nada foi alterado.'
     return
   fi
 
-  step "Installing to $app"
+  step "Instalando em $app"
   stop_agent
   mkdir -p "$(dirname "$app")"
   rm -rf "$app.new" "$app.old"
@@ -579,14 +579,14 @@ main() {
   if [ -d "$app" ]; then mv "$app" "$app.old"; fi
   if ! mv "$app.new" "$app"; then
     if [ -d "$app.old" ]; then mv "$app.old" "$app"; fi
-    die "installing failed; the previous version was restored."
+    die "a instalação falhou; a versão anterior foi restaurada."
   fi
   rm -rf "$app.old"
-  ok "PhoneBox $ver installed"
+  ok "PhoneBox $ver instalado"
 
   if [ "$autostart" = 1 ]; then
-    step 'Start at login'
-    if ask 'Start PhoneBox when you log in?' y; then write_autostart || true
+    step 'Iniciar ao entrar na sessão'
+    if ask 'Iniciar o PhoneBox quando você entrar na sessão?' y; then write_autostart || true
     else remove_autostart; fi
   else
     remove_autostart
@@ -594,18 +594,18 @@ main() {
 
   local phone_done=0 device apk
   if [ "$phone" = 1 ]; then
-    step 'Phone app'
-    if [ -z "$adb" ]; then caution 'Skipped: adb is not installed.'
-    elif ask 'Install the PhoneBox app on a phone connected over USB now?' y; then
-      info 'USB debugging lets an allowed computer control the phone. Allow only your own computers; you can'
-      info 'revoke them under Developer options > "Revoke USB debugging authorisations".'
+    step 'App do celular'
+    if [ -z "$adb" ]; then caution 'Pulado: o adb não está instalado.'
+    elif ask 'Instalar agora o app PhoneBox em um celular conectado via USB?' y; then
+      info 'A depuração USB permite que um computador autorizado controle o celular. Autorize apenas os seus computadores;'
+      info 'você pode revogá-los em Opções do desenvolvedor > "Revogar autorizações de depuração USB".'
       device="$(select_phone)"
       if [ -n "$device" ]; then
         apk="$tmp/PhoneBox-$ver.apk"
         if ! download "$base/PhoneBox-$ver.apk" "$apk"; then
-          caution "Phone app skipped: the download failed ($base/PhoneBox-$ver.apk)."
+          caution "App do celular pulado: o download falhou ($base/PhoneBox-$ver.apk)."
         elif ! check_sum "$apk" "$sums"; then
-          caution 'Phone app skipped: the APK could not be verified.'
+          caution 'App do celular pulado: não foi possível verificar o APK.'
         elif install_phone_app "$apk" "$device"; then
           phone_done=1
         fi
@@ -614,10 +614,10 @@ main() {
   fi
 
   if [ "$start" = 0 ]; then
-    step 'Done (not started)'
-    info "Start it with $app/PhoneBoxAgent"
+    step 'Concluído (não iniciado)'
+    info "Inicie com $app/PhoneBoxAgent"
   else
-    step 'Starting PhoneBox'
+    step 'Iniciando o PhoneBox'
     start_agent
     local i=0 up=0
     while [ "$i" -lt 30 ]; do
@@ -626,23 +626,23 @@ main() {
       i=$((i + 1))
     done
     if [ "$up" = 1 ]; then
-      ok "PhoneBox is running: settings at $settings_url"
+      ok "O PhoneBox está em execução: configurações em $settings_url"
       if [ "$os" = osx ]; then open "$settings_url" >/dev/null 2>&1 || true
       elif [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ] && have xdg-open; then (xdg-open "$settings_url" >/dev/null 2>&1 &) || true; fi
     else
-      caution "The agent did not answer. Its log: $(dirname "$app")/agent.log"
+      caution "O agente não respondeu. Log dele: $(dirname "$app")/agent.log"
     fi
   fi
 
-  step 'Good to know'
-  if [ "$phone_done" = 1 ]; then info 'Keep the phone plugged in: PhoneBox wakes it and opens the panel.'
-  elif [ "$phone" = 1 ]; then info 'Phone app later: plug the phone in and use Settings > General > Install the phone app, or run setup again.'; fi
-  info 'Wi-Fi only: install the app from the release page on the phone, then on the computer open'
-  info 'Settings > General > Wi-Fi & Tailscale > Pair a phone over Wi-Fi and scan the QR code.'
-  if [ "$os" = linux ]; then info 'With a firewall (ufw, firewalld), Wi-Fi also needs TCP port 8766 open on your local network.'; fi
-  info "Until Wi-Fi is on, PhoneBox only listens on this computer. Every connection it makes: https://github.com/$repo/blob/main/PRIVACY.md"
-  info 'Updates: PhoneBox updates itself from Settings. Run setup again any time to repair it.'
-  info "Uninstall: curl -fsSL https://raw.githubusercontent.com/$repo/main/scripts/uninstall.sh | bash -s -- [--purge] [--apk]"
+  step 'Bom saber'
+  if [ "$phone_done" = 1 ]; then info 'Deixe o celular conectado: o PhoneBox acorda o celular e abre o painel.'
+  elif [ "$phone" = 1 ]; then info 'App do celular depois: conecte o celular e use Configurações > Geral > Instalar app no celular, ou execute a instalação de novo.'; fi
+  info 'Só Wi-Fi: instale o app pela página de versões no celular e, no computador, abra'
+  info 'Configurações > Geral > Wi-Fi & Tailscale > Parear celular via Wi-Fi e escaneie o QR code.'
+  if [ "$os" = linux ]; then info 'Com um firewall (ufw, firewalld), o Wi-Fi também precisa da porta TCP 8766 aberta na sua rede local.'; fi
+  info "Até o Wi-Fi ser ativado, o PhoneBox só escuta neste computador. Todas as conexões que ele faz: https://github.com/$repo/blob/main/PRIVACY.md"
+  info 'Atualizações: o PhoneBox se atualiza pelas Configurações. Execute a instalação de novo quando quiser para repará-lo.'
+  info "Desinstalar: curl -fsSL https://raw.githubusercontent.com/$repo/main/scripts/uninstall.sh | bash -s -- [--purge] [--apk]"
 }
 
 # Everything runs from here, so a download cut off half way cannot run half a script.

@@ -555,7 +555,7 @@ public class ConfigConcurrencyTests
         var (s, path) = NewStore();
         try
         {
-            Assert.Equal("auto", s.Get().Display.Language);
+            Assert.Equal("pt-BR", s.Get().Display.Language);
 
             Assert.Null(s.Save("""{"display":{"language":"tr"}}"""));
             Assert.Equal("tr", s.Get().Display.Language);
@@ -574,10 +574,11 @@ public class ConfigConcurrencyTests
     [InlineData("\"pt-br\"", "pt-BR")] // any case still normalizes to the canonical pt-BR, not a lowercase copy
     [InlineData("\"zh-hant\"", "zh-Hant")]
     [InlineData("\"AR\"", "ar")]
-    [InlineData("\"xx\"", "auto")]     // a language PhoneBox does not have
-    [InlineData("null", "auto")]
-    [InlineData("\"\"", "auto")]
-    public void ADisplayLanguageItDoesNotKnowFollowsThePhone(string json, string expected)
+    [InlineData("\"xx\"", "pt-BR")]    // a language PhoneBox does not have: the default
+    [InlineData("null", "pt-BR")]
+    [InlineData("\"\"", "pt-BR")]
+    [InlineData("\"AUTO\"", "auto")]   // following the phone is a choice of its own
+    public void ADisplayLanguageItDoesNotKnowFallsBackToTheDefault(string json, string expected)
     {
         var (s, path) = NewStore();
         try
@@ -598,7 +599,7 @@ public class ConfigConcurrencyTests
     [Fact]
     public void EveryLanguageThePanelHasCanBeSaved()
     {
-        // a language added to i18n.js but not to DisplayConfig.Languages is saved as "auto", so picking it does nothing
+        // a language added to i18n.js but not to DisplayConfig.Languages falls back to the default when saved, so picking it does nothing
         using var s = AppPaths.Resource("www/i18n.js");
         Assert.NotNull(s);
         var js = new StreamReader(s!).ReadToEnd();

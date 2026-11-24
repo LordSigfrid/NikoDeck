@@ -72,7 +72,7 @@ esac''')
                    DISPLAY='', WAYLAND_DISPLAY='')
         result = subprocess.run(
             ['/bin/bash', str(SETUP), '--yes', '--no-autostart', '--no-extras', '--version', '0.0.1'],
-            env=env, capture_output=True, text=True, timeout=20,
+            env=env, capture_output=True, text=True, encoding='utf-8', timeout=20,
         )
         self.assertEqual(result.returncode, expected_code, result.stdout + result.stderr)
         self.assertEqual((agent / 'PhoneBoxAgent').exists(), expected_code == 0)
@@ -85,14 +85,14 @@ esac''')
             with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 result = self.install(mode, root)
-                self.assertIn('Phone app skipped', result.stdout)
-                self.assertIn('PhoneBox is running', result.stdout)
+                self.assertIn('App do celular pulado', result.stdout)
+                self.assertIn('O PhoneBox está em execução', result.stdout)
                 self.assertFalse((root / 'phone-installed').exists())
 
     def test_unverified_agent_still_blocks_installation(self):
         with tempfile.TemporaryDirectory() as directory:
             result = self.install('corrupt-agent', Path(directory), expected_code=1)
-            self.assertIn('the agent download could not be verified', result.stderr)
+            self.assertIn('não foi possível verificar o agente baixado', result.stderr)
 
     def test_verified_apk_still_reaches_the_phone(self):
         with tempfile.TemporaryDirectory() as directory:

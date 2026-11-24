@@ -10,11 +10,11 @@ for a in "$@"; do
     --purge) purge=1 ;;
     --apk) apk=1 ;;
     -h|--help)
-      printf '%s\n' 'Usage: uninstall.sh [--purge] [--apk]' \
-        'Remove the agent and its autostart entry. Settings are kept unless --purge is set.' \
-        'Use --apk to also remove the app from the connected phone.'
+      printf '%s\n' 'Uso: uninstall.sh [--purge] [--apk]' \
+        'Remove o agente e a inicialização automática. As configurações são mantidas, a menos que --purge seja usado.' \
+        'Use --apk para remover também o app do celular conectado.'
       exit 0 ;;
-    *) echo "unknown option: $a (see --help)" >&2; exit 2 ;;
+    *) echo "opção desconhecida: $a (veja --help)" >&2; exit 2 ;;
   esac
 done
 
@@ -37,4 +37,4 @@ pkill -x PhoneBoxAgent 2>/dev/null || true
 rm -rf "$base/app" "$base/updates"
 if [ "$purge" = 1 ]; then rm -rf "$base" "$conf"; fi
 if [ "$apk" = 1 ] && command -v adb >/dev/null; then adb uninstall net.oxog.phonebox.deskpanel || true; fi
-echo "PhoneBox removed."
+echo "PhoneBox removido."

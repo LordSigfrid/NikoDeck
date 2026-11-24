@@ -64,7 +64,9 @@ class MainActivity : Activity(), SensorEventListener {
     private val panelPreferences by lazy { getSharedPreferences("panel-ui", MODE_PRIVATE) }
 
     private fun pairingContext(): Context {
-        val tag = panelPreferences.getString("language", null) ?: return this
+        // nothing saved yet: Brazilian Portuguese, the panel's default; "auto" follows the system language
+        val tag = panelPreferences.getString("language", null) ?: "pt-BR"
+        if (tag == "auto") return this
         return createConfigurationContext(Configuration(resources.configuration).apply {
             setLocale(Locale.forLanguageTag(tag))
         })
@@ -440,7 +442,7 @@ class MainActivity : Activity(), SensorEventListener {
         fun setLanguage(key: String, tag: String) {
             if (!ok(key) || !panelLanguageTag.matches(tag)) return
             val language = when (tag) {
-                "auto" -> null
+                "auto" -> "auto" // kept, so it is told apart from nothing saved yet
                 "zh" -> "zh-CN"
                 "zh-Hant" -> "zh-TW"
                 "pt" -> "pt-PT"

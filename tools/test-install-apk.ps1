@@ -25,7 +25,7 @@ try {
     # Regression check: scripts/install.ps1 starts the newly installed agent before the optional -Apk step, a failed
     # -Apk step can't leave it stopped, and a failed start doesn't skip the phone step but still fails the install.
     $installer = Join-Path $PSScriptRoot '../scripts/install.ps1'
-    $adbMissing = 'adb not found: winget install Google.PlatformTools'
+    $adbMissing = Expand-Text 'adb n\u00e3o encontrado: winget install Google.PlatformTools'
     $scenarios = @(
         @{ Name = 'start ok, -Apk'; LaunchFails = $false; Apk = $true; Expect = $adbMissing },
         @{ Name = 'start fails, -Apk'; LaunchFails = $true; Apk = $true; Expect = $adbMissing },

@@ -186,8 +186,9 @@ public sealed class DisplayConfig
     public AppearanceConfig? Appearance { get; set; }
     /// <summary>How the uploaded wallpaper (Settings › Display) is drawn behind the pages.</summary>
     public WallpaperConfig Wallpaper { get; set; } = new();
-    /// <summary>UI language code ("auto", "en", "tr", "de", "fr", "es", "it", "pt", "pt-BR", "nl", "pl", "ru", "el", "vi", "zh").</summary>
-    public string Language { get; set; } = "auto";
+    /// <summary>UI language code: "auto" (follow the phone / browser) or one of <see cref="Languages"/>. Brazilian Portuguese until one is chosen.</summary>
+    public string Language { get; set; } = DefaultLanguage;
+    internal const string DefaultLanguage = "pt-BR";
     /// <summary>The codes the panel and the settings page are translated into (i18n.js). Casing matters for pt-BR:
     /// it is a distinct entry from pt, not a variant of it, so it must survive a save in this exact form.</summary>
     internal static readonly string[] Languages = ["auto", "en", "tr", "de", "fr", "es", "it", "pt", "pt-BR", "nl", "pl", "ru", "el", "vi", "zh", "ja", "ko", "id", "th", "uk", "hi", "cs", "ar", "zh-Hant"];
@@ -699,10 +700,10 @@ public sealed partial class ConfigStore(string path)
         c.Display.Wallpaper.Dim = Math.Clamp(c.Display.Wallpaper.Dim, 0, 90);
         c.Display.Wallpaper.Blur = Math.Clamp(c.Display.Wallpaper.Blur, 0, 20);
         c.Display.UnreachableNightDelayMin = Math.Clamp(c.Display.UnreachableNightDelayMin, 1, 30);
-        // a language the panel does not have falls back to following the phone / browser. Matched case-insensitively
+        // a language the panel does not have (or none at all) falls back to the default, Brazilian Portuguese. Matched case-insensitively
         // so "PT-br" still resolves, but stored in its canonical casing: i18n.js looks pt-BR up by exact code.
         var lang = (c.Display.Language ?? "").Trim();
-        c.Display.Language = DisplayConfig.Languages.FirstOrDefault(l => l.Equals(lang, StringComparison.OrdinalIgnoreCase)) ?? "auto";
+        c.Display.Language = DisplayConfig.Languages.FirstOrDefault(l => l.Equals(lang, StringComparison.OrdinalIgnoreCase)) ?? DisplayConfig.DefaultLanguage;
         c.Display.SwitchCountdownSec = Math.Clamp(c.Display.SwitchCountdownSec, 0, 30);
         c.Display.TouchGraceSec = Math.Clamp(c.Display.TouchGraceSec, 0, 600);
         c.Display.MinDwellSec = Math.Clamp(c.Display.MinDwellSec, 0, 600);

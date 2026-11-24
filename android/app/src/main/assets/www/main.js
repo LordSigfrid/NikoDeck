@@ -2449,7 +2449,7 @@ function applyTheme() {
 
 export function applyDisplay() {
   const d = cfg.display || {};
-  const langChanged = I18n ? I18n.setLang(d.language || 'auto') : false;
+  const langChanged = I18n ? I18n.setLang(d.language) : false; // no language saved yet: i18n.js uses its default (pt-BR)
   LOCALE = I18n ? I18n.getLocale() : 'en-GB';
   I18n?.applyDom();
   // theme and accent apply in the preview and the browser too
@@ -2464,7 +2464,7 @@ export function applyDisplay() {
   if (langChanged) { buildLayout(); renderApproval(); } else if (themeChanged) buildLayout();
   renderRulesBtn();
   if (PREVIEW || !bridge) return;
-  try { bridge.setLanguage?.(I18n?.getPref() || 'auto'); } catch (_) {}
+  try { if (I18n) bridge.setLanguage?.(I18n.getPref()); } catch (_) {} // getPref() is always a language code or 'auto'
   try { bridge.setVolumeKeys && bridge.setVolumeKeys(d.volumeKeys !== false); } catch (_) {}
   try { bridge.setPinned && bridge.setPinned(d.pin === true); } catch (_) {}
   try { bridge.setOrientation && bridge.setOrientation(['portrait', 'auto'].includes(d.orientation) ? d.orientation : 'landscape'); } catch (_) {}

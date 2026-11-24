@@ -22,15 +22,15 @@ class SetupOptionTests(unittest.TestCase):
         for option in ('--serial', '--version'):
             with self.subTest(option=option):
                 result = subprocess.run([args.bash, str(SETUP), option, '--dry-run', '--help'],
-                                        capture_output=True, text=True, timeout=5)
+                                        capture_output=True, text=True, encoding='utf-8', timeout=5)
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn(f'{option} needs a value', result.stderr)
+                self.assertIn(f'{option} precisa de um valor', result.stderr)
 
     def test_valid_serial_and_version_are_accepted(self):
         result = subprocess.run([args.bash, str(SETUP), '--serial', 'fixture-device', '--version', '0.9.10', '--help'],
-                                capture_output=True, text=True, timeout=5)
+                                capture_output=True, text=True, encoding='utf-8', timeout=5)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn('Options:', result.stdout)
+        self.assertIn('Opções:', result.stdout)
 
 
 class InstallerTests(unittest.TestCase):
@@ -38,9 +38,9 @@ class InstallerTests(unittest.TestCase):
         for flags in (('--serial', '--apk', '--help'), ('--serial', '', '--help'), ('--serial',)):
             with self.subTest(flags=flags):
                 result = subprocess.run([args.bash, str(INSTALLER), *flags],
-                                        capture_output=True, text=True, timeout=5)
+                                        capture_output=True, text=True, encoding='utf-8', timeout=5)
                 self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-                self.assertEqual(result.stderr.strip(), '--serial needs a value')
+                self.assertEqual(result.stderr.strip(), '--serial precisa de um valor')
                 self.assertEqual(result.stdout, '')
 
     def run_installer(self, serial=None, fail=False, newer_sources=False):
@@ -106,7 +106,7 @@ print('Success')
             command = [args.bash, str(repo / 'scripts/install.sh'), '--apk']
             if serial is not None:
                 command += ['--serial', serial]
-            result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=20)
+            result = subprocess.run(command, env=env, capture_output=True, text=True, encoding='utf-8', timeout=20)
             calls = [json.loads(line) for line in calls_path.read_text().splitlines()] if calls_path.exists() else []
             return result, calls, str(apk)
 
@@ -129,7 +129,7 @@ print('Success')
     def test_newer_android_sources_are_built_before_install(self):
         result, calls, apk = self.run_installer(newer_sources=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn('Building the APK', result.stdout)
+        self.assertIn('Compilando o APK', result.stdout)
         self.assertEqual(calls[0], ['install', '-r', apk])
 
     def test_failed_update_preserves_app_without_uninstall_or_launch(self):

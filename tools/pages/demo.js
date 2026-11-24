@@ -18,14 +18,32 @@
   const wave = (period, lo, hi, phase = 0, noise = 0) =>
     lo + (hi - lo) * (0.5 + 0.5 * Math.sin((2 * Math.PI * (now() - START)) / 1000 / period + phase)) + rnd(-noise, noise);
 
-  const SHORTCUTS = [
+  // Playwright (tools/ui-tests) drives the demo: its specs were written against an English demo, so a test run keeps the
+  // English sample names and a config without a language stays English. Everyone else gets Brazilian Portuguese, the
+  // default language, like the agent's config.default*.json.
+  const TEST = navigator.webdriver === true;
+  const SHORTCUTS = (TEST ? [
     ['terminal', 'Terminal', '⌨️', '#4b5563'], ['code', 'VS Code', '📝', '#2f80ed'], ['browser', 'Browser', '🌐', '#0ea5e9'],
     ['files', 'Files', '📁', '#e5b84b'], ['music', 'Spotify', '🎧', '#1db954'], ['chat', 'Discord', '💬', '#6366f1'],
     ['snip', 'Snip', '✂️', '#14b8a6'], ['taskmgr', 'Task Manager', '📊', '#22c55e'], ['mute', 'Mute', '🔇', '#f59e0b'],
     ['screenoff', 'Screen Off', '🌙', '#8b5cf6'], ['lock', 'Lock', '🔒', '#ef4444'], ['settings', 'Settings', '⚙️', '#94a3b8'],
-  ].map(([id, label, icon, color]) => ({ id, label, icon, color, cmd: id === 'mute' ? 'builtin:mute' : 'demo', args: null, toggle: false }));
+  ] : [
+    // labels in Brazilian Portuguese, the default language (like the agent's config.default*.json)
+    ['terminal', 'Terminal', '⌨️', '#4b5563'], ['code', 'VS Code', '📝', '#2f80ed'], ['browser', 'Navegador', '🌐', '#0ea5e9'],
+    ['files', 'Arquivos', '📁', '#e5b84b'], ['music', 'Spotify', '🎧', '#1db954'], ['chat', 'Discord', '💬', '#6366f1'],
+    ['snip', 'Captura', '✂️', '#14b8a6'], ['taskmgr', 'Gerenciador de Tarefas', '📊', '#22c55e'], ['mute', 'Mudo', '🔇', '#f59e0b'],
+    ['screenoff', 'Desligar tela', '🌙', '#8b5cf6'], ['lock', 'Bloquear', '🔒', '#ef4444'], ['settings', 'Configurações', '⚙️', '#94a3b8'],
+  ]).map(([id, label, icon, color]) => ({ id, label, icon, color, cmd: id === 'mute' ? 'builtin:mute' : 'demo', args: null, toggle: false }));
   const PAGES = ['home', 'dashboard', 'ai', 'work', 'system', 'procs', 'deck', 'music', 'status', 'ambient', 'world', 'daily', 'markets', 'feeds', 'focus', 'calm', 'clock', 'automation', 'planner', 'nightstand', 'weekend', 'focuswork',
     'codexbar', 'devops', 'audio-deck', 'stream-deck', 'meeting-deck', 'development-deck', 'music-deck', 'system-deck'];
+
+  // the sample pages are named in Brazilian Portuguese, the demo's language, as the agent's config.default*.json does
+  // (in English under test, see TEST)
+  const ptBR = (text) => {
+    if (TEST) return text;
+    const dict = window.PhoneBoxI18n?.CATALOG?.['pt-BR'];
+    return dict && Object.prototype.hasOwnProperty.call(dict, text) ? dict[text] : text;
+  };
 
   let catalog = null;
   async function loadCatalog() {
@@ -66,7 +84,7 @@
       deviceSerial: null, adbPath: null,
       weather: { city: 'Tallinn', lat: 59.437, lon: 24.745, unit: 'celsius', model: '' },
       night: { enabled: false, start: '00:30', end: '07:30', brightness: 0.02 },
-      display: { appearance: null, showSeconds: true, hour12: false, idleReturnSec: 0, vibrate: true, volumeKeys: true, orientation: 'landscape', theme: 'niko', accent: '#00afff',
+      display: { appearance: null, language: TEST ? 'en' : 'pt-BR', showSeconds: true, hour12: false, idleReturnSec: 0, vibrate: true, volumeKeys: true, orientation: 'landscape', theme: 'niko', accent: '#00afff',
         pixelShift: false, idleDimMin: 0,
         artTint: true, autoBrightness: false, nightWhenDark: false, nightWhenUnreachable: false, unreachableNightDelayMin: 5, proximityWake: true, pin: false, homeScreen: false, keepAwake: true, openOnConnect: true, followComputerLock: false,
         homePage: null, switchCountdownSec: 3, touchGraceSec: 20, minDwellSec: 15, holdMaxMin: 30 },
@@ -77,7 +95,7 @@
       opencode: { phoneApprovals: false, sessions: false, timeoutSec: 90, onlyWhenAway: false, alwaysCountdownSec: 10, watchWsl: false, shareSessionTitles: false },
       pages: PAGES.filter((id) => byId[id]).map((id) => {
         const t = byId[id], seen = {};
-        return { appearance: null, id, title: t.title, icon: t.icon, enabled: true, idleSec: null, widgets: t.widgets.map((w) => {
+        return { appearance: null, id, title: ptBR(t.title), icon: t.icon, enabled: true, idleSec: null, widgets: t.widgets.map((w) => {
           const n = (seen[w.type] = (seen[w.type] || 0) + 1);
           const control = w.type === 'docker' || /^obs(-|$)/.test(w.type) ? { control: true } : {};
           return { ...w, id: n === 1 ? w.type : `${w.type}-${n}`, options: { ...(w.options || {}), ...control } };
@@ -106,6 +124,9 @@
     cycleLists = Object.fromEntries((c.shortcuts || []).filter((x) => x.cmd === 'builtin:cycle').map((x) => [x.id, JSON.stringify(x.cycle || [])]));
     return c;
   }
+  // Under test a config that names no language is served as English, the language the specs were written in; a spec
+  // that sets display.language keeps it. Only what is served changes: the stored config stays as the spec left it.
+  const servedConfig = (c) => TEST && !c.display?.language ? { ...c, display: { ...(c.display || {}), language: 'en' } } : c;
   const cfgVersion = () => store.get('pb-demo-version', 1);
   // every widget of the layout, Smart Stack children included (AgentConfig.Widgets)
   const widgets = (c) => (c.pages || []).flatMap((p) => p.widgets || []).flatMap((w) => [w, ...(w.type === 'stack' ? (w.options?.widgets || []).filter((x) => x.enabled !== false) : [])]);
@@ -555,7 +576,7 @@
     if (path === '/api/controls/state') return json(await deckState());
     if (path.startsWith('/api/controls/command/') && method === 'POST') return json(await controlCommand(path.split('/').pop(), q));
     if (path === '/api/state') return json(state(q.has('ev') ? +q.get('ev') : null));
-    if (path === '/api/config') return json({ version: cfgVersion(), config: publicConfig(await config()) });
+    if (path === '/api/config') return json({ version: cfgVersion(), config: publicConfig(servedConfig(await config())) });
     if (path.startsWith('/api/widget/') && path.endsWith('/note') && method === 'POST') {
       const parts = path.split('/');
       const pageId = decodeURIComponent(parts[3]);
@@ -905,7 +926,7 @@
         store.set('pb-demo-version', cfgVersion() + 1);
         return json({ version: cfgVersion() });
       }
-      return json(await config(), 200, { 'X-Config-Version': String(cfgVersion()) });
+      return json(servedConfig(await config()), 200, { 'X-Config-Version': String(cfgVersion()) });
     }
     if (path === '/api/info') return json({ version: VERSION, os: 'windows', configPath: 'browser storage (demo)', logPath: '—', adb: 'demo', connected: true, devices: ['DEMO0001'], appMissing: [], usbProblem: null, webviewProblem: null });
     // Pairing over Wi-Fi: a placeholder pattern instead of real QR codes (the demo has no agent to pair with)

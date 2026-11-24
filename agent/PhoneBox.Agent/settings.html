@@ -3581,7 +3581,7 @@ function localizeCatalog() {
 function applyLanguageUi(langPref) {
   const I18n = window.PhoneBoxI18n;
   if (!I18n) return;
-  I18n.setLang(langPref || 'auto');
+  I18n.setLang(langPref); // nothing chosen yet: i18n.js uses its default (pt-BR)
   localizeCatalog();
   I18n.populateSelect($('langSel'), true);
   I18n.populateSelect($('displayLangSel'), true);
@@ -3598,11 +3598,11 @@ function applyLanguageUi(langPref) {
 function bindLanguage() {
   const I18n = window.PhoneBoxI18n;
   if (!I18n) return;
-  const pref = cfg.display?.language || 'auto';
+  const pref = cfg.display?.language || I18n.DEFAULT_LANG;
   applyLanguageUi(pref);
   const onPick = (val) => {
     cfg.display ??= {};
-    cfg.display.language = val || 'auto';
+    cfg.display.language = val || I18n.DEFAULT_LANG;
     applyLanguageUi(cfg.display.language);
     // every section holds localized strings: rebuild them all, not only the pages editor
     renderAppearanceSettings();
@@ -3759,7 +3759,7 @@ async function loadInfo() {
 function fillDefaults() {
   cfg.pages = fitPages(cfg.pages); cfg.shortcuts ??= []; cfg.rules ??= []; cfg.display ??= {}; cfg.display.wallpaper ??= { dim: 45, blur: 0 }; cfg.night = { enabled: true, start: '00:30', end: '07:30', brightness: 0.02, ...cfg.night }; cfg.weather ??= {}; cfg.weather.unit ??= 'celsius'; cfg.weather.model ??= ''; cfg.photos ??= { source: 'folder', folder: '', subfolders: true, immichUrl: '', immichKey: '', immichAlbum: '', immichAlbumName: '' }; cfg.lan ??= { enabled: false, port: 8766 }; cfg.updates ??= { auto: true, repo: 'ersinkoc/phonebox' }; cfg.claude ??= { phoneApprovals: true, timeoutSec: 90, onlyWhenAway: false, shareSessionTitles: false, shareConversation: false, watchWsl: false }; cfg.opencode ??= { phoneApprovals: false, timeoutSec: 90, onlyWhenAway: false, alwaysCountdownSec: 10, watchWsl: false, shareSessionTitles: false, sessions: false };
   cfg.codexBar ??= { providers: ['claude', 'codex', 'antigravity'], rotate: true, pageSize: 2, rotateInterval: 8 };
-  for (const [k, v] of Object.entries({ language: 'auto', hour12: false, idleReturnSec: 90, switchCountdownSec: 3, touchGraceSec: 20, minDwellSec: 15, holdMaxMin: 30, keepAwake: true, openOnConnect: true,
+  for (const [k, v] of Object.entries({ language: window.PhoneBoxI18n?.DEFAULT_LANG || 'pt-BR', hour12: false, idleReturnSec: 90, switchCountdownSec: 3, touchGraceSec: 20, minDwellSec: 15, holdMaxMin: 30, keepAwake: true, openOnConnect: true,
     showSeconds: true, vibrate: true, finishToast: true, finishSound: false, finishSoundVolume: 70, volumeKeys: true, artTint: true, nightWhenUnreachable: false, unreachableNightDelayMin: 5, proximityWake: true, orientation: 'landscape', theme: 'niko', accent: '#00afff' })) cfg.display[k] ??= v;
   cfg.charge ??= { enabled: false, min: 50, max: 80, method: 'ha' };
   cfg.steam ??= { enabled: false };
@@ -3773,7 +3773,7 @@ async function load() {
   fillDefaults();
   // the saved language must be active before the first render: the settings page is built in JavaScript, so a browser
   // in English that has display.language = "vi" would otherwise render every editor in English and never rebuild them
-  if (window.PhoneBoxI18n) applyLanguageUi(cfg.display?.language || 'auto');
+  if (window.PhoneBoxI18n) applyLanguageUi(cfg.display?.language);
   else localizeCatalog();
   renderPages(); renderDeck(); renderRules(); renderCalendars(); renderFeeds(); renderCameras(); renderConsole(); renderNetAdapters(); renderCharge(); bindForm();
   // the editors fill in the sections and fields they own (feeds, cameras, an action's "enabled", ...), so the
@@ -4003,7 +4003,7 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 route();
-applyLanguageUi(window.PhoneBoxI18n?.getPref() || 'auto');
+applyLanguageUi(window.PhoneBoxI18n?.getPref());
 fitLeads();
 load();
 setInterval(loadInfo, 5000);

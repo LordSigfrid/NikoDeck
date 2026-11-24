@@ -4,9 +4,9 @@
     "homepage": "https://github.com/ersinkoc/phonebox",
     "license": "MIT",
     "notes": [
-        "Start PhoneBox from the Start menu; it lives in the tray (right-click it to start it with Windows).",
-        "Plug the phone in with USB debugging on, then open the settings (double-click the tray icon) and use",
-        "General › Phone connection › Install the phone app."
+        "Abra o PhoneBox pelo menu Iniciar; ele fica na bandeja do sistema (clique com o botão direito para marcar Iniciar com o Windows).",
+        "Conecte o celular com a depuração USB ativada, abra as configurações (clique duas vezes no ícone da bandeja) e use",
+        "Geral › Conexão do celular › Instalar app no celular."
     ],
     "suggest": {
         "adb": "main/adb"
