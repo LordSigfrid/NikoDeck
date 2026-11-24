@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 — 2026-11-24
 
 **Weather**
 - The weather follows the phone: with **Settings › General › Weather › Use the phone's location** (on by default, also
