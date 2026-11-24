@@ -35,7 +35,7 @@
     ['screenoff', 'Desligar tela', '🌙', '#8b5cf6'], ['lock', 'Bloquear', '🔒', '#ef4444'], ['settings', 'Configurações', '⚙️', '#94a3b8'],
   ]).map(([id, label, icon, color]) => ({ id, label, icon, color, cmd: id === 'mute' ? 'builtin:mute' : 'demo', args: null, toggle: false }));
   const PAGES = ['home', 'dashboard', 'ai', 'work', 'system', 'procs', 'deck', 'music', 'status', 'ambient', 'world', 'daily', 'markets', 'feeds', 'focus', 'calm', 'clock', 'automation', 'planner', 'nightstand', 'weekend', 'focuswork',
-    'codexbar', 'devops', 'audio-deck', 'stream-deck', 'meeting-deck', 'development-deck', 'music-deck', 'system-deck'];
+    'codexbar', 'devops', 'audio-deck', 'stream-deck', 'meeting-deck', 'development-deck', 'music-deck', 'system-deck', 'visor'];
 
   // the sample pages are named in Brazilian Portuguese, the demo's language, as the agent's config.default*.json does
   // (in English under test, see TEST)
@@ -150,6 +150,8 @@
       // wallpaperRev: the agent sets it while a wallpaper is uploaded; the demo serves no picture, so a config that
       // sets it also needs /agent/api/wallpaper mocked (see wallpaper.spec.js)
       wallpaperRev: c.wallpaperRev ?? null,
+      // visorMediaRev: likewise for the Visor widget's uploaded background; a spec that sets it mocks /agent/api/visor-media
+      visorMediaRev: c.visorMediaRev ?? null,
       pages: (c.pages || []).map((p) => ({ id: p.id, title: p.title, icon: p.icon, enabled: p.enabled !== false, idleSec: p.idleSec ?? null, appearance: p.appearance ?? null,
         widgets: (p.widgets || []).map((w) => ({ id: w.id, type: w.type, x: w.x, y: w.y, w: w.w, h: w.h, appearance: w.appearance ?? null, options: options(w) })) })),
       // iconRev / iconUpload: the agent sets them when a shortcut has a picture (and when the user uploaded it). The demo

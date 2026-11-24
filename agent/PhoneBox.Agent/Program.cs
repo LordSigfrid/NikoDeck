@@ -67,6 +67,7 @@ builder.Services.AddSingleton<AudioControl>();
 builder.Services.AddSingleton<AppCatalog>();
 builder.Services.AddSingleton(_ => new ShortcutIconUploads(Path.Combine(configDir, "icons")));
 builder.Services.AddSingleton(_ => new WallpaperStore(configDir));
+builder.Services.AddSingleton(_ => new VisorMediaStore(configDir));
 builder.Services.AddSingleton<PairingCodes>();
 builder.Services.AddSingleton<SpotifyControl>();
 builder.Services.AddSingleton<PlexControl>();
@@ -949,54 +950,66 @@ app.MapGet("/api/spectrum", (SpectrumAnalyzer spectrum) =>
 app.MapGet("/api/widget/{page}/{widget}", (string page, string widget, bool? force, CommandRunner runner) =>
     runner.Get(page, widget, force == true) is { } r ? Results.Json(r) : Results.NotFound());
 
-app.MapGet("/api/config", (ConfigStore cfg, HttpRequest req, ShortcutIconUploads icons, WallpaperStore wallpaper) =>
+app.MapGet("/api/config", (ConfigStore cfg, HttpRequest req, ShortcutIconUploads icons, WallpaperStore wallpaper, VisorMediaStore visorMedia) =>
     Results.Json(new { version = cfg.Version.ToString(), config = cfg.Get().ToPublic(req.Headers["X-PhoneBox-Device"].ToString(),
-        s => icons.Revision(s.Id) is { } up ? (up, true) : (ShortcutIcons.Revision(s), false), wallpaper.Revision()) }));
+        s => icons.Revision(s.Id) is { } up ? (up, true) : (ShortcutIcons.Revision(s), false), wallpaper.Revision(), visorMedia.Revision()) }));
 
-// The panel's wallpaper (Settings › Display). The panel asks with ?v=<revision>, so the picture may be kept for good.
-app.MapGet("/api/wallpaper", (WallpaperStore wallpaper, HttpResponse res, string? v) =>
+// The panel's wallpaper (Settings › Display) and the Visor widget's background media: uploaded files the panel shows.
+// The panel asks with ?v=<revision>, so the file may be kept for good.
+app.MapGet("/api/wallpaper", (WallpaperStore wallpaper, HttpResponse res, string? v) => ServeMedia(wallpaper, res, v));
+app.MapGet("/api/visor-media", (VisorMediaStore media, HttpResponse res, string? v) => ServeMedia(media, res, v));
+// Uploading and removing them: under /api/settings, so local only like the rest of the settings API. The version bump
+// tells connected phones to load the config, and with it the new revision.
+app.MapPost("/api/settings/wallpaper", (HttpRequest req, ConfigStore cfg, WallpaperStore wallpaper) => UploadMedia(req, cfg, wallpaper));
+app.MapDelete("/api/settings/wallpaper", (HttpRequest req, ConfigStore cfg, WallpaperStore wallpaper) => RemoveMedia(req, cfg, wallpaper));
+app.MapPost("/api/settings/visor-media", (HttpRequest req, ConfigStore cfg, VisorMediaStore media) => UploadMedia(req, cfg, media));
+app.MapDelete("/api/settings/visor-media", (HttpRequest req, ConfigStore cfg, VisorMediaStore media) => RemoveMedia(req, cfg, media));
+
+static IResult ServeMedia(MediaStore store, HttpResponse res, string? v)
 {
-    if (wallpaper.Read() is not { } found) return Results.NotFound();
+    if (store.Read() is not { } found) return Results.NotFound();
     // kept for good only when these very bytes are the revision asked for (the revision is their hash): an upload
-    // between the config and this request must not leave the new picture cached under the old revision's address
-    res.Headers.CacheControl = v == WallpaperStore.ContentRevision(found.Bytes).ToString(System.Globalization.CultureInfo.InvariantCulture)
+    // between the config and this request must not leave the new file cached under the old revision's address
+    res.Headers.CacheControl = v == MediaStore.ContentRevision(found.Bytes).ToString(System.Globalization.CultureInfo.InvariantCulture)
         ? "private, max-age=31536000, immutable" : "no-store";
     res.Headers.XContentTypeOptions = "nosniff";
     return Results.File(found.Bytes, found.ContentType);
-});
-// Uploading and removing it: under /api/settings, so local only like the rest of the settings API. The version bump
-// tells connected phones to load the config, and with it the new revision.
-app.MapPost("/api/settings/wallpaper", async (HttpRequest req, ConfigStore cfg, WallpaperStore wallpaper) =>
+}
+
+static async Task<IResult> UploadMedia(HttpRequest req, ConfigStore cfg, MediaStore store)
 {
     var configVersion = req.Headers["X-Config-Version"].ToString();
     if (cfg.VersionConflict(configVersion)) return Results.Json(new { error = ConfigStore.Conflict }, statusCode: StatusCodes.Status409Conflict);
-    var bytes = await WallpaperStore.ReadBounded(req.Body);
+    // a body known to be too large is refused before it is read, with the message a save would give
+    if (req.ContentLength > store.Limit) return Results.BadRequest(new { error = store.TooLargeMessage });
+    var bytes = await MediaStore.ReadBounded(req.Body, store.Limit);
     lock (IconCommit)
     {
         if (cfg.VersionConflict(configVersion)) return Results.Json(new { error = ConfigStore.Conflict }, statusCode: StatusCodes.Status409Conflict);
-        var before = wallpaper.Revision();
-        if (wallpaper.Save(bytes) is { } err)
+        var before = store.Revision();
+        if (store.Save(bytes) is { } err)
         {
-            // a save that failed halfway can still have changed the picture served: the panels must hear of it
-            if (wallpaper.Revision() == before) return Results.BadRequest(new { error = err });
+            // a save that failed halfway can still have changed the file served: the panels must hear of it
+            if (store.Revision() == before) return Results.BadRequest(new { error = err });
             cfg.Touch();
             return Results.Json(new { error = err, version = cfg.VersionText }, statusCode: StatusCodes.Status409Conflict);
         }
         cfg.Touch();
         return Results.Ok(new { version = cfg.VersionText });
     }
-});
-app.MapDelete("/api/settings/wallpaper", (HttpRequest req, ConfigStore cfg, WallpaperStore wallpaper) =>
+}
+
+static IResult RemoveMedia(HttpRequest req, ConfigStore cfg, MediaStore store)
 {
     lock (IconCommit)
     {
         if (cfg.VersionConflict(req.Headers["X-Config-Version"])) return Results.Json(new { error = ConfigStore.Conflict }, statusCode: StatusCodes.Status409Conflict);
-        var error = wallpaper.Remove();
+        var error = store.Remove();
         cfg.Touch(); // also when a file stayed: the panel must load whatever is there now
         return error is null ? Results.Ok(new { version = cfg.VersionText })
             : Results.Json(new { error, version = cfg.VersionText }, statusCode: StatusCodes.Status409Conflict);
     }
-});
+}
 
 // Phones that have talked to this agent, with their settings (Settings › Phones).
 app.MapGet("/api/phones", (ConfigStore cfg) =>

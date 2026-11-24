@@ -1251,11 +1251,13 @@ function optVal(w, o) {
   // The previous Clock alignment value is an alias for the logical start.
   return w.type === 'clock' && o.key === 'align' && value === 'left' ? 'start' : value;
 }
-/** An option with showWhen {key, not} is drawn only while the widget's option <key> is not set to <not> (an option that does nothing while another is off is not offered). */
+/** An option with showWhen {key, not} is drawn only while the widget's option <key> is not set to <not>, and one with
+ *  showWhen {key, is} only while it is set to <is> (an option that does nothing while another is off is not offered). */
 function optionShown(w, d, o) {
   if (!o.showWhen) return true;
   const driver = d.options.find((x) => x.key === o.showWhen.key);
   const v = driver ? optVal(w, driver) : undefined;
+  if ('is' in o.showWhen) return v === o.showWhen.is;
   return v !== o.showWhen.not;
 }
 /** The catalog's defaults for a widget type, written out so the panel and the agent see what the inspector shows. */
@@ -1487,6 +1489,7 @@ function sendPreview() {
   // the settings file has no wallpaper revision (the agent adds it for the phone): the preview gets the picture shown
   // here, so the darkening and blur being edited can be seen on it
   config.wallpaperRev = wallpaperShown;
+  config.visorMediaRev = visorMediaShown; // the same for the Visor's background media, once its editor has shown it
   if (previewFrame && previewReady && stageMode === 'live')
     previewFrame.contentWindow.postMessage({ type: 'phonebox-preview', config, page: selPage }, location.origin);
   if (appearancePreviewFrame && appearancePreviewReady)
@@ -1897,10 +1900,13 @@ function optionField(w, o, onValChange) {
           if (e.target.checked) picked.add(k); else picked.delete(k);
           const knownOrder = currentChoices.map((c) => c[0]).filter((x) => picked.has(x));
           const preservedUnknown = [...picked].filter((x) => !knownOrder.includes(x));
-          const next = [...knownOrder, ...preservedUnknown];
+          // an ordered list (the Visor's metrics) keeps the order the boxes were ticked in: a new one goes last
+          const next = o.ordered ? [...cur().filter((x) => picked.has(x)), ...(e.target.checked && !cur().includes(k) ? [k] : [])]
+            : [...knownOrder, ...preservedUnknown];
           if (!next.length) { e.target.checked = true; toast(t('s.js.keepOne'), true); return; }
           set(o.key, next);
-        } }), l)));
+          if (o.ordered) renderChoices(currentChoices); // the position numbers move
+        } }), l, o.ordered && selected.includes(k) ? h('span', { class: 'hint', style: { marginInlineStart: '6px' } }, `#${selected.indexOf(k) + 1}`) : null)));
       };
       const withSaved = (list) => {
         const seen = new Set(list.map((c) => c[0]));
@@ -1953,8 +1959,11 @@ function optionField(w, o, onValChange) {
     case 'lines':
       return field(h('textarea', { rows: 5, oninput: (e) => set(o.key, e.target.value.split('\n').map((x) => x.trim()).filter(Boolean)) }, (Array.isArray(v) ? v : []).join('\n')));
     case 'color':
-      return field(h('div', { class: 'row', style: { gap: '8px' } }, h('input', { type: 'color', value: v || '#fbbf24', oninput: (e) => set(o.key, e.target.value) }),
-        h('div', { class: 'swatches' }, ...COLORS.map((c) => h('button', { style: { background: c }, onclick: () => { set(o.key, c); renderInspector(); } })))));
+      // a colour whose default is empty follows the theme until one is picked; its Theme button goes back to that
+      return field(h('div', { class: 'row', style: { gap: '8px' } }, h('input', { type: 'color', value: v || (o.default === '' ? '#00afff' : '#fbbf24'), oninput: (e) => set(o.key, e.target.value) }),
+        h('div', { class: 'swatches' }, ...COLORS.map((c) => h('button', { style: { background: c }, onclick: () => { set(o.key, c); renderInspector(); } }))),
+        o.default === '' ? h('button', { class: 'btn sm', type: 'button', 'aria-pressed': String(!v), onclick: () => { set(o.key, ''); renderInspector(); } }, t('s.display.theme')) : null));
+    case 'visor-media': return visorMediaEditor(o);
     case 'camera':
       return field(h('select', { onchange: (e) => set(o.key, e.target.value) }, h('option', { value: '' }, t('s.camera.pick')),
         ...(cfg.cameras?.sources || []).map((c) => h('option', { value: c.id, selected: c.id === v }, c.name || (c.url || '').replace(/\/\/[^/@]*@/, '//')))));
@@ -1983,6 +1992,97 @@ function optionField(w, o, onValChange) {
       return field(h('input', { type: 'text', value: v ?? '', oninput: (e) => set(o.key, e.target.value) }),
         w.type === 'push' && o.key === 'key' ? h('span', { class: 'hint' }, t('s.js.pushHint')) : null);
   }
+}
+
+// Visor widget: the background picture, GIF or video. Uploaded and removed on its own, like the wallpaper (one file for
+// every Visor widget, the agent's visor-media.<ext>): the agent bumps the settings version, which tells the phones.
+// Each refresh is numbered, so an older one that answers late cannot undo a newer one. The inspector is drawn again on
+// every edit, so the file is kept here under the agent's revision and downloaded again only when that changes (or after
+// an upload or a removal), not on each redraw.
+let visorMediaRefresh = 0, visorMediaShown = null, visorMediaCache = null; // { rev, url, video }
+// the agent's limits (VisorMediaStore): checked here too, so a file that is too large is not sent at all
+const VISOR_MEDIA_MAX_MB = { image: 8, video: 20 };
+const visorMediaMaxMb = (f) => (/^video\//.test(f.type) || /\.(mp4|webm)$/i.test(f.name) ? VISOR_MEDIA_MAX_MB.video : VISOR_MEDIA_MAX_MB.image);
+function visorMediaEditor(o) {
+  const thumb = h('div', { style: { display: 'none', width: '96px', height: '54px', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--line)', flex: 'none' } });
+  const file = h('input', { type: 'file', style: { display: 'none' },
+    accept: '.jpg,.jpeg,.png,.webp,.gif,.mp4,.webm,image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm' });
+  const remove = h('button', { class: 'btn sm', type: 'button', style: { display: 'none' } }, t('s.k.remove'));
+  const choose = h('button', { class: 'btn sm', type: 'button', onclick: () => file.click() }, t('s.visor.choose'));
+  const show = (m) => {
+    if (!m) {
+      thumb.replaceChildren();
+      thumb.style.display = 'none';
+      remove.style.display = 'none';
+      return;
+    }
+    const fit = { width: '100%', height: '100%', objectFit: 'cover', display: 'block' };
+    const el = m.video ? h('video', { src: m.url, muted: true, loop: true, autoplay: true, playsinline: true, style: fit })
+      : h('img', { src: m.url, alt: '', style: fit });
+    if (el.tagName === 'VIDEO') el.muted = true; // the attribute alone does not mute a video that is already loading
+    thumb.replaceChildren(el);
+    thumb.style.display = '';
+    remove.style.display = '';
+  };
+  const drop = () => {
+    if (visorMediaCache) URL.revokeObjectURL(visorMediaCache.url);
+    visorMediaCache = null;
+  };
+  const refresh = async (force) => {
+    const mine = ++visorMediaRefresh;
+    if (force) drop();
+    show(visorMediaCache); // what is already here, at once, while the revision is checked
+    try {
+      // the revision the agent gives the phones (the settings file has none): a small request on every redraw
+      const cr = await fetch('/api/config', { cache: 'no-store' });
+      if (!cr.ok) throw new Error();
+      const rev = (await cr.json())?.config?.visorMediaRev ?? null;
+      if (mine !== visorMediaRefresh) return;
+      if (rev == null) throw new Error();
+      if (visorMediaCache?.rev !== rev) {
+        const res = await fetch('/api/visor-media?v=' + encodeURIComponent(rev), { cache: 'no-store' });
+        if (mine !== visorMediaRefresh) return;
+        if (!res.ok) throw new Error();
+        const blob = await res.blob();
+        if (mine !== visorMediaRefresh) return;
+        drop();
+        visorMediaCache = { rev, url: URL.createObjectURL(blob), video: /^video\//.test(blob.type) };
+      }
+      show(visorMediaCache);
+      visorMediaShown = 'settings-' + rev; // an address of its own for each file, so the preview loads a new one
+    } catch (_) {
+      if (mine !== visorMediaRefresh) return;
+      drop();
+      show(null);
+      visorMediaShown = null;
+    }
+    queuePreview();
+  };
+  const send = async (method, body, type) => {
+    const headers = {};
+    if (type) headers['Content-Type'] = type;
+    if (cfgVersion) headers['X-Config-Version'] = cfgVersion;
+    try {
+      const res = await fetch('/api/settings/visor-media', { method, headers, body });
+      const j = await res.json().catch(() => ({}));
+      if (j.version) cfgVersion = j.version; // also on a failure that moved the settings version (see sendWallpaper)
+      if (!res.ok) throw new Error(j.error || t('s.k.uploadFailed'));
+      toast(t(method === 'DELETE' ? 's.visor.removed' : 's.visor.saved'));
+    } catch (err) { toast(err.message, true); }
+    refresh(true);
+  };
+  file.onchange = (e) => {
+    const f = e.target.files[0];
+    e.target.value = '';
+    if (!f) return;
+    const mb = visorMediaMaxMb(f);
+    if (f.size > mb * 1024 * 1024) { toast(t('s.k.tooLarge', { mb }), true); return; }
+    send('POST', f, f.type);
+  };
+  remove.onclick = () => send('DELETE');
+  refresh(false);
+  return h('div', { class: 'field' }, h('label', {}, o.label),
+    h('div', { class: 'row', style: { gap: '8px', alignItems: 'center', flexWrap: 'wrap' } }, thumb, choose, remove, file));
 }
 
 // Steam library: tick the favorite games, read from Steam's files on this computer when the editor opens. They come
@@ -3903,6 +4003,7 @@ for (const name of ['codex', 'claude']) $(`${name}HookBtn`).onclick = async () =
 // Uploaded and removed on its own, like a shortcut icon: the agent bumps the settings version, which tells the phones.
 // Each refresh is numbered: an older one that answers late (the first load racing an upload) must not undo a newer one.
 let wallpaperRefresh = 0, wallpaperShown = null;
+const WALLPAPER_MAX_MB = 4; // the agent's WallpaperStore.MaxBytes: a picture that is too large is not sent at all
 async function refreshWallpaper() {
   const img = $('wallpaperPreview');
   const mine = ++wallpaperRefresh;
@@ -3945,7 +4046,9 @@ $('wallpaperUpload').onclick = () => $('wallpaperFile').click();
 $('wallpaperFile').onchange = (e) => {
   const f = e.target.files[0];
   e.target.value = '';
-  if (f) sendWallpaper('POST', f, f.type);
+  if (!f) return;
+  if (f.size > WALLPAPER_MAX_MB * 1024 * 1024) { toast(t('s.k.tooLarge', { mb: WALLPAPER_MAX_MB }), true); return; }
+  sendWallpaper('POST', f, f.type);
 };
 $('wallpaperRemove').onclick = () => sendWallpaper('DELETE');
 refreshWallpaper();

@@ -1632,3 +1632,77 @@ body.controls-top .ap-foot { order: -1; margin-bottom: 4px; }
   .toast, .toast.on { transform: translate(-50%, 0); transition: opacity .15s; }
   .g-dial .fg, .q-dial .fg, .track i { transition: none; }
 }
+
+/* ---------------------------------------------------------------- Visor (widgets/visor.js)
+   A page-sized LCD: the number in the middle of a ring, the background behind. --vz-c is the level's colour: the theme's
+   (or the widget's accent) while cool, orange when warm, red when hot. The background effects only move transform and
+   opacity, and only while the widget has .vz-run (on screen, no reduced motion); otherwise they stand still. */
+.w-visor { --vz-cool: var(--cpu); --vz-c: var(--vz-cool); background: #02050a; border-radius: 14px; border-radius: clamp(10px, 4cqmin, 20px); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; isolation: isolate; }
+.w-visor[data-level="warm"] { --vz-c: #ff8a1e; }
+.w-visor[data-level="hot"] { --vz-c: #ff365d; }
+.vz-back, .vz-dim, .vz-fx { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; pointer-events: none; }
+.vz-back { z-index: 0; background: radial-gradient(70% 70% at 50% 50%, rgba(0, 120, 200, .16), transparent 72%); }
+.vz-dim { z-index: 1; display: none; background: rgba(0, 0, 0, var(--vz-dim, .45)); }
+.w-visor.vz-has-media .vz-dim { display: block; }
+.vz-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+/* !important: each effect sets its loop with the animation shorthand, which would put the play state back to running */
+.w-visor .vz-fx * { animation-play-state: paused !important; }
+.w-visor.vz-run .vz-fx * { animation-play-state: running !important; }
+/* particles: full-height columns that rise by their own height, a glowing dot at the top of each */
+.vz-particles i { position: absolute; top: 0; height: 100%; width: var(--s, 4px); animation: vz-rise 12s linear infinite; will-change: transform, opacity; }
+.vz-particles i.alt { animation-name: vz-rise-alt; }
+.vz-particles b { display: block; width: var(--s, 4px); height: var(--s, 4px); border-radius: 50%; background: var(--vz-cool);
+  box-shadow: 0 0 6px 1px var(--vz-cool); }
+@keyframes vz-rise { 0% { transform: translate3d(0, 100%, 0); opacity: 0; } 15% { opacity: .85; } 80% { opacity: .5; } 100% { transform: translate3d(0, -8%, 0); opacity: 0; } }
+@keyframes vz-rise-alt { 0% { transform: translate3d(0, 100%, 0); opacity: 0; } 20% { opacity: .6; } 75% { opacity: .35; } 100% { transform: translate3d(14px, -8%, 0); opacity: 0; } }
+/* waves: two masked bands twice as wide as the widget, sliding by half their width (one wave length set) */
+.vz-waves i { position: absolute; left: 0; bottom: 0; width: 200%; height: 42%; background: var(--vz-cool); opacity: .16;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20 Q25 4 50 20 T100 20 T150 20 T200 20 V40 H0Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20 Q25 4 50 20 T100 20 T150 20 T200 20 V40 H0Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 50% 100%; mask-size: 50% 100%; -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
+  animation: vz-wave 14s linear infinite; will-change: transform; }
+.vz-waves i.w2 { height: 32%; opacity: .1; animation-duration: 9s; animation-direction: reverse; }
+@keyframes vz-wave { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+/* grid: a floor of lines tilted away, moving one cell towards the viewer per loop */
+.vz-grid { perspective: 260px; perspective-origin: 50% 0; }
+.vz-grid .plane { position: absolute; left: -60%; right: -60%; top: 45%; height: 140%; transform-origin: 50% 0;
+  background-image: linear-gradient(var(--vz-cool) 1px, transparent 1px), linear-gradient(90deg, var(--vz-cool) 1px, transparent 1px);
+  background-size: 40px 40px; opacity: .22; transform: rotateX(62deg); animation: vz-grid 3s linear infinite; will-change: transform; }
+@keyframes vz-grid { 0% { transform: rotateX(62deg) translate3d(0, -40px, 0); } 100% { transform: rotateX(62deg) translate3d(0, 0, 0); } }
+.vz-grid .horizon { position: absolute; left: 0; right: 0; top: 0; height: 60%; background: linear-gradient(#02050a 55%, transparent),
+  radial-gradient(60% 30% at 50% 100%, rgba(0, 229, 255, .18), transparent); }
+/* pulse: a soft glow that breathes */
+.vz-pulse i { position: absolute; left: 50%; top: 50%; width: 70vmax; height: 70vmax; margin: -35vmax 0 0 -35vmax; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--vz-cool), transparent); opacity: .12; animation: vz-pulse 5s ease-in-out infinite alternate; will-change: transform, opacity; }
+@keyframes vz-pulse { 0% { transform: scale(.6); opacity: .1; } 100% { transform: scale(.95); opacity: .3; } }
+/* the dial: a ring of ticks and the gauge, as large as the widget allows */
+/* Before aspect-ratio and container units (Chrome 83-87) the ring is sized from the screen, and capped by the widget's
+   own box so a small Visor is not clipped: the SVG ring keeps its circle inside whatever box is left (its viewBox). */
+.vz-dial { position: relative; z-index: 2; width: 64vmin; height: 64vmin; max-width: 92%; max-height: 88%; pointer-events: none; }
+@supports (aspect-ratio: 1) { .vz-dial { width: auto; height: 88%; aspect-ratio: 1; max-width: 92%; max-height: none; } }
+@supports (height: 1cqh) { .vz-dial { height: min(88cqh, 92cqw); } }
+.vz-ticks { position: absolute; top: -3%; right: -3%; bottom: -3%; left: -3%; border-radius: 50%; opacity: .35;
+  background: repeating-conic-gradient(var(--vz-c) 0 1.2deg, transparent 1.2deg 6deg);
+  -webkit-mask-image: radial-gradient(closest-side, transparent 92%, #000 93%); mask-image: radial-gradient(closest-side, transparent 92%, #000 93%);
+  transition: opacity .6s; }
+.vz-dial svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.vz-dial .bg { fill: none; stroke: rgba(255, 255, 255, .07); stroke-width: 5; }
+.vz-dial .fg { fill: none; stroke: var(--vz-c); stroke-width: 5; stroke-linecap: round; filter: drop-shadow(0 0 4px var(--vz-c)); transition: stroke .6s; }
+/* the face: label, number, secondary line; crossfades when the metric changes */
+.vz-face { position: absolute; z-index: 3; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; pointer-events: none;
+  transition: opacity .28s ease; }
+.vz-face.out { opacity: 0; }
+.vz-label { font-size: 14px; font-size: clamp(10px, 6cqmin, 30px); letter-spacing: .3em; font-weight: 700; color: var(--muted); text-transform: uppercase; padding-inline-start: .3em; }
+.vz-val { display: flex; align-items: flex-start; justify-content: center; line-height: .95; margin: .04em 0; }
+.vz-num { font-size: 64px; font-size: clamp(28px, 34cqmin, 220px); font-weight: 300; letter-spacing: -.02em; color: #fff;
+  text-shadow: 0 0 18px var(--vz-c), 0 0 4px var(--vz-c); transition: text-shadow .6s; }
+.vz-unit { font-size: 18px; font-size: clamp(11px, 9cqmin, 60px); font-weight: 400; color: var(--vz-c); margin: .35em 0 0 .1em; transition: color .6s; }
+.vz-sub { font-size: 13px; font-size: clamp(10px, 5cqmin, 26px); color: var(--text); opacity: .75; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8%; }
+/* smaller than a page: drop the secondary line, then the label and the ticks */
+@container (max-height: 170px) { .w-visor .vz-sub { display: none; } }
+@container (max-height: 110px) { .w-visor .vz-label, .w-visor .vz-ticks { display: none; } .w-visor .vz-num { font-size: 46cqmin; } }
+@media (prefers-reduced-motion: reduce) {
+  .w-visor.vz-run .vz-fx * { animation-play-state: paused !important; }
+  .vz-face, .vz-dial .fg, .vz-num, .vz-unit, .vz-ticks { transition: none; }
+}

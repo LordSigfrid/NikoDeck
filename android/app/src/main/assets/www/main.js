@@ -19,6 +19,7 @@ import './widgets/camera.js';
 import './widgets/spectrum.js';
 import './widgets/steam-library.js';
 import './widgets/lyrics.js';
+import './widgets/visor.js';
 
 // PhoneBox desk panel. Pages are 12 × 6 grids of widgets, designed in the agent's settings page.
 // The panel talks to the PhoneBox agent through "/agent/*", which the Android shell proxies over USB
@@ -1438,10 +1439,13 @@ export function handleEvent(e) {
 export const WIDGET_ICONS = { camera: '📹', dictate: '🎙️', spectrum: '📶', 'app-console': '🎛️', discord: '💬', steam: '👥', 'steam-activity': '🔔', rules: '⚡', chargecare: '🔋', nextup: '⏭️', moon: '🌙', wordclock: '🔤', clock: '🕒', weather: '⛅', forecast: '🌦️', media: '🎵', lyrics: '🎤', stat: '📈', gauge: '⏲️', chart: '📊', meters: '💾', gpu: '🎮', quotas: '✳️', sessions: '🤖',
   github: '🐙', processes: '⚙️', shortcuts: '🎛️', button: '🔘', worldclock: '🌍', calendar: '📅', pomodoro: '🍅', countdown: '⏳', note: '📝', command: '💻',
   push: '📡', inbox: '📬', label: '🔤', analog: '🕰️', progress: '📆', stopwatch: '⏱️', timer: '⏲️', counter: '🔢', breathe: '🫁', quote: '💬',
-  checklist: '✅', battery: '🔋', topprocs: '🔥', quotaring: '🎯', volume: '🔊', sun: '🌅', air: '🍃', hackernews: '📰', feeds: '🗞️', photos: '🖼️', exchange: '💱', crypto: '🪙', image: '🖼️', pcswitch: '🖥️', pagebuttons: '🧭', 'plex-queue': '🎛️', 'plex-playlists': '🎶' };
+  checklist: '✅', battery: '🔋', topprocs: '🔥', quotaring: '🎯', volume: '🔊', sun: '🌅', air: '🍃', hackernews: '📰', feeds: '🗞️', photos: '🖼️', exchange: '💱', crypto: '🪙', image: '🖼️', pcswitch: '🖥️', pagebuttons: '🧭', visor: '🌡️', 'plex-queue': '🎛️', 'plex-playlists': '🎶' };
 
 // ================================================================= pages
 export const pager = $('pager');
+/** Tells the widgets that run their own animations (Visor) that what is on screen may have changed: a page turn, the
+ *  night screen, the app paused. They check for themselves whether they still show, and stop when they don't. */
+export function shownChanged() { window.dispatchEvent(new CustomEvent('phonebox-shown')); }
 export let pages = [];       // enabled pages
 export let mounted = [];     // { pi, def, inst, ctx, dirty }
 export let layoutKey = '';
@@ -1958,6 +1962,7 @@ export function onScroll() {
   const wasActive = activeSet(); // the pages already drawn (and, for the neighbours, partly seen in a swipe)
   curPage = p;
   setShownPage(pager.children[p]);
+  shownChanged();
   if (prev >= 0 && pagePaused) setPagePaused(false, { feedback: false, resume: false });
   updateDots();
   flashTitle();
@@ -2277,6 +2282,7 @@ export function setNight(on) {
   nightOn = on;
   document.body.classList.toggle('night', on);
   applyBrightness(true);
+  shownChanged();
 }
 let unreachableSince = 0;
 
@@ -2683,6 +2689,7 @@ export const idle = () => appPaused || document.hidden;
 window.onAppPause = (paused) => {
   const was = idle();
   appPaused = !!paused;
+  shownChanged();
   if (was && !idle()) wokeUp();
 };
 document.addEventListener('visibilitychange', () => { if (!document.hidden && !appPaused) wokeUp(); });

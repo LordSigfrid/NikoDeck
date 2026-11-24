@@ -1,4 +1,4 @@
-import { h, haptic, t, tp } from '../main.js';
+import { h, haptic, shownChanged, t, tp } from '../main.js';
 import { W } from '../registry.js';
 
 function parseWidgets(raw) {
@@ -166,6 +166,7 @@ W.stack = {
       nextChild.el.inert = false;
 
       currentIndex = target;
+      shownChanged(); // a Visor card that left (or came in) stops or starts its background
 
       if (dots) {
         dots.querySelectorAll('.stack-dot').forEach((d, idx) => {

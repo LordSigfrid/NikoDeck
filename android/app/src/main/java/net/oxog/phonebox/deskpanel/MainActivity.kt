@@ -119,6 +119,7 @@ class MainActivity : Activity(), SensorEventListener {
         with(web.settings) {
             javaScriptEnabled = true
             domStorageEnabled = true
+            // lets a muted video, such as the Visor widget's background, start playing without a tap first
             mediaPlaybackRequiresUserGesture = false
             cacheMode = WebSettings.LOAD_NO_CACHE
             textZoom = 100

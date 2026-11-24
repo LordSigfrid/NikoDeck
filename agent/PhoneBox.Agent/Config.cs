@@ -75,7 +75,10 @@ public sealed class AgentConfig
     /// <param name="wallpaperRev">The uploaded wallpaper's revision (null without one): the panel loads the picture
     /// with it in the URL, so a new upload is fetched and an unchanged one comes from the cache. Sent as text: a 64-bit
     /// value loses its last digits as a JavaScript number, and two pictures could then share a cached URL.</param>
-    public object ToPublic(string? deviceId = null, Func<Shortcut, (long? Rev, bool Upload)>? shortcutIcon = null, long? wallpaperRev = null) => new
+    /// <param name="visorMediaRev">The Visor widget's uploaded background media's revision (null without one), sent like
+    /// <paramref name="wallpaperRev"/>; the panel reads whether it is a picture or a video from the file it loads.</param>
+    public object ToPublic(string? deviceId = null, Func<Shortcut, (long? Rev, bool Upload)>? shortcutIcon = null, long? wallpaperRev = null,
+        long? visorMediaRev = null) => new
     {
         weather = Weather,
         codexBar = CodexBar,
@@ -84,6 +87,7 @@ public sealed class AgentConfig
         // this device's own home page (Settings › Phones), when it has one among the pages it shows
         homePage = HomePageFor(deviceId),
         wallpaperRev = wallpaperRev?.ToString(System.Globalization.CultureInfo.InvariantCulture),
+        visorMediaRev = visorMediaRev?.ToString(System.Globalization.CultureInfo.InvariantCulture),
         pages = PagesFor(deviceId).Select(p => new
         {
             p.Id, p.Title, p.Icon, p.Enabled, p.IdleSec, p.Appearance,
