@@ -208,6 +208,7 @@ W.stack = {
       dots.appendChild(pauseBtn);
       syncPauseUi();
       box.appendChild(dots);
+      box.classList.add('stack-has-dots'); // the cards end above the dots bar (style.css)
 
       // Long-press on the dots bar (excluding the pause toggle button) toggles rotation pause.
       let holdTimer = 0, holdStart = null, heldDots = false;
@@ -317,6 +318,7 @@ W.stack = {
         destroyed = true;
         clearHold();
         delete box.dataset.stackPaused;
+        box.classList.remove('stack-has-dots');
         for (const child of children) {
           try { child.inst.destroy?.(); } catch (_) {}
         }
