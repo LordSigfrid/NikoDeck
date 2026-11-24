@@ -28,6 +28,8 @@ concurrency:
 jobs:
   checks:
     uses: ./.github/workflows/build.yml
+    with:
+      macos: ${{ vars.RELEASE_MACOS == 'true' }}
 
   version:
     needs: checks
