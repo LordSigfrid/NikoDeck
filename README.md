@@ -1,6 +1,6 @@
-<p align="center"><img src="agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox icon"></p>
+<p align="center"><img src="docs/images/logo-niko.png" width="220" alt="NikoDeck logo: a glowing blue N inside HUD rings"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <b>English</b> ·
@@ -28,29 +28,41 @@
   <a href="docs/README.zh-Hant.md">中文（繁體）</a>
 </p>
 
-<p align="center"><b>Turn an old Android phone into a desk panel for your computer.</b><br>
-PC stats, AI coding sessions, music and touch controls over USB or Wi-Fi.<br>
-Windows, Linux and macOS. No root, PhoneBox account or cloud service required.</p>
+<p align="center"><b>Transforme um celular Android antigo em um painel de mesa para o seu computador.</b><br>
+Status do PC, sessões de IA para programação, música e controles por toque via USB ou Wi-Fi.<br>
+Windows, Linux e macOS. Sem root, sem conta e sem serviço na nuvem.</p>
+
+> **Português (Brasil):** o NikoDeck junta um **app Android** em tela cheia e um pequeno **agente para o computador**.
+> Monte o painel num editor visual no navegador, com widgets, modelos, várias páginas e prévia ao vivo. A instalação
+> e o app falam português do Brasil por padrão; o guia completo em português está em
+> [docs/README.pt-BR.md](docs/README.pt-BR.md).
+>
+> **English summary:** NikoDeck turns an old Android phone into a desk panel for your computer: PC stats, AI coding
+> sessions, music and touch controls over USB or Wi-Fi, on Windows, Linux and macOS. No root, account or cloud service
+> required. The rest of this page is in English.
+
+<p align="center"><sub>Baseado no <a href="https://github.com/ersinkoc/phonebox">PhoneBox</a> de Ersin Koç (ersinkoc/phonebox), licença MIT.
+· Based on <a href="https://github.com/ersinkoc/phonebox">PhoneBox by Ersin Koç (ersinkoc/phonebox)</a>, MIT.</sub></p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>Try the live demo</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>Download</b></a> ·
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>Try the live demo</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>Download</b></a> ·
   <a href="#quick-start"><b>Quick start</b></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml"><img src="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Latest release"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml"><img src="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><img src="https://img.shields.io/github/v/release/LordSigfrid/NikoDeck?label=release" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
 </p>
 
-<p align="center"><img src="docs/hero-0.6.png" width="900" alt="PhoneBox on three phones showing automation, home and planner pages"><br>
+<p align="center"><img src="docs/hero-0.6.png" width="900" alt="NikoDeck on three phones showing automation, home and planner pages"><br>
 <sub>Example layouts with demo data.</sub></p>
 
-PhoneBox pairs a full-screen **Android app** with a small **desktop agent**. Build your panel in a browser-based
-visual editor: **131 widgets**, **30 templates**, multiple pages and a live preview. Connect several phones with
+NikoDeck pairs a full-screen **Android app** with a small **desktop agent**. Build your panel in a browser-based
+visual editor: **132 widgets**, **31 templates**, multiple pages and a live preview. Connect several phones with
 their own layouts, or switch one phone between paired computers.
 
 ## What you can do
@@ -67,7 +79,7 @@ Tap an AI session for its model, timing and token details. Opt in to Codex, Clau
 to answer **Allow**, **Deny** (and **Always allow** for OpenCode) from the phone. Optional
 [CodexBar integration](docs/GUIDE.md#widgets) adds quota providers and a cost overview.
 
-<p align="center"><a href="docs/tour-0.6.mp4"><img src="docs/tour-0.6.gif" width="780" alt="PhoneBox tour showing notifications, a Claude Code permission prompt and automatic page switching"></a><br>
+<p align="center"><a href="docs/tour-0.6.mp4"><img src="docs/tour-0.6.gif" width="780" alt="NikoDeck tour showing notifications, a Claude Code permission prompt and automatic page switching"></a><br>
 <sub>A tour with demo data: notifications, permission prompts and automatic page switching. <a href="docs/tour-0.6.mp4">Watch the MP4</a></sub></p>
 
 ## Quick start
@@ -80,20 +92,20 @@ works without either. Release agents include .NET, so you do not need to install
 **Windows 10/11 x64** — paste into a normal PowerShell window:
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 **Linux or macOS** — run as your own user:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 Setup downloads the latest release, checks its SHA-256 checksum, offers missing dependencies and start-at-login,
 and opens the settings at <http://127.0.0.1:8765>. It can also install the Android app over USB.
 Run setup again to update or repair the installation while keeping settings and pairings.
 
-> **Windows signing:** release agents are still unsigned: SignPath Foundation accepted PhoneBox and test signing works, and releases are signed once its release certificate is issued.
+> **Windows signing:** NikoDeck release agents are unsigned. The SignPath Foundation signing arranged for the upstream PhoneBox project does not cover this fork.
 > SmartScreen or antivirus software may warn or block them. See the [code signing policy](#code-signing-policy)
 > and [installation warnings](docs/SETUP.md#quick-start). USB debugging should be authorized only on computers you trust.
 
@@ -104,7 +116,7 @@ The [installation guide](docs/SETUP.md) covers options, dependencies, install pa
 
 | USB | Wi-Fi only |
 |---|---|
-| Enable **Developer options → USB debugging**, connect a data cable and accept the phone's authorization prompt. Let setup install the app, or use **Settings → General → Install the phone app**. | Install the APK from the [latest release](https://github.com/ersinkoc/phonebox/releases/latest). Wi-Fi is off by default: open the settings page (tray icon, or `http://127.0.0.1:8765`), turn on **General → Wi-Fi & Tailscale → Let the phone connect without the USB cable**, click **Save**, then **Restart to apply** at the top. Choose **Pair a phone over Wi-Fi**, scan the pairing QR code and confirm the matching check code. |
+| Enable **Developer options → USB debugging**, connect a data cable and accept the phone's authorization prompt. Let setup install the app, or use **Settings → General → Install the phone app**. | Install the APK from the [latest release](https://github.com/LordSigfrid/NikoDeck/releases/latest). Wi-Fi is off by default: open the settings page (tray icon, or `http://127.0.0.1:8765`), turn on **General → Wi-Fi & Tailscale → Let the phone connect without the USB cable**, click **Save**, then **Restart to apply** at the top. Choose **Pair a phone over Wi-Fi**, scan the pairing QR code and confirm the matching check code. |
 | Wakes and opens the panel on connection; supports app updates over adb. | No adb or developer options needed; install app updates manually unless you later configure USB. |
 
 The phone app is not in any app store; it comes only from this repository's releases. It runs on Android 5.0 and
@@ -122,13 +134,13 @@ Swipe, tap the page dots or use the phone's volume keys to move between pages.
 <details>
 <summary><b>Other installation methods</b></summary>
 
-- **Manual download:** unzip the agent for your system from the [release page](https://github.com/ersinkoc/phonebox/releases/latest)
+- **Manual download:** unzip the agent for your system from the [release page](https://github.com/LordSigfrid/NikoDeck/releases/latest)
   and run it. Install the APK on the phone. Checksums and build provenance accompany the release assets.
 - **Scoop (Windows):**
 
   ```powershell
-  scoop bucket add phonebox https://github.com/ersinkoc/phonebox
-  scoop install main/adb phonebox/phonebox
+  scoop bucket add nikodeck https://github.com/LordSigfrid/NikoDeck
+  scoop install main/adb nikodeck/nikodeck
   ```
 
 - **From source:** see the [installation guide](docs/SETUP.md#other-ways-to-install) and [development guide](docs/DEVELOPMENT.md).
@@ -183,8 +195,8 @@ The [UMIDIGI BISON extras](extras/umidigi-bison) contain the reversible, no-root
 
 ## Community add-ons
 
-Add-ons are written and maintained by their authors. PhoneBox doesn't review or ship them. They run with your own
-rights on the computer and can change PhoneBox settings through `PUT /api/settings`, so read what an add-on does
+Add-ons are written and maintained by their authors. NikoDeck doesn't review or ship them. They run with your own
+rights on the computer and can change NikoDeck settings through `PUT /api/settings`, so read what an add-on does
 before you install it.
 
 | Add-on | What it does | What it sends outside the PC |
@@ -199,7 +211,7 @@ port of its own, over TLS pinned like Wi-Fi, with a key the phone app makes and 
 Optional Wi-Fi uses HTTPS on port 8766 with a pinned certificate and a paired key. Settings and pairing endpoints
 stay local. The phone requests configured actions by ID; commands and integration credentials stay on the computer.
 
-PhoneBox has no telemetry, analytics or accounts of its own. Optional widgets and integrations contact external
+NikoDeck has no telemetry, analytics or accounts of its own. Optional widgets and integrations contact external
 services for weather, quotas, GitHub and other data, and the agent checks GitHub for updates.
 Supported public feeds can fall back through the agent over USB when the phone has no internet.
 The [privacy policy](PRIVACY.md) lists outbound connections and how to disable them.
@@ -222,26 +234,23 @@ Contributions are welcome; start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Code signing policy
 
-Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by
-[SignPath Foundation](https://signpath.org/).
-
-- **Windows agent:** SignPath Foundation accepted the project and a test-signed build passed; releases stay unsigned
-  until the Foundation's release certificate is issued.
-  The intended signing target is `PhoneBoxAgent.exe` in the `win-x64` release zip, built by the
-  [release workflow](.github/workflows/release.yml). Every signing request requires manual approval.
+- **Windows agent:** NikoDeck releases are not code-signed. The release workflow still contains the SignPath steps
+  inherited from upstream PhoneBox; they stay off unless the repository variable that enables them is set.
+  The build is `NikoDeck.exe` in the `win-x64` release zip, made by the [release workflow](.github/workflows/release.yml).
   Bundled runtime and library notices are in [THIRD-PARTY-NOTICES.txt](agent/PhoneBox.Agent/THIRD-PARTY-NOTICES.txt).
-- **Android app:** release APKs use the project's own signing key, independently of SignPath.
-- **Team roles:** committer, reviewer and signing approver: [ersinkoc](https://github.com/ersinkoc).
-  Pull requests from other contributors are reviewed before merging.
+- **Android app:** release APKs use the project's own signing key (`com.lordsigfrid.nikodeck`).
+- **Team roles:** committer, reviewer and release approver: [LordSigfrid](https://github.com/LordSigfrid).
 - **Privacy:** see the [privacy policy](PRIVACY.md).
 
 ## Thanks
 
-People who tested PhoneBox on their own hardware:
+People who tested NikoDeck on their own hardware:
 
 - [anandyakshit](https://github.com/anandyakshit): Android 7 support, on an Android 7.1.1 phone ([#73](https://github.com/ersinkoc/phonebox/issues/73)).
 
-## Sponsor
+## Upstream sponsor
+
+WrongStack sponsors the original [PhoneBox](https://github.com/ersinkoc/phonebox) project that NikoDeck is based on.
 
 <!-- sponsor: WrongStack -->
 <p align="center">
@@ -259,14 +268,15 @@ People who tested PhoneBox on their own hardware:
 
 ## Star History
 
-<a href="https://www.star-history.com/#ersinkoc/phonebox&Date">
+<a href="https://www.star-history.com/#LordSigfrid/NikoDeck&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date&theme=dark">
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date">
-    <img alt="Star history of ersinkoc/phonebox" src="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date">
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date&theme=dark">
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date">
+    <img alt="Star history of LordSigfrid/NikoDeck" src="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date">
   </picture>
 </a>
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE). NikoDeck is a fork of [PhoneBox](https://github.com/ersinkoc/phonebox) by Ersin Koç; the original
+copyright notice is kept in [LICENSE](LICENSE).

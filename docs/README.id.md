@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -32,11 +32,11 @@
 Lihat statistik PC, sesi pemrograman AI, dan musik serta gunakan kontrol sentuh melalui USB atau Wi-Fi.</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>Coba demo langsung</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>Muat turun</b></a>
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>Coba demo langsung</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>Muat turun</b></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox menunjukkan otomatisasi, rumah dan halaman perencana pada tiga telepon Android"></p>
+<p align="center"><img src="hero-0.6.png" width="900" alt="NikoDeck menunjukkan otomatisasi, rumah dan halaman perencana pada tiga telepon Android"></p>
 
 ## Yang dapat Anda lakukan
 
@@ -46,7 +46,7 @@ Lihat statistik PC, sesi pemrograman AI, dan musik serta gunakan kontrol sentuh 
 - Tampilkan jam, cuaca, kalender, catatan, media, dan kontrol Home Assistant.
 - Susun halaman dan widget di editor visual. Lihat pratinjaunya sebelum menyimpan.
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="PhoneBox tur menunjukkan notifikasi, peringatan izin dan penggantian halaman otomatis"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="NikoDeck tur menunjukkan notifikasi, peringatan izin dan penggantian halaman otomatis"></a><br>
 <sub>Data demo: pemberitahuan, prompt izin dan penggantian halaman otomatis. <a href="tour-0.6.mp4">Lihat MP4</a></sub></p>
 
 ## Mulai cepat
@@ -58,13 +58,13 @@ Gunakan telepon Android 5.0 atau lebih baru (Android 6 atau lebih baru direkomen
 Di Windows 10/11 x64, jalankan perintah berikut di PowerShell.
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 Di Linux atau macOS, jalankan perintah berikut sebagai pengguna biasa.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 Skrip pemasangan memeriksa checksum rilis dan membuka halaman pengaturan. Skrip juga dapat memasang aplikasi ponsel melalui USB. Jalankan lagi untuk memperbarui atau memperbaiki pemasangan sambil mempertahankan pengaturan dan perangkat yang tersanding.
@@ -78,7 +78,7 @@ Buka halaman pengaturan dari tray Windows atau kunjungi alamat di bawah ini. <ht
 
 ## Privasi dan keamanan
 
-PhoneBox menghubungkan ponsel dan komputer secara langsung. Anda tidak memerlukan akun PhoneBox dan aplikasi tidak mengirim telemetri. Sebagian widget opsional menghubungi layanan yang Anda atur.
+NikoDeck menghubungkan ponsel dan komputer secara langsung. Anda tidak memerlukan akun NikoDeck dan aplikasi tidak mengirim telemetri. Sebagian widget opsional menghubungi layanan yang Anda atur.
 
 ## Dokumentasi
 
@@ -92,4 +92,4 @@ PhoneBox menghubungkan ponsel dan komputer secara langsung. Anda tidak memerluka
 
 ## Lisensi
 
-[PhoneBox dirilis di bawah MIT License.](../LICENSE)
+[NikoDeck dirilis di bawah MIT License.](../LICENSE)

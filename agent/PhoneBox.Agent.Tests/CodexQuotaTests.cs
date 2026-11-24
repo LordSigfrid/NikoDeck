@@ -42,7 +42,7 @@ public sealed class CodexQuotaTests : IDisposable
     [Fact]
     public void ALastLineCutOffMidWriteFallsBackToTheReadingBeforeIt()
     {
-        // Codex was stopped, or PhoneBox read the file, while the newest reading was half written
+        // Codex was stopped, or NikoDeck read the file, while the newest reading was half written
         var torn = Reading(55);
         Log("{\"type\":\"session_meta\"}", Reading(12), torn[..(torn.Length / 2 + 40)]);
         var agent = Agent();

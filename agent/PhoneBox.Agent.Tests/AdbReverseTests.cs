@@ -37,7 +37,7 @@ public sealed class AdbReverseTests : IDisposable
                 "if \"%4\"==\"pm\" (" + (installed ? "echo package:/data/app/base.apk& exit /b 0)" : "exit /b 1)"),
                 "if \"%4\"==\"content\" (" + (usbKey is null ? "echo No result found.& exit /b 0)" : "echo Row: 0 key=" + usbKey + "& exit /b 0)"),
                 "if \"%4\"==\"dumpsys\" (" + (appVersion is null ? "" : "echo     versionName=" + appVersion + "& ")
-                    + (usbKey is not null && ownsProvider ? "echo   [net.oxog.phonebox.deskpanel.usb]:& echo     Provider{3ec2f24 net.oxog.phonebox.deskpanel/.UsbKeyProvider}& " : "") + "exit /b 0)",
+                    + (usbKey is not null && ownsProvider ? "echo   [com.lordsigfrid.nikodeck.usb]:& echo     Provider{3ec2f24 com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.UsbKeyProvider}& " : "") + "exit /b 0)",
                 "if \"%6\"==\"set-home-activity\" if \"%2\"==\"" + homeRefused + "\" (echo Error: Failed to set default home.& exit /b 1)",
                 "if \"%6\"==\"set-home-activity\" (echo Success& exit /b 0)",
                 "exit /b 0", ""));
@@ -55,7 +55,7 @@ public sealed class AdbReverseTests : IDisposable
             "if [ \"$4\" = pm ]; then " + (installed ? "echo package:/data/app/base.apk; exit 0; fi" : "exit 1; fi"),
             "if [ \"$4\" = content ]; then " + (usbKey is null ? "echo 'No result found.'; exit 0; fi" : "echo 'Row: 0 key=" + usbKey + "'; exit 0; fi"),
             "if [ \"$4\" = dumpsys ]; then " + (appVersion is null ? "" : "echo '    versionName=" + appVersion + "'; ")
-                + (usbKey is not null && ownsProvider ? "printf '  [net.oxog.phonebox.deskpanel.usb]:\\n    Provider{3ec2f24 net.oxog.phonebox.deskpanel/.UsbKeyProvider}\\n'; " : "") + "exit 0; fi",
+                + (usbKey is not null && ownsProvider ? "printf '  [com.lordsigfrid.nikodeck.usb]:\\n    Provider{3ec2f24 com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.UsbKeyProvider}\\n'; " : "") + "exit 0; fi",
             "if [ \"$6\" = set-home-activity ] && [ \"$2\" = '" + homeRefused + "' ]; then echo 'Error: Failed to set default home.'; exit 1; fi",
             "if [ \"$6\" = set-home-activity ]; then echo Success; exit 0; fi",
             "exit 0", ""));
@@ -216,7 +216,7 @@ public sealed class AdbReverseTests : IDisposable
 
     /// <summary>
     /// Android refuses "set-home-activity" (exit 1) while the app's home entry is still off or the app is missing. That
-    /// must not end the round: the other phone still becomes PhoneBox's home and keep-awake reaches both phones.
+    /// must not end the round: the other phone still becomes NikoDeck's home and keep-awake reaches both phones.
     /// </summary>
     [Fact]
     public async Task ARefusedHomeScreenOnOnePhoneDoesNotHoldBackTheOthersOrKeepAwake()
@@ -225,7 +225,7 @@ public sealed class AdbReverseTests : IDisposable
         const string awake = "shell settings put global stay_on_while_plugged_in 7";
         var calls = await RunUntil(fake, new { adbPath = fake, display = new { homeScreen = true, keepAwake = true, followComputerLock = false } }, null,
             c => c.Contains("-s FAKE2 " + awake) && c.Contains("-s FAKE1 " + awake));
-        Assert.Contains("-s FAKE2 shell cmd package set-home-activity net.oxog.phonebox.deskpanel/.HomeAlias", calls);
+        Assert.Contains("-s FAKE2 shell cmd package set-home-activity com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.HomeAlias", calls);
         Assert.Contains("-s FAKE1 " + awake, calls);
         Assert.Contains("-s FAKE2 " + awake, calls);
     }
@@ -272,7 +272,7 @@ public sealed class AdbReverseTests : IDisposable
                 display = new { homeScreen = false, keepAwake = false, followComputerLock = false, openOnConnect } },
             null, c => c.Count(x => x == "devices") >= 2);
         Assert.Contains("-s FAKE1 reverse tcp:8765 tcp:8765", calls);
-        Assert.Equal(openOnConnect, calls.Contains("-s FAKE1 shell am start -n net.oxog.phonebox.deskpanel/.MainActivity"));
+        Assert.Equal(openOnConnect, calls.Contains("-s FAKE1 shell am start -n com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.MainActivity"));
         Assert.Equal(openOnConnect, calls.Contains("-s FAKE1 shell input keyevent KEYCODE_WAKEUP"));
     }
 
@@ -289,7 +289,7 @@ public sealed class AdbReverseTests : IDisposable
         var calls = await RunUntil(fake, new { adbPath = fake, deviceSerial = "FAKE1",
                 display = new { homeScreen = false, keepAwake = false, followComputerLock = false, openOnConnect = true } },
             null, c => c.Count(x => x == "devices") >= 3);
-        Assert.Equal(1, calls.Count(x => x == "-s FAKE1 shell am start -n net.oxog.phonebox.deskpanel/.MainActivity"));
+        Assert.Equal(1, calls.Count(x => x == "-s FAKE1 shell am start -n com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.MainActivity"));
         // and the rule is set once: setting it again drops the panel's open connection
         Assert.Equal(1, calls.Count(x => x == "-s FAKE1 reverse tcp:8765 tcp:8765"));
         Assert.DoesNotContain("-s FAKE1 reverse --list", calls);
@@ -347,10 +347,10 @@ public sealed class AdbReverseTests : IDisposable
     }
 
     private const string UsbKey = "k3Y_0123456789abcdefghijklmnopqrstuvwxyzABCD";
-    private const string KeyQuery = "-s FAKE1 shell content query --uri content://net.oxog.phonebox.deskpanel.usb/key";
+    private const string KeyQuery = "-s FAKE1 shell content query --uri content://com.lordsigfrid.nikodeck.usb/key";
     private const string Pin = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    private const string PinWrite = "-s FAKE1 shell content insert --uri content://net.oxog.phonebox.deskpanel.usb/pin --bind fp:s:" + Pin;
-    private const string Dumpsys = "-s FAKE1 shell dumpsys package net.oxog.phonebox.deskpanel";
+    private const string PinWrite = "-s FAKE1 shell content insert --uri content://com.lordsigfrid.nikodeck.usb/pin --bind fp:s:" + Pin;
+    private const string Dumpsys = "-s FAKE1 shell dumpsys package com.lordsigfrid.nikodeck";
 
     /// <summary>
     /// The tunnel ends on the agent's USB port, not on the local port the settings page and the hooks use, and the agent
@@ -362,7 +362,7 @@ public sealed class AdbReverseTests : IDisposable
         var fake = FakeAdb(["FAKE1"], "", homeRefused: null, usbKey: UsbKey);
         var usb = new UsbLink(45678, Pin);
         var calls = await RunUntil(fake, new { adbPath = fake, deviceSerial = "FAKE1", display = new { homeScreen = false, keepAwake = false, followComputerLock = false } },
-            new AgentEndpoint(8765), c => c.Contains("-s FAKE1 shell am start -n net.oxog.phonebox.deskpanel/.MainActivity"), usb);
+            new AgentEndpoint(8765), c => c.Contains("-s FAKE1 shell am start -n com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.MainActivity"), usb);
         Assert.Contains("-s FAKE1 reverse tcp:8765 tcp:45678", calls);
         Assert.DoesNotContain("-s FAKE1 reverse tcp:8765 tcp:8765", calls);
         Assert.Contains(KeyQuery, calls);
@@ -370,7 +370,7 @@ public sealed class AdbReverseTests : IDisposable
         Assert.True(Array.IndexOf(calls, Dumpsys) < Array.IndexOf(calls, KeyQuery), "the provider's owner is checked first");
         Assert.True(usb.HasKey("FAKE1"));
         Assert.Equal(UsbLink.Access.Allowed, usb.Authorize("GET", "/api/state", "", "Bearer " + UsbKey));
-        Assert.Contains("-s FAKE1 shell am start -n net.oxog.phonebox.deskpanel/.MainActivity", calls);
+        Assert.Contains("-s FAKE1 shell am start -n com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.MainActivity", calls);
     }
 
     /// <summary>
@@ -411,7 +411,7 @@ public sealed class AdbReverseTests : IDisposable
     }
 
     /// <summary>
-    /// Another app took the provider name while an older PhoneBox was installed and answers with a key of its own: the
+    /// Another app took the provider name while an older NikoDeck was installed and answers with a key of its own: the
     /// app's own listing doesn't have the provider, so that key is never asked for, and the agent's pin is not written.
     /// </summary>
     [Fact]

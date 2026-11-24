@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -32,11 +32,11 @@
 Статистика ПК, сеанси програмування з ШІ, музика й сенсорне керування через USB або Wi-Fi.</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>Спробувати демонстрацію</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>Звантажити</b></a>
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>Спробувати демонстрацію</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>Звантажити</b></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox показує автоматизацію, домашню сторінку та сторінки планувальника на трьох телефонах Android"></p>
+<p align="center"><img src="hero-0.6.png" width="900" alt="NikoDeck показує автоматизацію, домашню сторінку та сторінки планувальника на трьох телефонах Android"></p>
 
 ## Що можна робити
 
@@ -46,7 +46,7 @@
 - Показувати годинники, погоду, календарі, нотатки, мультимедійні файли та елементи керування Home Assistant.
 - Створювати сторінки й віджети у візуальному редакторі та переглядати зміни перед збереженням.
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="PhoneBox екскурсія, що показує сповіщення, запит на дозвіл і автоматичне перемикання сторінок"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="NikoDeck екскурсія, що показує сповіщення, запит на дозвіл і автоматичне перемикання сторінок"></a><br>
 <sub>Демонстраційні дані: сповіщення, запит на дозвіл і автоматичне перемикання сторінок. <a href="tour-0.6.mp4">Переглянути MP4</a></sub></p>
 
 ## Швидкий запуск
@@ -58,13 +58,13 @@
 У Windows 10/11 x64 виконайте цю команду в PowerShell.
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 У Linux або macOS виконайте команду від імені свого користувача.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 Сценарій встановлення перевіряє контрольну суму випуску та відкриває налаштування. Він також може встановити застосунок на телефон через USB. Запустіть його ще раз для оновлення або відновлення зі збереженням налаштувань і сполучень.
@@ -78,7 +78,7 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 
 ## Конфіденційність і безпека
 
-PhoneBox підключає телефон до комп’ютера напряму. Обліковий запис не потрібен, телеметрія не надсилається. Деякі необов’язкові віджети підключаються до налаштованих вами сервісів.
+NikoDeck підключає телефон до комп’ютера напряму. Обліковий запис не потрібен, телеметрія не надсилається. Деякі необов’язкові віджети підключаються до налаштованих вами сервісів.
 
 ## Документація
 
@@ -92,4 +92,4 @@ PhoneBox підключає телефон до комп’ютера напря
 
 ## Ліцензія
 
-[PhoneBox випущений під ліцензією MIT.](../LICENSE)
+[NikoDeck випущений під ліцензією MIT.](../LICENSE)

@@ -1,6 +1,6 @@
 # Development guide
 
-[Back to PhoneBox](../README.md) · [Installation and connections](SETUP.md) · [User guide](GUIDE.md)
+[Back to NikoDeck](../README.md) · [Installation and connections](SETUP.md) · [User guide](GUIDE.md)
 
 [How it works](#how-it-works) · [Development](#development)
 
@@ -13,7 +13,7 @@ flowchart LR
     UI -->|weather, rates, HN| Web(("Public APIs"))
   end
   subgraph PC["Windows / Linux / macOS"]
-    Agent["PhoneBox agent<br/>(.NET 10)"]
+    Agent["NikoDeck agent<br/>(.NET 10)"]
     Agent --- Mon["System, GPU, media, volume,<br/>processes, sessions, quotas, GitHub"]
     Agent --- Set["Settings page &<br/>layout editor"]
   end
@@ -86,7 +86,7 @@ dotnet run --project agent/PhoneBox.Agent -f net10.0-windows10.0.19041.0
 ```
 
 
-On macOS or Linux, `./scripts/build.sh` turns a checkout into ready-to-run files in `dist/`: a `.dmg` (PhoneBox.app) on a Mac,
+On macOS or Linux, `./scripts/build.sh` turns a checkout into ready-to-run files in `dist/`: a `.dmg` (NikoDeck.app) on a Mac,
 a `.tar.gz` holding one executable on Linux. Pass a target (`osx-arm64`, `osx-x64`, `linux-x64`, `linux-arm64`) or `all`.
 The Windows `.exe` is built with `build.ps1` on Windows.
 
@@ -96,7 +96,7 @@ target frameworks. Set `ANDROID_HOME` or `android/local.properties` (`sdk.dir`) 
 
 ### Demo data and media
 
-The demo server needs only Python. It serves the same demo as the [live one](https://ersinkoc.github.io/phonebox/)
+The demo server needs only Python. It serves the same demo as the [live one](https://lordsigfrid.github.io/NikoDeck/)
 (made-up data in [`tools/pages/demo.js`](../tools/pages/demo.js)) straight from the sources, so a reload shows your
 changes. Size the browser window to 780 × 360 (the phone's screen in CSS pixels) and the panel behaves as on the
 phone, including webhooks: `curl -X POST http://127.0.0.1:8790/api/notify -d hello` (also `/api/push/<key>`,
@@ -125,7 +125,7 @@ Templates live in [`templates.json`](../agent/PhoneBox.Agent/templates.json).
 ### Isolated agent runs
 
 To check a development agent beside an installed one, run it with an isolated settings file and port, for example
-`PhoneBoxAgent.exe --config "D:\test folder\config.json" --port 18765`. Settings and browser checks use
+`NikoDeck.exe --config "D:\test folder\config.json" --port 18765`. Settings and browser checks use
 `http://127.0.0.1:18765/`; restarts preserve these arguments. The ordinary port remains 8765. Set `deviceSerial`
 explicitly in the test settings (an unmatched serial disables USB attachment) and turn off automatic updates.
 USB clients still use phone port 8765; do not assign the same phone to two agents at once.

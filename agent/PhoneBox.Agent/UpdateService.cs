@@ -11,18 +11,18 @@ public sealed record UpdateStatus(string AgentVersion, string? AppVersion, strin
     bool AgentUpdate, bool AppUpdate, long? LastCheck, string State, string? Error);
 
 /// <summary>
-/// Keeps the agent and the phone app up to date from GitHub releases (PhoneBox-&lt;v&gt;.apk and
-/// PhoneBoxAgent-&lt;v&gt;-&lt;rid&gt;.zip, rid = win-x64, linux-x64, linux-arm64, osx-arm64 or osx-x64):
+/// Keeps the agent and the phone app up to date from GitHub releases (NikoDeck-&lt;v&gt;.apk and
+/// NikoDeckAgent-&lt;v&gt;-&lt;rid&gt;.zip, rid = win-x64, linux-x64, linux-arm64, osx-arm64 or osx-x64):
 ///  - phone: installed with "adb install -r" while the phone is on USB (no prompt on the phone). Android refuses
 ///    an APK signed with a different key, and the agent never uninstalls to force it.
 ///  - agent: files are swapped in place (running files are renamed to *.old, which Windows allows) and the agent
 ///    restarts itself. Only when running from the installed location, never from a build folder. An agent running
-///    from PhoneBox.app (the macOS disk image, PhoneBox-&lt;v&gt;-&lt;rid&gt;.dmg) replaces the whole app from the new image.
+///    from NikoDeck.app (the macOS disk image, NikoDeck-&lt;v&gt;-&lt;rid&gt;.dmg) replaces the whole app from the new image.
 /// </summary>
 public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicationLifetime life, ILogger<UpdateService> log) : BackgroundService
 {
     private static readonly string InstallDir = AppPaths.InstallDir;
-    private static readonly string ExeName = OperatingSystem.IsWindows() ? "PhoneBoxAgent.exe" : "PhoneBoxAgent";
+    private static readonly string ExeName = OperatingSystem.IsWindows() ? "NikoDeck.exe" : "NikoDeck";
     private static readonly string Downloads = Path.Combine(AppPaths.LocalDir, "updates");
     internal string DownloadsDir { get; init; } = Downloads;
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromMinutes(5) };
@@ -41,7 +41,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
 
     public static bool RunningInstalled => SameFolder(AppContext.BaseDirectory, InstallDir);
 
-    /// <summary>The PhoneBox.app this agent runs from (macOS disk image installs), else null.</summary>
+    /// <summary>The NikoDeck.app this agent runs from (macOS disk image installs), else null.</summary>
     internal static string? BundleDir(string baseDirectory)
     {
         var exeDir = Resolved(baseDirectory);
@@ -52,7 +52,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
 
     public static bool RunningInBundle => OperatingSystem.IsMacOS() && BundleDir(AppContext.BaseDirectory) is not null;
 
-    /// <summary>The agent can replace itself: from the install folder (setup, zip) or as PhoneBox.app (disk image).</summary>
+    /// <summary>The agent can replace itself: from the install folder (setup, zip) or as NikoDeck.app (disk image).</summary>
     public static bool CanUpdateAgent => RunningInstalled || RunningInBundle;
 
     /// <summary>
@@ -93,7 +93,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        _http.DefaultRequestHeaders.UserAgent.ParseAdd("PhoneBox/" + AppPaths.Version);
+        _http.DefaultRequestHeaders.UserAgent.ParseAdd("NikoDeck/" + AppPaths.Version);
         _http.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
         CleanupOldFiles();
         if (RunningInBundle) CleanupBundleLeftovers(BundleDir(AppContext.BaseDirectory)!);
@@ -207,7 +207,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
             _state = "installing the phone app";
             if (_latest is null) { await CheckCoreAsync(ct); _state = "installing the phone app"; } // not CheckAsync: this method already holds the gate
             if (_latest?.Apk is null) return "could not find the phone app in the GitHub releases";
-            var apk = await VerifiedDownloadAsync(_latest.Apk, $"PhoneBox-{_latest.Version}.apk", ct);
+            var apk = await VerifiedDownloadAsync(_latest.Apk, $"NikoDeck-{_latest.Version}.apk", ct);
             var adbExe = AdbReverse.FindAdb(cfg.Get().AdbPath) ?? throw new InvalidOperationException("adb not found");
             var failed = new List<string>();
             foreach (var serial in targets)
@@ -239,7 +239,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
         // decided before the download: a phone that already has the new app can report it while the APK downloads,
         // and must not turn this into a retry that skips the phones that never got it
         var appCurrent = AppVersion is not null && !Newer(_latest!.Version, AppVersion);
-        var apk = await VerifiedDownloadAsync(_latest!.Apk!, $"PhoneBox-{_latest.Version}.apk", ct);
+        var apk = await VerifiedDownloadAsync(_latest!.Apk!, $"NikoDeck-{_latest.Version}.apk", ct);
         var adbExe = AdbReverse.FindAdb(cfg.Get().AdbPath) ?? throw new InvalidOperationException("adb not found");
         var connected = adb.Devices.Split(", ", StringSplitOptions.RemoveEmptyEntries);
         var retry = _phoneRetryFor == _latest.Version ? _phoneRetry : [];
@@ -283,12 +283,12 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
         if (targets.Length > 0) AppVersion = _latest.Version;
     }
 
-    // Next to PhoneBox.app, so the swap is a rename on one volume.
-    private const string BundleStaging = ".PhoneBox-update.app", BundleOld = ".PhoneBox-old.app";
+    // Next to NikoDeck.app, so the swap is a rename on one volume.
+    private const string BundleStaging = ".NikoDeck-update.app", BundleOld = ".NikoDeck-old.app";
 
     /// <summary>
-    /// PhoneBox.app (macOS disk image): download the release's .dmg (checked against SHA256SUMS like every asset), copy
-    /// the new PhoneBox.app out of it, check its signature, swap it for the running one and restart. The app is replaced
+    /// NikoDeck.app (macOS disk image): download the release's .dmg (checked against SHA256SUMS like every asset), copy
+    /// the new NikoDeck.app out of it, check its signature, swap it for the running one and restart. The app is replaced
     /// as a whole, because a bundle's signature seals its files: swapping only the executable would break it.
     /// </summary>
     private async Task UpdateBundleAsync(CancellationToken ct)
@@ -317,16 +317,16 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
         try { Directory.CreateDirectory(staging); Directory.Delete(staging); }
         catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
         {
-            throw new InvalidOperationException($"{parent} is not writable, so PhoneBox.app cannot update itself there; move it to ~/Applications or install the new version by hand");
+            throw new InvalidOperationException($"{parent} is not writable, so NikoDeck.app cannot update itself there; move it to ~/Applications or install the new version by hand");
         }
-        var dmg = await VerifiedDownloadAsync(_latest!.AgentDmg!, $"PhoneBox-{_latest.Version}-{AppPaths.Rid}.dmg", ct, requireSums: true);
+        var dmg = await VerifiedDownloadAsync(_latest!.AgentDmg!, $"NikoDeck-{_latest.Version}-{AppPaths.Rid}.dmg", ct, requireSums: true);
         try
         {
             await ExtractAppAsync(dmg, staging, ct);
             var verify = new ProcessStartInfo("/usr/bin/codesign");
             foreach (var arg in new[] { "--verify", "--deep", "--strict", staging }) verify.ArgumentList.Add(arg);
             var signed = await ToolProcess.RunAsync(verify, TimeSpan.FromMinutes(1), ct);
-            if (signed.ExitCode != 0) throw new InvalidOperationException("the new PhoneBox.app's signature does not verify; the update was not installed: " + (signed.Output + signed.Error).Trim());
+            if (signed.ExitCode != 0) throw new InvalidOperationException("the new NikoDeck.app's signature does not verify; the update was not installed: " + (signed.Output + signed.Error).Trim());
             // The new app must be signed by the identity of the one that runs. A valid signature alone would accept any
             // certificate (SHA256SUMS comes from the same release as the image). A copy signed ad hoc (a build from source) has
             // only a hash as its requirement, which cannot be pinned.
@@ -336,9 +336,9 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
                 var pin = new ProcessStartInfo("/usr/bin/codesign");
                 foreach (var arg in new[] { "--verify", "-R=" + running, staging }) pin.ArgumentList.Add(arg);
                 var pinned = await ToolProcess.RunAsync(pin, TimeSpan.FromMinutes(1), ct);
-                if (pinned.ExitCode != 0) throw new InvalidOperationException("the new PhoneBox.app is not signed by the same identity as the running one; the update was not installed: " + (pinned.Output + pinned.Error).Trim());
+                if (pinned.ExitCode != 0) throw new InvalidOperationException("the new NikoDeck.app is not signed by the same identity as the running one; the update was not installed: " + (pinned.Output + pinned.Error).Trim());
             }
-            else log.LogWarning("the running PhoneBox.app is signed ad hoc (its requirement is only a code hash), so the update's signing identity cannot be checked against it");
+            else log.LogWarning("the running NikoDeck.app is signed ad hoc (its requirement is only a code hash), so the update's signing identity cannot be checked against it");
             // The path is read now: once the running app is renamed, the OS no longer says where it lives.
             AppRestart.Executable = Environment.ProcessPath;
             SwapBundle(app, staging);
@@ -362,7 +362,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
         var result = await ToolProcess.RunAsync(start, TimeSpan.FromMinutes(1), ct);
         // A lookup that failed is not "ad hoc": it must not turn the identity check off
         if (result.ExitCode != 0 || ParseDesignatedRequirement(result.Output + "\n" + result.Error) is not { } requirement)
-            throw new InvalidOperationException("could not read the running PhoneBox.app's signing requirement, so the update's signer cannot be checked and it was not installed: " + (result.Output + result.Error).Trim());
+            throw new InvalidOperationException("could not read the running NikoDeck.app's signing requirement, so the update's signer cannot be checked and it was not installed: " + (result.Output + result.Error).Trim());
         return requirement;
     }
 
@@ -380,12 +380,12 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
     /// </summary>
     internal static bool CodeHashOnly(string? requirement)
     {
-        if (string.IsNullOrWhiteSpace(requirement)) throw new InvalidOperationException("the running PhoneBox.app has an empty signing requirement, so the update's signer cannot be checked and it was not installed");
+        if (string.IsNullOrWhiteSpace(requirement)) throw new InvalidOperationException("the running NikoDeck.app has an empty signing requirement, so the update's signer cannot be checked and it was not installed");
         // the whole expression, nothing before or after: "cdhash H"..." or anchor apple generic" is not a plain hash
         return System.Text.RegularExpressions.Regex.IsMatch(requirement.Trim(), "^cdhash H\"[0-9a-fA-F]+\"$");
     }
 
-    /// <summary>Copies PhoneBox.app out of a disk image into <paramref name="destination"/> (the image is mounted read-only and detached again).</summary>
+    /// <summary>Copies NikoDeck.app out of a disk image into <paramref name="destination"/> (the image is mounted read-only and detached again).</summary>
     internal static async Task ExtractAppAsync(string dmg, string destination, CancellationToken ct)
     {
         var mount = Path.Combine(Path.GetTempPath(), "phonebox-dmg-" + Guid.NewGuid().ToString("N"));
@@ -404,13 +404,13 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
             if (attached.ExitCode != 0) throw new InvalidOperationException("could not open the disk image: " + (attached.Output + attached.Error).Trim());
             try
             {
-                var source = Path.Combine(mount, "PhoneBox.app");
-                if (!Directory.Exists(source)) throw new InvalidOperationException("the disk image has no PhoneBox.app");
+                var source = Path.Combine(mount, "NikoDeck.app");
+                if (!Directory.Exists(source)) throw new InvalidOperationException("the disk image has no NikoDeck.app");
                 var copy = new ProcessStartInfo("/usr/bin/ditto"); // keeps the signature, permissions and extended attributes
                 copy.ArgumentList.Add(source);
                 copy.ArgumentList.Add(destination);
                 var copied = await ToolProcess.RunAsync(copy, TimeSpan.FromMinutes(2), ct);
-                if (copied.ExitCode != 0) throw new InvalidOperationException("could not copy PhoneBox.app out of the disk image: " + (copied.Output + copied.Error).Trim());
+                if (copied.ExitCode != 0) throw new InvalidOperationException("could not copy NikoDeck.app out of the disk image: " + (copied.Output + copied.Error).Trim());
             }
             finally
             {
@@ -450,7 +450,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
     private async Task UpdateAgentAsync(CancellationToken ct)
     {
         _state = "updating agent";
-        var zip = await VerifiedDownloadAsync(_latest!.AgentZip!, $"PhoneBoxAgent-{_latest.Version}.zip", ct);
+        var zip = await VerifiedDownloadAsync(_latest!.AgentZip!, $"NikoDeckAgent-{_latest.Version}.zip", ct);
         var staging = Path.Combine(DownloadsDir, "agent-" + _latest.Version);
         if (Directory.Exists(staging)) Directory.Delete(staging, true);
         ZipFile.ExtractToDirectory(zip, staging);
@@ -583,7 +583,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
     /// </summary>
     internal static readonly string[] FrameworkDependentFiles =
     [
-        "PhoneBoxAgent.dll", "PhoneBoxAgent.deps.json", "PhoneBoxAgent.runtimeconfig.json",
+        "NikoDeck.dll", "NikoDeck.deps.json", "NikoDeck.runtimeconfig.json",
         "NAudio.dll", "NAudio.Core.dll", "NAudio.Midi.dll", "NAudio.Wasapi.dll", "NAudio.WinMM.dll",
         "WinRT.Runtime.dll", "Microsoft.Windows.SDK.NET.dll", "System.Numerics.Tensors.dll",
     ];
@@ -620,7 +620,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
 
     /// <summary>
     /// The phone app, this machine's agent zip and disk image and the checksum file of a GitHub release
-    /// (PhoneBox-&lt;v&gt;.apk, PhoneBoxAgent-&lt;v&gt;-&lt;rid&gt;.zip, PhoneBox-&lt;v&gt;-&lt;rid&gt;.dmg, SHA256SUMS-&lt;v&gt;.txt, as release.yml names them).
+    /// (NikoDeck-&lt;v&gt;.apk, NikoDeckAgent-&lt;v&gt;-&lt;rid&gt;.zip, NikoDeck-&lt;v&gt;-&lt;rid&gt;.dmg, SHA256SUMS-&lt;v&gt;.txt, as release.yml names them).
     /// </summary>
     internal static Release SelectAssets(JsonElement release, string rid)
     {
@@ -629,9 +629,9 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
         {
             var name = a.GetProperty("name").GetString() ?? "";
             var url = a.GetProperty("browser_download_url").GetString();
-            if (name.StartsWith("PhoneBox-", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".apk", StringComparison.OrdinalIgnoreCase)) apk = url;
-            if (name.StartsWith("PhoneBoxAgent-", StringComparison.OrdinalIgnoreCase) && name.EndsWith($"-{rid}.zip", StringComparison.OrdinalIgnoreCase)) zip = url;
-            if (name.StartsWith("PhoneBox-", StringComparison.OrdinalIgnoreCase) && name.EndsWith($"-{rid}.dmg", StringComparison.OrdinalIgnoreCase)) dmg = url;
+            if (name.StartsWith("NikoDeck-", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".apk", StringComparison.OrdinalIgnoreCase)) apk = url;
+            if (name.StartsWith("NikoDeckAgent-", StringComparison.OrdinalIgnoreCase) && name.EndsWith($"-{rid}.zip", StringComparison.OrdinalIgnoreCase)) zip = url;
+            if (name.StartsWith("NikoDeck-", StringComparison.OrdinalIgnoreCase) && name.EndsWith($"-{rid}.dmg", StringComparison.OrdinalIgnoreCase)) dmg = url;
             if (name.StartsWith("SHA256SUMS-", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)) sums = url;
         }
         var tag = release.GetProperty("tag_name").GetString() ?? "";
@@ -661,7 +661,7 @@ public sealed class UpdateService(ConfigStore cfg, AdbReverse adb, IHostApplicat
     /// <summary>"dumpsys package" for the app; empty when the phone does not answer (the install then goes ahead).</summary>
     private static async Task<string> InstalledDumpAsync(string adbExe, string serial, CancellationToken ct)
     {
-        try { return await Run(adbExe, ["-s", serial, "shell", "dumpsys", "package", "net.oxog.phonebox.deskpanel"], ct, TimeSpan.FromSeconds(20)); }
+        try { return await Run(adbExe, ["-s", serial, "shell", "dumpsys", "package", "com.lordsigfrid.nikodeck"], ct, TimeSpan.FromSeconds(20)); }
         catch (Exception ex) when (ex is not OperationCanceledException || !ct.IsCancellationRequested) { return ""; }
     }
 
@@ -763,7 +763,7 @@ public static class AppRestart
     public const int ServiceRestartCode = 75;
 
     /// <summary>
-    /// True when launchd (the setup.sh login item, label net.oxog.phonebox.agent) or systemd started the agent. A copy
+    /// True when launchd (the setup.sh login item, label com.lordsigfrid.nikodeck.agent) or systemd started the agent. A copy
     /// started by the agent itself doesn't survive there: launchd ends the job's whole process group when the agent
     /// exits, and a clean exit counts as "stopped" (KeepAlive SuccessfulExit=false, Restart=on-failure), so the agent
     /// stayed down after Restart or a self-update (#182). It exits with <see cref="ServiceRestartCode"/> instead.
@@ -774,7 +774,7 @@ public static class AppRestart
     /// pid, or on an older systemd its parent process is systemd.
     /// </remarks>
     internal static bool ServiceManaged(Func<string, string?> env, int pid, Func<string?> parentName) =>
-        env("XPC_SERVICE_NAME") == "net.oxog.phonebox.agent"
+        env("XPC_SERVICE_NAME") == "com.lordsigfrid.nikodeck.agent"
         || (!string.IsNullOrEmpty(env("INVOCATION_ID")) && (env("SYSTEMD_EXEC_PID") is { Length: > 0 } exec
             ? exec == pid.ToString(System.Globalization.CultureInfo.InvariantCulture)
             : parentName() == "systemd"));

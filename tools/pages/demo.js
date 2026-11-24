@@ -1,4 +1,4 @@
-// PhoneBox web demo: answers the panel's and the settings page's API calls in the browser with made-up data,
+// NikoDeck web demo: answers the panel's and the settings page's API calls in the browser with made-up data,
 // so both run on a static site (GitHub Pages) without a phone or an agent. Load it before app.js / the settings script.
 // The panel and the settings page talk through a BroadcastChannel: layout changes and test notifications show up live.
 (() => {
@@ -18,14 +18,32 @@
   const wave = (period, lo, hi, phase = 0, noise = 0) =>
     lo + (hi - lo) * (0.5 + 0.5 * Math.sin((2 * Math.PI * (now() - START)) / 1000 / period + phase)) + rnd(-noise, noise);
 
-  const SHORTCUTS = [
+  // Playwright (tools/ui-tests) drives the demo: its specs were written against an English demo, so a test run keeps the
+  // English sample names and a config without a language stays English. Everyone else gets Brazilian Portuguese, the
+  // default language, like the agent's config.default*.json.
+  const TEST = navigator.webdriver === true;
+  const SHORTCUTS = (TEST ? [
     ['terminal', 'Terminal', '⌨️', '#4b5563'], ['code', 'VS Code', '📝', '#2f80ed'], ['browser', 'Browser', '🌐', '#0ea5e9'],
     ['files', 'Files', '📁', '#e5b84b'], ['music', 'Spotify', '🎧', '#1db954'], ['chat', 'Discord', '💬', '#6366f1'],
     ['snip', 'Snip', '✂️', '#14b8a6'], ['taskmgr', 'Task Manager', '📊', '#22c55e'], ['mute', 'Mute', '🔇', '#f59e0b'],
     ['screenoff', 'Screen Off', '🌙', '#8b5cf6'], ['lock', 'Lock', '🔒', '#ef4444'], ['settings', 'Settings', '⚙️', '#94a3b8'],
-  ].map(([id, label, icon, color]) => ({ id, label, icon, color, cmd: id === 'mute' ? 'builtin:mute' : 'demo', args: null, toggle: false }));
+  ] : [
+    // labels in Brazilian Portuguese, the default language (like the agent's config.default*.json)
+    ['terminal', 'Terminal', '⌨️', '#4b5563'], ['code', 'VS Code', '📝', '#2f80ed'], ['browser', 'Navegador', '🌐', '#0ea5e9'],
+    ['files', 'Arquivos', '📁', '#e5b84b'], ['music', 'Spotify', '🎧', '#1db954'], ['chat', 'Discord', '💬', '#6366f1'],
+    ['snip', 'Captura', '✂️', '#14b8a6'], ['taskmgr', 'Gerenciador de Tarefas', '📊', '#22c55e'], ['mute', 'Mudo', '🔇', '#f59e0b'],
+    ['screenoff', 'Desligar tela', '🌙', '#8b5cf6'], ['lock', 'Bloquear', '🔒', '#ef4444'], ['settings', 'Configurações', '⚙️', '#94a3b8'],
+  ]).map(([id, label, icon, color]) => ({ id, label, icon, color, cmd: id === 'mute' ? 'builtin:mute' : 'demo', args: null, toggle: false }));
   const PAGES = ['home', 'dashboard', 'ai', 'work', 'system', 'procs', 'deck', 'music', 'status', 'ambient', 'world', 'daily', 'markets', 'feeds', 'focus', 'calm', 'clock', 'automation', 'planner', 'nightstand', 'weekend', 'focuswork',
-    'codexbar', 'devops', 'audio-deck', 'stream-deck', 'meeting-deck', 'development-deck', 'music-deck', 'system-deck'];
+    'codexbar', 'devops', 'audio-deck', 'stream-deck', 'meeting-deck', 'development-deck', 'music-deck', 'system-deck', 'visor'];
+
+  // the sample pages are named in Brazilian Portuguese, the demo's language, as the agent's config.default*.json does
+  // (in English under test, see TEST)
+  const ptBR = (text) => {
+    if (TEST) return text;
+    const dict = window.PhoneBoxI18n?.CATALOG?.['pt-BR'];
+    return dict && Object.prototype.hasOwnProperty.call(dict, text) ? dict[text] : text;
+  };
 
   let catalog = null;
   async function loadCatalog() {
@@ -66,18 +84,18 @@
       deviceSerial: null, adbPath: null,
       weather: { city: 'Tallinn', lat: 59.437, lon: 24.745, unit: 'celsius', model: '' },
       night: { enabled: false, start: '00:30', end: '07:30', brightness: 0.02 },
-      display: { appearance: null, showSeconds: true, hour12: false, idleReturnSec: 0, vibrate: true, volumeKeys: true, orientation: 'landscape', theme: 'default', accent: '#2dd4bf',
+      display: { appearance: null, language: TEST ? 'en' : 'pt-BR', showSeconds: true, hour12: false, idleReturnSec: 0, vibrate: true, volumeKeys: true, orientation: 'landscape', theme: 'niko', accent: '#00afff',
         pixelShift: false, idleDimMin: 0,
         artTint: true, autoBrightness: false, nightWhenDark: false, nightWhenUnreachable: false, unreachableNightDelayMin: 5, proximityWake: true, pin: false, homeScreen: false, keepAwake: true, openOnConnect: true, followComputerLock: false,
         homePage: null, switchCountdownSec: 3, touchGraceSec: 20, minDwellSec: 15, holdMaxMin: 30 },
       lan: { enabled: true, port: 8766, token: 'demo', webhookToken: 'demo-webhook-key' },
-      updates: { auto: true, repo: 'ersinkoc/phonebox' },
+      updates: { auto: true, repo: 'LordSigfrid/NikoDeck' },
       claude: { phoneApprovals: true, timeoutSec: 90, onlyWhenAway: false },
       antigravity: { sessions: false, shareSessionTitles: false },
       opencode: { phoneApprovals: false, sessions: false, timeoutSec: 90, onlyWhenAway: false, alwaysCountdownSec: 10, watchWsl: false, shareSessionTitles: false },
       pages: PAGES.filter((id) => byId[id]).map((id) => {
         const t = byId[id], seen = {};
-        return { appearance: null, id, title: t.title, icon: t.icon, enabled: true, idleSec: null, widgets: t.widgets.map((w) => {
+        return { appearance: null, id, title: ptBR(t.title), icon: t.icon, enabled: true, idleSec: null, widgets: t.widgets.map((w) => {
           const n = (seen[w.type] = (seen[w.type] || 0) + 1);
           const control = w.type === 'docker' || /^obs(-|$)/.test(w.type) ? { control: true } : {};
           return { ...w, id: n === 1 ? w.type : `${w.type}-${n}`, options: { ...(w.options || {}), ...control } };
@@ -106,6 +124,9 @@
     cycleLists = Object.fromEntries((c.shortcuts || []).filter((x) => x.cmd === 'builtin:cycle').map((x) => [x.id, JSON.stringify(x.cycle || [])]));
     return c;
   }
+  // Under test a config that names no language is served as English, the language the specs were written in; a spec
+  // that sets display.language keeps it. Only what is served changes: the stored config stays as the spec left it.
+  const servedConfig = (c) => TEST && !c.display?.language ? { ...c, display: { ...(c.display || {}), language: 'en' } } : c;
   const cfgVersion = () => store.get('pb-demo-version', 1);
   // every widget of the layout, Smart Stack children included (AgentConfig.Widgets)
   const widgets = (c) => (c.pages || []).flatMap((p) => p.widgets || []).flatMap((w) => [w, ...(w.type === 'stack' ? (w.options?.widgets || []).filter((x) => x.enabled !== false) : [])]);
@@ -129,6 +150,8 @@
       // wallpaperRev: the agent sets it while a wallpaper is uploaded; the demo serves no picture, so a config that
       // sets it also needs /agent/api/wallpaper mocked (see wallpaper.spec.js)
       wallpaperRev: c.wallpaperRev ?? null,
+      // visorMediaRev: likewise for the Visor widget's uploaded background; a spec that sets it mocks /agent/api/visor-media
+      visorMediaRev: c.visorMediaRev ?? null,
       pages: (c.pages || []).map((p) => ({ id: p.id, title: p.title, icon: p.icon, enabled: p.enabled !== false, idleSec: p.idleSec ?? null, appearance: p.appearance ?? null,
         widgets: (p.widgets || []).map((w) => ({ id: w.id, type: w.type, x: w.x, y: w.y, w: w.w, h: w.h, appearance: w.appearance ?? null, options: options(w) })) })),
       // iconRev / iconUpload: the agent sets them when a shortcut has a picture (and when the user uploaded it). The demo
@@ -555,7 +578,7 @@
     if (path === '/api/controls/state') return json(await deckState());
     if (path.startsWith('/api/controls/command/') && method === 'POST') return json(await controlCommand(path.split('/').pop(), q));
     if (path === '/api/state') return json(state(q.has('ev') ? +q.get('ev') : null));
-    if (path === '/api/config') return json({ version: cfgVersion(), config: publicConfig(await config()) });
+    if (path === '/api/config') return json({ version: cfgVersion(), config: publicConfig(servedConfig(await config())) });
     if (path.startsWith('/api/widget/') && path.endsWith('/note') && method === 'POST') {
       const parts = path.split('/');
       const pageId = decodeURIComponent(parts[3]);
@@ -857,7 +880,7 @@
       // runs the rule's action once, like the agent's Test button
       const r = parse(body) || {};
       if (r.then === 'goto' && r.page) emit('goto', { page: r.page, rule: r.id || 'test', name: r.name || null, priority: r.priority ?? 5, countdown: r.countdownSec ?? null, hold: false });
-      else if (r.then === 'notify') emit('notify', { title: r.name || 'PhoneBox', text: (r.text || 'test').replace('{detail}', 'test'), level: r.level || 'info' });
+      else if (r.then === 'notify') emit('notify', { title: r.name || 'NikoDeck', text: (r.text || 'test').replace('{detail}', 'test'), level: r.level || 'info' });
       else if (r.then === 'push' && r.key) {
         const value = r.pushValue ?? true;
         setPush(r.key, value);
@@ -905,7 +928,7 @@
         store.set('pb-demo-version', cfgVersion() + 1);
         return json({ version: cfgVersion() });
       }
-      return json(await config(), 200, { 'X-Config-Version': String(cfgVersion()) });
+      return json(servedConfig(await config()), 200, { 'X-Config-Version': String(cfgVersion()) });
     }
     if (path === '/api/info') return json({ version: VERSION, os: 'windows', configPath: 'browser storage (demo)', logPath: '—', adb: 'demo', connected: true, devices: ['DEMO0001'], appMissing: [], usbProblem: null, webviewProblem: null });
     // Pairing over Wi-Fi: a placeholder pattern instead of real QR codes (the demo has no agent to pair with)
@@ -914,13 +937,13 @@
         [0, 22].flatMap((x) => [0, 22].filter((y) => !(x === 22 && y === 22)).map((y) => `<rect x="${x}" y="${y}" width="7" height="7" fill="#000"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="#fff"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" fill="#000"/>`)).join('')
       }<text x="14.5" y="16" font-size="3" text-anchor="middle" font-family="sans-serif">${label}</text></svg>`;
       return json({ enabled: true, pc: 'DEMO-PC', hosts: ['192.168.1.20', '100.101.102.103'], port: 8766, expiresAt: now() + 300e3, claims: 0, attempt: 1, check: 'DE40 0001',
-        link: 'https://ersinkoc.github.io/phonebox/pair/#v=1&pc=DEMO-PC&fp=demo&port=8766&h=192.168.1.20&c=demo',
-        qr: box('demo pairing'), app: 'https://github.com/ersinkoc/phonebox/releases/latest', appQr: box('demo app') });
+        link: 'https://lordsigfrid.github.io/NikoDeck/pair/#v=1&pc=DEMO-PC&fp=demo&port=8766&h=192.168.1.20&c=demo',
+        qr: box('demo pairing'), app: 'https://github.com/LordSigfrid/NikoDeck/releases/latest', appQr: box('demo app') });
     }
     if (path === '/api/pair/status') return json({ claims: 0 });
     if (path === '/api/pair/cancel' && method === 'POST') return json({});
     if (path === '/api/lan') return json({ configured: true, active: true, port: 8766, restartNeeded: false, hosts: ['192.168.1.20', '100.101.102.103'], fingerprint: 'demo' });
-    if (path === '/api/update') return json({ status: { agentVersion: VERSION, appVersion: VERSION, latest: VERSION, releaseUrl: 'https://github.com/ersinkoc/phonebox/releases/latest', agentUpdate: false, appUpdate: false,
+    if (path === '/api/update') return json({ status: { agentVersion: VERSION, appVersion: VERSION, latest: VERSION, releaseUrl: 'https://github.com/LordSigfrid/NikoDeck/releases/latest', agentUpdate: false, appUpdate: false,
       lastCheck: now() - 3600e3, state: 'idle', error: null }, auto: (await config()).updates?.auto !== false, installed: true });
     if (path === '/api/claude/hook') return json({ installed: false, path: '~/.claude/settings.json' });
     if (method !== 'GET') return json({ ok: true });
@@ -931,6 +954,8 @@
     const url = new URL(typeof input === 'string' ? input : input.url, location.href);
     const i = url.pathname.indexOf('/api/');
     if (url.origin !== location.origin || i < 0) return realFetch(input, init);
+    // the Visor's uploaded media: the demo has none, so a spec that sets visorMediaRev mocks it on the network
+    if (url.pathname.slice(i).startsWith('/api/visor-media')) return realFetch(input, init);
     return handle((init.method || 'GET').toUpperCase(), url.pathname.slice(i), url.searchParams, init.body, new Headers(init.headers || {}));
   };
 

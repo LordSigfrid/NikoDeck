@@ -81,7 +81,7 @@ test('Arabic rule presets and Webhooks examples preserve their technical values'
 test('General keeps the pairing prerequisite and uses physical slider direction', async ({ page }) => {
   await openSettings(page, 'general');
   await expect(page.locator('#general h2')).toHaveText('الإعدادات العامة');
-  await expect(page.locator('[data-i18n-html="s.wifi.lead"]')).toContainText('بعد تفعيل هذا الخيار وإعادة تشغيل PhoneBox');
+  await expect(page.locator('[data-i18n-html="s.wifi.lead"]')).toContainText('بعد تفعيل هذا الخيار وإعادة تشغيل NikoDeck');
   const night = page.locator('[data-bind="night.brightness"]');
   await expect(night).toHaveCSS('direction', 'ltr');
   await night.focus();
@@ -119,7 +119,7 @@ test('Advanced JSON has LTR editing, scroll and unchanged Arabic string values',
   await expect(page.locator('#jsonErr')).toHaveText('صيغة JSON غير صالحة.');
   const download = page.waitForEvent('download');
   await page.locator('#downloadJson').click();
-  expect((await download).suggestedFilename()).toMatch(/^phonebox-settings.*\.json$/);
+  expect((await download).suggestedFilename()).toMatch(/^nikodeck-settings.*\.json$/);
   cfg.weather.city = 'مدينة تجريبية';
   const chooser = page.waitForEvent('filechooser');
   await page.locator('#uploadJson').click();

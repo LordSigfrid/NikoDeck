@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="Εικονίδιο PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="Εικονίδιο NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -30,26 +30,26 @@
 
 <p align="center"><b>Μετατρέψτε ένα παλιό τηλέφωνο Android σε πάνελ γραφείου για τον υπολογιστή σας.</b><br>
 Στατιστικά του PC, συνεδρίες προγραμματισμού με AI, μουσική και χειριστήρια αφής μέσω USB ή Wi-Fi.<br>
-Windows, Linux και macOS. Χωρίς root, λογαριασμό PhoneBox ή υπηρεσία cloud.</p>
+Windows, Linux και macOS. Χωρίς root, λογαριασμό NikoDeck ή υπηρεσία cloud.</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>Δοκιμάστε το ζωντανό demo</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>Λήψη</b></a> ·
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>Δοκιμάστε το ζωντανό demo</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>Λήψη</b></a> ·
   <a href="#γρήγορη-εκκίνηση"><b>Γρήγορη εκκίνηση</b></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml"><img src="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml/badge.svg" alt="Κατάσταση build"></a>
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Τελευταία έκδοση"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml"><img src="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml/badge.svg" alt="Κατάσταση build"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><img src="https://img.shields.io/github/v/release/LordSigfrid/NikoDeck?label=release" alt="Τελευταία έκδοση"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Άδεια MIT"></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="Το PhoneBox σε τρία τηλέφωνα που δείχνουν σελίδες αυτοματισμών, αρχικής και προγραμματισμού"><br>
+<p align="center"><img src="hero-0.6.png" width="900" alt="Το NikoDeck σε τρία τηλέφωνα που δείχνουν σελίδες αυτοματισμών, αρχικής και προγραμματισμού"><br>
 <sub>Παραδείγματα διατάξεων με δεδομένα demo.</sub></p>
 
-Το PhoneBox συνδυάζει μια **εφαρμογή Android** πλήρους οθόνης με έναν μικρό **πράκτορα (agent) για τον υπολογιστή**. Φτιάξτε το πάνελ σας σε έναν οπτικό επεξεργαστή που τρέχει στον browser: **124 widgets**, **30 πρότυπα**, πολλές σελίδες και ζωντανή προεπισκόπηση. Συνδέστε πολλά τηλέφωνα, το καθένα με τη δική του διάταξη, ή εναλλάξτε ένα τηλέφωνο ανάμεσα σε ζευγαρωμένους υπολογιστές.
+Το NikoDeck συνδυάζει μια **εφαρμογή Android** πλήρους οθόνης με έναν μικρό **πράκτορα (agent) για τον υπολογιστή**. Φτιάξτε το πάνελ σας σε έναν οπτικό επεξεργαστή που τρέχει στον browser: **124 widgets**, **30 πρότυπα**, πολλές σελίδες και ζωντανή προεπισκόπηση. Συνδέστε πολλά τηλέφωνα, το καθένα με τη δική του διάταξη, ή εναλλάξτε ένα τηλέφωνο ανάμεσα σε ζευγαρωμένους υπολογιστές.
 
 ## Τι μπορείτε να κάνετε
 
@@ -63,7 +63,7 @@ Windows, Linux και macOS. Χωρίς root, λογαριασμό PhoneBox ή �
 
 Πατήστε σε μια συνεδρία AI για λεπτομέρειες μοντέλου, χρονισμού και tokens. Ενεργοποιήστε προαιρετικά τα αιτήματα άδειας του Claude Code, για να απαντάτε **Allow** ή **Deny** από το τηλέφωνο. Η προαιρετική [ενσωμάτωση CodexBar](GUIDE.md#widgets) προσθέτει παρόχους ορίων χρήσης και μια επισκόπηση κόστους.
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="Περιήγηση στο PhoneBox με ειδοποιήσεις, ένα αίτημα άδειας του Claude Code και αυτόματη αλλαγή σελίδας"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="Περιήγηση στο NikoDeck με ειδοποιήσεις, ένα αίτημα άδειας του Claude Code και αυτόματη αλλαγή σελίδας"></a><br>
 <sub>Μια περιήγηση με δεδομένα demo: ειδοποιήσεις, αιτήματα άδειας και αυτόματη αλλαγή σελίδας. <a href="tour-0.6.mp4">Δείτε το MP4</a></sub></p>
 
 ## Γρήγορη εκκίνηση
@@ -75,13 +75,13 @@ Windows, Linux και macOS. Χωρίς root, λογαριασμό PhoneBox ή �
 **Windows 10/11 x64** — επικολλήστε σε ένα κανονικό παράθυρο PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 **Linux ή macOS** — εκτελέστε το με τον δικό σας χρήστη:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 Το πρόγραμμα εγκατάστασης κατεβάζει την τελευταία έκδοση, ελέγχει το άθροισμα SHA-256, προτείνει τις εξαρτήσεις που λείπουν και την εκκίνηση κατά τη σύνδεση, και ανοίγει τις ρυθμίσεις στη διεύθυνση <http://127.0.0.1:8765>. Μπορεί επίσης να εγκαταστήσει την εφαρμογή Android μέσω USB.
@@ -98,7 +98,7 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 
 | USB | Μόνο Wi-Fi |
 |---|---|
-| Ενεργοποιήστε τις **Επιλογές για προγραμματιστές → Εντοπισμός σφαλμάτων USB**, συνδέστε ένα καλώδιο δεδομένων και αποδεχτείτε το αίτημα εξουσιοδότησης στο τηλέφωνο. Αφήστε το πρόγραμμα εγκατάστασης να εγκαταστήσει την εφαρμογή ή χρησιμοποιήστε **Ρυθμίσεις → Γενικά → Εγκατάσταση της εφαρμογής τηλεφώνου**. | Εγκαταστήστε το APK από την [τελευταία έκδοση](https://github.com/ersinkoc/phonebox/releases/latest). Το Wi-Fi είναι απενεργοποιημένο από προεπιλογή: ανοίξτε τη σελίδα ρυθμίσεων (εικονίδιο στην περιοχή ειδοποιήσεων ή `http://127.0.0.1:8765`), ενεργοποιήστε το **Γενικά → Wi-Fi & Tailscale → Να συνδέεται το τηλέφωνο χωρίς καλώδιο USB**, πατήστε **Αποθήκευση** και μετά **Επανεκκίνηση για εφαρμογή** στο πάνω μέρος. Επιλέξτε **Σύζευξη τηλεφώνου μέσω Wi-Fi**, σαρώστε τον κωδικό QR σύζευξης και επιβεβαιώστε ότι ο κωδικός ελέγχου ταιριάζει. |
+| Ενεργοποιήστε τις **Επιλογές για προγραμματιστές → Εντοπισμός σφαλμάτων USB**, συνδέστε ένα καλώδιο δεδομένων και αποδεχτείτε το αίτημα εξουσιοδότησης στο τηλέφωνο. Αφήστε το πρόγραμμα εγκατάστασης να εγκαταστήσει την εφαρμογή ή χρησιμοποιήστε **Ρυθμίσεις → Γενικά → Εγκατάσταση της εφαρμογής τηλεφώνου**. | Εγκαταστήστε το APK από την [τελευταία έκδοση](https://github.com/LordSigfrid/NikoDeck/releases/latest). Το Wi-Fi είναι απενεργοποιημένο από προεπιλογή: ανοίξτε τη σελίδα ρυθμίσεων (εικονίδιο στην περιοχή ειδοποιήσεων ή `http://127.0.0.1:8765`), ενεργοποιήστε το **Γενικά → Wi-Fi & Tailscale → Να συνδέεται το τηλέφωνο χωρίς καλώδιο USB**, πατήστε **Αποθήκευση** και μετά **Επανεκκίνηση για εφαρμογή** στο πάνω μέρος. Επιλέξτε **Σύζευξη τηλεφώνου μέσω Wi-Fi**, σαρώστε τον κωδικό QR σύζευξης και επιβεβαιώστε ότι ο κωδικός ελέγχου ταιριάζει. |
 | Ξυπνά και ανοίγει το πάνελ κατά τη σύνδεση· υποστηρίζει ενημερώσεις της εφαρμογής μέσω adb. | Δεν χρειάζεται adb ή επιλογές για προγραμματιστές· εγκαθιστάτε χειροκίνητα τις ενημερώσεις της εφαρμογής, εκτός αν ρυθμίσετε αργότερα το USB. |
 
 Η εφαρμογή τηλεφώνου δεν διατίθεται σε κανένα κατάστημα εφαρμογών· προέρχεται μόνο από τις εκδόσεις αυτού του αποθετηρίου. Τρέχει σε Android 5.0
@@ -115,13 +115,13 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 <details>
 <summary><b>Άλλοι τρόποι εγκατάστασης</b></summary>
 
-- **Χειροκίνητη λήψη:** αποσυμπιέστε τον πράκτορα για το σύστημά σας από τη [σελίδα εκδόσεων](https://github.com/ersinkoc/phonebox/releases/latest)
+- **Χειροκίνητη λήψη:** αποσυμπιέστε τον πράκτορα για το σύστημά σας από τη [σελίδα εκδόσεων](https://github.com/LordSigfrid/NikoDeck/releases/latest)
   και εκτελέστε τον. Εγκαταστήστε το APK στο τηλέφωνο. Τα αθροίσματα ελέγχου και η προέλευση του build συνοδεύουν τα αρχεία της έκδοσης.
 - **Scoop (Windows):**
 
   ```powershell
-  scoop bucket add phonebox https://github.com/ersinkoc/phonebox
-  scoop install main/adb phonebox/phonebox
+  scoop bucket add nikodeck https://github.com/LordSigfrid/NikoDeck
+  scoop install main/adb nikodeck/nikodeck
   ```
 
 - **Από τον πηγαίο κώδικα:** δείτε τον [οδηγό εγκατάστασης](SETUP.md#other-ways-to-install) και τον [οδηγό ανάπτυξης](DEVELOPMENT.md).
@@ -179,7 +179,7 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 Το προαιρετικό Wi-Fi χρησιμοποιεί HTTPS στη θύρα 8766 με καρφιτσωμένο πιστοποιητικό και ζευγαρωμένο κλειδί. Τα σημεία πρόσβασης (endpoints) ρυθμίσεων και σύζευξης
 παραμένουν τοπικά. Το τηλέφωνο ζητά τις ρυθμισμένες ενέργειες με βάση το ID· οι εντολές και τα διαπιστευτήρια των ενσωματώσεων μένουν στον υπολογιστή.
 
-Το PhoneBox δεν έχει δική του τηλεμετρία, analytics ή λογαριασμούς. Τα προαιρετικά widgets και οι ενσωματώσεις επικοινωνούν με εξωτερικές
+Το NikoDeck δεν έχει δική του τηλεμετρία, analytics ή λογαριασμούς. Τα προαιρετικά widgets και οι ενσωματώσεις επικοινωνούν με εξωτερικές
 υπηρεσίες για καιρό, όρια χρήσης, GitHub και άλλα δεδομένα, και ο πράκτορας ελέγχει το GitHub για ενημερώσεις.
 Οι υποστηριζόμενες δημόσιες ροές μπορούν να περνούν μέσω του πράκτορα, μέσω USB, όταν το τηλέφωνο δεν έχει διαδίκτυο.
 Η [πολιτική απορρήτου](../PRIVACY.md) απαριθμεί τις εξερχόμενες συνδέσεις και τον τρόπο απενεργοποίησής τους.
@@ -206,7 +206,7 @@ python tools/demo-server.py
 [SignPath Foundation](https://signpath.org/).
 
 - **Πράκτορας Windows:** η αίτηση στο SignPath Foundation εκκρεμεί· οι εκδόσεις είναι χωρίς υπογραφή μέχρι την έγκριση.
-  Στόχος της υπογραφής είναι το `PhoneBoxAgent.exe` στο zip έκδοσης `win-x64`, που χτίζεται από τη
+  Στόχος της υπογραφής είναι το `NikoDeck.exe` στο zip έκδοσης `win-x64`, που χτίζεται από τη
   [ροή εργασίας έκδοσης](../.github/workflows/release.yml). Κάθε αίτημα υπογραφής απαιτεί χειροκίνητη έγκριση.
   Οι ειδοποιήσεις για το runtime και τις βιβλιοθήκες που περιλαμβάνονται βρίσκονται στο [THIRD-PARTY-NOTICES.txt](../agent/PhoneBox.Agent/THIRD-PARTY-NOTICES.txt).
 - **Εφαρμογή Android:** τα APK των εκδόσεων χρησιμοποιούν το δικό τους κλειδί υπογραφής του έργου, ανεξάρτητα από το SignPath.
@@ -216,7 +216,7 @@ python tools/demo-server.py
 
 ## Ευχαριστίες
 
-Άνθρωποι που δοκίμασαν το PhoneBox στο δικό τους υλικό:
+Άνθρωποι που δοκίμασαν το NikoDeck στο δικό τους υλικό:
 
 - [anandyakshit](https://github.com/anandyakshit): υποστήριξη Android 7, σε τηλέφωνο με Android 7.1.1 ([#73](https://github.com/ersinkoc/phonebox/issues/73)).
 
@@ -238,11 +238,11 @@ python tools/demo-server.py
 
 ## Ιστορικό αστεριών
 
-<a href="https://www.star-history.com/#ersinkoc/phonebox&Date">
+<a href="https://www.star-history.com/#LordSigfrid/NikoDeck&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date&theme=dark">
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date">
-    <img alt="Ιστορικό αστεριών του ersinkoc/phonebox" src="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date">
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date&theme=dark">
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date">
+    <img alt="Ιστορικό αστεριών του LordSigfrid/NikoDeck" src="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date">
   </picture>
 </a>
 

@@ -51,7 +51,7 @@ import java.util.Locale
 
 /**
  * Full-screen desk panel. The UI is plain HTML/JS bundled in assets/www.
- * The UI calls "/agent/..." URLs; they are intercepted here and forwarded to the PhoneBox agent on the PC,
+ * The UI calls "/agent/..." URLs; they are intercepted here and forwarded to the NikoDeck agent on the PC,
  * over USB (adb reverse) or, once paired, over Wi-Fi / Tailscale (see AgentLink). The WebView itself therefore
  * never makes local-network requests (no CORS, mixed-content or local-network-access issues).
  */
@@ -64,7 +64,9 @@ class MainActivity : Activity(), SensorEventListener {
     private val panelPreferences by lazy { getSharedPreferences("panel-ui", MODE_PRIVATE) }
 
     private fun pairingContext(): Context {
-        val tag = panelPreferences.getString("language", null) ?: return this
+        // nothing saved yet: Brazilian Portuguese, the panel's default; "auto" follows the system language
+        val tag = panelPreferences.getString("language", null) ?: "pt-BR"
+        if (tag == "auto") return this
         return createConfigurationContext(Configuration(resources.configuration).apply {
             setLocale(Locale.forLanguageTag(tag))
         })
@@ -100,7 +102,7 @@ class MainActivity : Activity(), SensorEventListener {
         web = try { WebView(this) } catch (e: Exception) {
             // Some Android 5.1 vendor systems cannot start any WebView update ("Invalid reflection", #385): say so
             // instead of crashing at every launch.
-            Log.e("PhoneBox", "WebView failed to start", e)
+            Log.e("NikoDeck", "WebView failed to start", e)
             setContentView(TextView(this).apply {
                 text = getString(R.string.webview_failed)
                 setTextColor(0xFFFFFFFF.toInt())
@@ -117,6 +119,7 @@ class MainActivity : Activity(), SensorEventListener {
         with(web.settings) {
             javaScriptEnabled = true
             domStorageEnabled = true
+            // lets a muted video, such as the Visor widget's background, start playing without a tap first
             mediaPlaybackRequiresUserGesture = false
             cacheMode = WebSettings.LOAD_NO_CACHE
             textZoom = 100
@@ -440,7 +443,7 @@ class MainActivity : Activity(), SensorEventListener {
         fun setLanguage(key: String, tag: String) {
             if (!ok(key) || !panelLanguageTag.matches(tag)) return
             val language = when (tag) {
-                "auto" -> null
+                "auto" -> "auto" // kept, so it is told apart from nothing saved yet
                 "zh" -> "zh-CN"
                 "zh-Hant" -> "zh-TW"
                 "pt" -> "pt-PT"
@@ -595,7 +598,8 @@ class MainActivity : Activity(), SensorEventListener {
         @JavascriptInterface
         fun setHomeScreen(key: String, on: Boolean) {
             if (!ok(key)) return
-            val alias = ComponentName(this@MainActivity, "$packageName.HomeAlias")
+            // the alias lives in the Kotlin package (the manifest's ".HomeAlias"), not under the applicationId
+            val alias = ComponentName(this@MainActivity, "${MainActivity::class.java.name.substringBeforeLast('.')}.HomeAlias")
             val want = if (on) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
             if (packageManager.getComponentEnabledSetting(alias) != want)
                 packageManager.setComponentEnabledSetting(alias, want, PackageManager.DONT_KILL_APP)

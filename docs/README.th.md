@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -32,11 +32,11 @@
 ดูสถานะพีซี เซสชันเขียนโค้ดด้วย AI และเพลง พร้อมควบคุมด้วยการสัมผัสผ่าน USB หรือ Wi-Fi</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>ลองดูตัวอย่างสด</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>ดาวน์โหลด</b></a>
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>ลองดูตัวอย่างสด</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>ดาวน์โหลด</b></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox แสดงหน้าอัตโนมัติ, หน้าบ้าน และหน้าวางแผนบนสาม Android โทรศัพท์"></p>
+<p align="center"><img src="hero-0.6.png" width="900" alt="NikoDeck แสดงหน้าอัตโนมัติ, หน้าบ้าน และหน้าวางแผนบนสาม Android โทรศัพท์"></p>
 
 ## สิ่งที่ทำได้
 
@@ -46,7 +46,7 @@
 - แสดงนาฬิกา อากาศ ปฏิทิน โน๊ต สื่อมวลชน และตัวควบคุม Home Assistant
 - จัดหน้าและวิดเจ็ตในตัวแก้ไขแบบภาพ แล้วดูตัวอย่างก่อนบันทึก
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="PhoneBox การแสดงการแจ้งเตือน, คำถามขออนุญาต และเปลี่ยนหน้าอัตโนมัติ"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="NikoDeck การแสดงการแจ้งเตือน, คำถามขออนุญาต และเปลี่ยนหน้าอัตโนมัติ"></a><br>
 <sub>ข้อมูลการทดลอง: การแจ้งเตือน, คำถามขออนุญาต และเปลี่ยนหน้าอัตโนมัติ <a href="tour-0.6.mp4">ดู MP4</a></sub></p>
 
 ## เริ่มเร็ว
@@ -58,13 +58,13 @@
 สำหรับ Windows 10/11 x64 ให้รันคำสั่งต่อไปนี้ใน PowerShell
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 สำหรับ Linux หรือ macOS ให้รันคำสั่งต่อไปนี้ด้วยบัญชีผู้ใช้ปกติ
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 สคริปต์ติดตั้งตรวจสอบเช็กซัมของรุ่นที่ดาวน์โหลดแล้วเปิดหน้าการตั้งค่า คุณยังติดตั้งแอปบนโทรศัพท์ผ่าน USB ได้ด้วย รันสคริปต์ซ้ำเพื่ออัปเดตหรือซ่อมแซมโดยเก็บการตั้งค่าและการจับคู่ไว้
@@ -78,7 +78,7 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 
 ## ความเป็นส่วนตัวและความปลอดภัย
 
-PhoneBox เชื่อมโทรศัพท์กับคอมพิวเตอร์โดยตรง ไม่ต้องมีบัญชีและไม่ส่งข้อมูลการใช้งาน วิดเจ็ตเสริมบางตัวติดต่อเฉพาะบริการที่คุณตั้งค่าไว้
+NikoDeck เชื่อมโทรศัพท์กับคอมพิวเตอร์โดยตรง ไม่ต้องมีบัญชีและไม่ส่งข้อมูลการใช้งาน วิดเจ็ตเสริมบางตัวติดต่อเฉพาะบริการที่คุณตั้งค่าไว้
 
 ## เอกสาร
 
@@ -92,4 +92,4 @@ PhoneBox เชื่อมโทรศัพท์กับคอมพิว�
 
 ## ใบอนุญาต
 
-[PhoneBox ถูกปล่อยออกมาภายใต้ MIT License](../LICENSE)
+[NikoDeck ถูกปล่อยออกมาภายใต้ MIT License](../LICENSE)

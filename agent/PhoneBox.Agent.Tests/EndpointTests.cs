@@ -31,10 +31,10 @@ public sealed class EndpointTests
     [Fact]
     public void RestartPreservesTheConfigPathAndPortAsSeparateArguments()
     {
-        var info = AppRestart.StartInfo("PhoneBoxAgent.exe", ["--config", "C:/test folder/config.json", "--port", "18765", "--restart"]);
+        var info = AppRestart.StartInfo("NikoDeck.exe", ["--config", "C:/test folder/config.json", "--port", "18765", "--restart"]);
         Assert.Equal(new[] { "--config", "C:/test folder/config.json", "--port", "18765", "--restart" }, info.ArgumentList);
         Assert.False(info.UseShellExecute);
         var hosted = AppRestart.StartInfo("dotnet", ["--port", "18765"]);
-        Assert.EndsWith("PhoneBoxAgent.dll", hosted.ArgumentList[0]);
+        Assert.EndsWith("NikoDeck.dll", hosted.ArgumentList[0]);
     }
 }

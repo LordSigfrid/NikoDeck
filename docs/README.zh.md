@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox 图标"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck 图标"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -30,26 +30,26 @@
 
 <p align="center"><b>将闲置的 Android 手机变成电脑的桌面控制面板。</b><br>
 通过 USB 或 Wi-Fi 查看电脑状态、AI 编程会话、音乐与触控操作。<br>
-支持 Windows、Linux 和 macOS。无需 Root、无需 PhoneBox 账号、无需云服务。</p>
+支持 Windows、Linux 和 macOS。无需 Root、无需 NikoDeck 账号、无需云服务。</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>在线演示</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>下载</b></a> ·
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>在线演示</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>下载</b></a> ·
   <a href="#快速开始"><b>快速开始</b></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml"><img src="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml/badge.svg" alt="构建状态"></a>
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="最新版本"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml"><img src="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml/badge.svg" alt="构建状态"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><img src="https://img.shields.io/github/v/release/LordSigfrid/NikoDeck?label=release" alt="最新版本"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT 许可证"></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="三部手机上的 PhoneBox 示例"><br>
+<p align="center"><img src="hero-0.6.png" width="900" alt="三部手机上的 NikoDeck 示例"><br>
 <sub>使用演示数据的示例布局。</sub></p>
 
-PhoneBox 将全屏 **Android 应用**与轻量级**桌面代理**配对。通过浏览器可视化编辑器打造专属面板：**123 个小组件**、**30 个模板**、多页面以及实时预览。
+NikoDeck 将全屏 **Android 应用**与轻量级**桌面代理**配对。通过浏览器可视化编辑器打造专属面板：**123 个小组件**、**30 个模板**、多页面以及实时预览。
 
 ## 主要功能
 
@@ -68,13 +68,13 @@ PhoneBox 将全屏 **Android 应用**与轻量级**桌面代理**配对。通过
 **Windows 10/11 x64**（PowerShell）：
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 **Linux 或 macOS**：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 安装完成后会自动打开设置页面 <http://127.0.0.1:8765>。详见[安装指南](SETUP.md)。
@@ -83,7 +83,7 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 
 | USB | 仅 Wi-Fi |
 |---|---|
-| 开启 **开发者选项 → USB 调试**并连接数据线。 | 从[最新发布](https://github.com/ersinkoc/phonebox/releases/latest)安装 APK，开启 **Wi-Fi & Tailscale** 并扫描配对二维码。 |
+| 开启 **开发者选项 → USB 调试**并连接数据线。 | 从[最新发布](https://github.com/LordSigfrid/NikoDeck/releases/latest)安装 APK，开启 **Wi-Fi & Tailscale** 并扫描配对二维码。 |
 
 ### 3. 自定义面板
 

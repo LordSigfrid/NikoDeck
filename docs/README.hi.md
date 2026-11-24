@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -32,11 +32,11 @@
 USB या Wi-Fi से जुड़कर PC की स्थिति, AI कोडिंग सेशन और संगीत देखें, और टच से नियंत्रण करें।</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>लाइव डेमो का प्रयास करें</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>डाउनलोड</b></a>
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>लाइव डेमो का प्रयास करें</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>डाउनलोड</b></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox तीन Android फोनों पर स्वचालन, घर और प्लानर पृष्ठ दिखा रहा है"></p>
+<p align="center"><img src="hero-0.6.png" width="900" alt="NikoDeck तीन Android फोनों पर स्वचालन, घर और प्लानर पृष्ठ दिखा रहा है"></p>
 
 ## आप क्या कर सकते हैं
 
@@ -46,7 +46,7 @@ USB या Wi-Fi से जुड़कर PC की स्थिति, AI क�
 - घड़ी, मौसम, पंचांग, नोट्स, मीडिया तथा Home Assistant नियंत्रण दिखाएँ.
 - विज़ुअल एडिटर में पेज और विजेट बनाएँ और सहेजने से पहले प्रीव्यू देखें।
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="PhoneBox दौरा सूचनाएँ, अनुमति प्रोम्प्ट तथा स्वचालित पृष्ठ स्विचिंग दिखाता है"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="NikoDeck दौरा सूचनाएँ, अनुमति प्रोम्प्ट तथा स्वचालित पृष्ठ स्विचिंग दिखाता है"></a><br>
 <sub>डेमो डाटा: अधिसूचनाएं, अनुमति प्रोम्प्ट और स्वचालित पृष्ठ स्विचिंग। <a href="tour-0.6.mp4">MP4 देखें</a></sub></p>
 
 ## त्वरित प्रारंभ
@@ -58,13 +58,13 @@ USB या Wi-Fi से जुड़कर PC की स्थिति, AI क�
 Windows 10/11 x64 पर यह कमांड PowerShell में चलाएँ।
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 Linux या macOS पर यह कमांड अपने सामान्य उपयोगकर्ता खाते से चलाएँ।
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 सेटअप रिलीज़ का चेकसम जाँचता है और सेटिंग पेज खोलता है। यह फ़ोन ऐप को USB से इंस्टॉल भी कर सकता है। सेटिंग और पेयरिंग बनाए रखते हुए अपडेट या मरम्मत के लिए इसे फिर चलाएँ।
@@ -78,7 +78,7 @@ Windows ट्रे से विन्यास पृष्ठ खोले�
 
 ## गोपनीयता तथा सुरक्षा
 
-PhoneBox फ़ोन और कंप्यूटर को सीधे जोड़ता है। इसके लिए खाते की ज़रूरत नहीं है और यह टेलीमेट्री नहीं भेजता। कुछ वैकल्पिक विजेट आपकी कॉन्फ़िगर की हुई सेवाओं से जुड़ते हैं।
+NikoDeck फ़ोन और कंप्यूटर को सीधे जोड़ता है। इसके लिए खाते की ज़रूरत नहीं है और यह टेलीमेट्री नहीं भेजता। कुछ वैकल्पिक विजेट आपकी कॉन्फ़िगर की हुई सेवाओं से जुड़ते हैं।
 
 ## दस्तावेज़ीकरण
 
@@ -92,4 +92,4 @@ PhoneBox फ़ोन और कंप्यूटर को सीधे जो
 
 ## लाइसेंस
 
-[PhoneBox MIT लाइसेंस के तहत जारी किया गया है।](../LICENSE)
+[NikoDeck MIT लाइसेंस के तहत जारी किया गया है।](../LICENSE)

@@ -1,0 +1,43 @@
+{
+    "version": "0.9.29",
+    "description": "NikoDeck agent: turns an old Android phone into a desk panel for this PC (widgets, AI coding sessions, music, webhooks).",
+    "homepage": "https://github.com/LordSigfrid/NikoDeck",
+    "license": "MIT",
+    "notes": [
+        "Abra o NikoDeck pelo menu Iniciar; ele fica na bandeja do sistema (clique com o botão direito para marcar Iniciar com o Windows).",
+        "Conecte o celular com a depuração USB ativada, abra as configurações (clique duas vezes no ícone da bandeja) e use",
+        "Geral › Conexão do celular › Instalar app no celular."
+    ],
+    "suggest": {
+        "adb": "main/adb"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.29/NikoDeckAgent-0.9.29-win-x64.zip",
+            "hash": "70175042696e6724d75e596d5295ae00a4dc859734ce5898ca0aa1d545ccda9e"
+        }
+    },
+    "bin": [
+        [
+            "NikoDeck.exe",
+            "nikodeck"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "NikoDeck.exe",
+            "NikoDeck"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v$version/NikoDeckAgent-$version-win-x64.zip",
+                "hash": {
+                    "url": "$baseurl/SHA256SUMS-$version.txt"
+                }
+            }
+        }
+    }
+}

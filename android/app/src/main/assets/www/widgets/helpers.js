@@ -1,4 +1,5 @@
 import { $, LOCALE, cfg, h, ringSvg, safeFetch, sizeCanvas, store } from '../main.js';
+import { carryRing } from '../motion.js';
 
 // ---------------------------------------------------------------- more widgets: helpers
 export const inflight = {};
@@ -52,9 +53,12 @@ export function dialEl() {
   dial.append(val);
   let svg = null;
   dial.set = (pct, text, unit, elapsed) => {
-    if (svg) svg.remove();
+    const old = svg;
     dial.insertAdjacentHTML('afterbegin', ringSvg(pct, elapsed)); // numbers only
     svg = dial.firstElementChild;
+    // timers and quotas: a second's tick is set at once, only a jump (a reset, a new window) moves
+    carryRing(old, svg, 0.1);
+    old?.remove();
     val.replaceChildren(String(text), unit ? h('small', null, unit) : '');
   };
   return dial;

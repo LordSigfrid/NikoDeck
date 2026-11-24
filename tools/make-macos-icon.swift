@@ -1,3 +1,6 @@
+// NikoDeck: packaging/macos/PhoneBox.icns now comes from tools/make-icon.ps1 (the NIKO logo). This script draws the
+// upstream PhoneBox artwork and is kept only so upstream changes still merge; running it would bring that icon back.
+//
 // Draws the PhoneBox app icon (the Android launcher icon's monitor, bars and dot on a rounded dark tile, the shape macOS
 // expects: an 824 px tile centred in a 1024 px canvas) and writes packaging/macos/PhoneBox.icns. A Mac is needed for
 // iconutil; the .icns is committed, so builds do not run this. Re-run it only when the artwork changes:

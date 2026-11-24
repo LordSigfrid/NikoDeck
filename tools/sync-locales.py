@@ -62,7 +62,7 @@ def main():
                 href = readmes[code].name
             links.append(f'<a href="{href}">{name}</a>')
         picker = '<p align="center">\n  ' + ' ·\n  '.join(links) + '\n</p>'
-        replace(path, r'(<h1[^>]*>PhoneBox</h1>\s*)<p align="center">[\s\S]*?</p>',
+        replace(path, r'(<h1[^>]*>NikoDeck</h1>\s*)<p align="center">[\s\S]*?</p>',
                 lambda match: match[1] + picker)
     print(f'Synced {len(languages)} locale entries')
 

@@ -75,7 +75,10 @@ public sealed class AgentConfig
     /// <param name="wallpaperRev">The uploaded wallpaper's revision (null without one): the panel loads the picture
     /// with it in the URL, so a new upload is fetched and an unchanged one comes from the cache. Sent as text: a 64-bit
     /// value loses its last digits as a JavaScript number, and two pictures could then share a cached URL.</param>
-    public object ToPublic(string? deviceId = null, Func<Shortcut, (long? Rev, bool Upload)>? shortcutIcon = null, long? wallpaperRev = null) => new
+    /// <param name="visorMediaRev">The Visor widget's uploaded background media's revision (null without one), sent like
+    /// <paramref name="wallpaperRev"/>; the panel reads whether it is a picture or a video from the file it loads.</param>
+    public object ToPublic(string? deviceId = null, Func<Shortcut, (long? Rev, bool Upload)>? shortcutIcon = null, long? wallpaperRev = null,
+        long? visorMediaRev = null) => new
     {
         weather = Weather,
         codexBar = CodexBar,
@@ -84,6 +87,7 @@ public sealed class AgentConfig
         // this device's own home page (Settings › Phones), when it has one among the pages it shows
         homePage = HomePageFor(deviceId),
         wallpaperRev = wallpaperRev?.ToString(System.Globalization.CultureInfo.InvariantCulture),
+        visorMediaRev = visorMediaRev?.ToString(System.Globalization.CultureInfo.InvariantCulture),
         pages = PagesFor(deviceId).Select(p => new
         {
             p.Id, p.Title, p.Icon, p.Enabled, p.IdleSec, p.Appearance,
@@ -166,7 +170,8 @@ public sealed class PingConfig
 
 public sealed class NightConfig
 {
-    public bool Enabled { get; set; } = true;
+    // off by default: NikoDeck keeps the phone's panel lit; the night screen is opt-in from the settings page
+    public bool Enabled { get; set; }
     public string Start { get; set; } = "00:30";
     public string End { get; set; } = "07:30";
     public double Brightness { get; set; } = 0.02;
@@ -186,8 +191,9 @@ public sealed class DisplayConfig
     public AppearanceConfig? Appearance { get; set; }
     /// <summary>How the uploaded wallpaper (Settings › Display) is drawn behind the pages.</summary>
     public WallpaperConfig Wallpaper { get; set; } = new();
-    /// <summary>UI language code ("auto", "en", "tr", "de", "fr", "es", "it", "pt", "pt-BR", "nl", "pl", "ru", "el", "vi", "zh").</summary>
-    public string Language { get; set; } = "auto";
+    /// <summary>UI language code: "auto" (follow the phone / browser) or one of <see cref="Languages"/>. Brazilian Portuguese until one is chosen.</summary>
+    public string Language { get; set; } = DefaultLanguage;
+    internal const string DefaultLanguage = "pt-BR";
     /// <summary>The codes the panel and the settings page are translated into (i18n.js). Casing matters for pt-BR:
     /// it is a distinct entry from pt, not a variant of it, so it must survive a save in this exact form.</summary>
     internal static readonly string[] Languages = ["auto", "en", "tr", "de", "fr", "es", "it", "pt", "pt-BR", "nl", "pl", "ru", "el", "vi", "zh", "ja", "ko", "id", "th", "uk", "hi", "cs", "ar", "zh-Hant"];
@@ -209,10 +215,10 @@ public sealed class DisplayConfig
     public bool VolumeKeys { get; set; } = true;
     /// <summary>landscape, portrait or auto (follow the phone). In portrait the widgets are arranged automatically.</summary>
     public string Orientation { get; set; } = "landscape";
-    /// <summary>default, amoled, midnight, warm or graphite.</summary>
-    public string Theme { get; set; } = "default";
-    /// <summary>Accent colour (background glow, page dots), e.g. "#2dd4bf".</summary>
-    public string Accent { get; set; } = "#2dd4bf";
+    /// <summary>niko (the default), default (the earlier look), amoled, midnight, warm or graphite.</summary>
+    public string Theme { get; set; } = "niko";
+    /// <summary>Accent colour (background glow, page dots), e.g. "#00afff" (Niko's blue).</summary>
+    public string Accent { get; set; } = "#00afff";
     /// <summary>Tint the background with the album art's colour while music plays.</summary>
     public bool ArtTint { get; set; } = true;
     /// <summary>Screen brightness follows the room (the phone's light sensor).</summary>
@@ -242,10 +248,10 @@ public sealed class DisplayConfig
 
     /// <summary>Over USB, turn off Android's screen saver (it starts on the dock / charger) and keep the phone awake while it is plugged in.</summary>
     public bool KeepAwake { get; set; } = true;
-    /// <summary>Over USB, wake the phone and open PhoneBox when it is plugged in (or adb reconnects). Off: the panel opens only
+    /// <summary>Over USB, wake the phone and open NikoDeck when it is plugged in (or adb reconnects). Off: the panel opens only
     /// when you start it on the phone, from the tray or the settings page.</summary>
     public bool OpenOnConnect { get; set; } = true;
-    /// <summary>On macOS, sleep the connected phone when the computer locks; wake it and open PhoneBox after unlock.</summary>
+    /// <summary>On macOS, sleep the connected phone when the computer locks; wake it and open NikoDeck after unlock.</summary>
     public bool FollowComputerLock { get; set; }
     /// <summary>The page the panel returns to (idle return, Back); null = the first page.</summary>
     public string? HomePage { get; set; }
@@ -274,7 +280,8 @@ public sealed class UpdateConfig
 {
     /// <summary>Install new GitHub releases automatically (phone app over USB, agent in place).</summary>
     public bool Auto { get; set; } = true;
-    public string Repo { get; set; } = "ersinkoc/phonebox";
+    public string Repo { get; set; } = DefaultRepo;
+    public const string DefaultRepo = "LordSigfrid/NikoDeck";
 }
 
 public sealed class ClaudeConfig
@@ -456,7 +463,7 @@ public sealed class DiscordConfig
     public bool AllowControl { get; set; }
     /// <summary>
     /// Screen share from the phone (off by default). Asks Discord for rpc.screenshare.read / .write, so Discord asks to
-    /// approve PhoneBox again; lists the apps with a window (names only) while the share view is open on the phone.
+    /// approve NikoDeck again; lists the apps with a window (names only) while the share view is open on the phone.
     /// </summary>
     public bool ScreenShare { get; set; }
     /// <summary>
@@ -665,6 +672,9 @@ public sealed partial class ConfigStore(string path)
         return null;
     }
 
+    /// <summary>The upstream PhoneBox repository; settings copied from a PhoneBox install may still name it.</summary>
+    private const string UpstreamRepo = "ersinkoc/phonebox";
+
     /// <summary>Fills in defaults: builds pages from templates, migrates old pages, generates unique ids.</summary>
     private static AgentConfig Normalize(AgentConfig c, IReadOnlySet<string>? staleIds = null)
     {
@@ -699,10 +709,10 @@ public sealed partial class ConfigStore(string path)
         c.Display.Wallpaper.Dim = Math.Clamp(c.Display.Wallpaper.Dim, 0, 90);
         c.Display.Wallpaper.Blur = Math.Clamp(c.Display.Wallpaper.Blur, 0, 20);
         c.Display.UnreachableNightDelayMin = Math.Clamp(c.Display.UnreachableNightDelayMin, 1, 30);
-        // a language the panel does not have falls back to following the phone / browser. Matched case-insensitively
+        // a language the panel does not have (or none at all) falls back to the default, Brazilian Portuguese. Matched case-insensitively
         // so "PT-br" still resolves, but stored in its canonical casing: i18n.js looks pt-BR up by exact code.
         var lang = (c.Display.Language ?? "").Trim();
-        c.Display.Language = DisplayConfig.Languages.FirstOrDefault(l => l.Equals(lang, StringComparison.OrdinalIgnoreCase)) ?? "auto";
+        c.Display.Language = DisplayConfig.Languages.FirstOrDefault(l => l.Equals(lang, StringComparison.OrdinalIgnoreCase)) ?? DisplayConfig.DefaultLanguage;
         c.Display.SwitchCountdownSec = Math.Clamp(c.Display.SwitchCountdownSec, 0, 30);
         c.Display.TouchGraceSec = Math.Clamp(c.Display.TouchGraceSec, 0, 600);
         c.Display.MinDwellSec = Math.Clamp(c.Display.MinDwellSec, 0, 600);
@@ -720,7 +730,9 @@ public sealed partial class ConfigStore(string path)
         c.OpenCode ??= new();
         c.OpenCode.TimeoutSec = Math.Clamp(c.OpenCode.TimeoutSec, 10, 3600);
         c.OpenCode.AlwaysCountdownSec = Math.Clamp(c.OpenCode.AlwaysCountdownSec, 0, 60);
-        if (string.IsNullOrWhiteSpace(c.Updates.Repo)) c.Updates.Repo = "ersinkoc/phonebox";
+        // settings copied from PhoneBox name its repository, whose releases have no NikoDeck assets to install
+        if (string.IsNullOrWhiteSpace(c.Updates.Repo) || string.Equals(c.Updates.Repo.Trim(), UpstreamRepo, StringComparison.OrdinalIgnoreCase))
+            c.Updates.Repo = UpdateConfig.DefaultRepo;
         c.Lan.Port = Math.Clamp(c.Lan.Port, 1024, 65535);
         if (string.IsNullOrWhiteSpace(c.Lan.Token)) c.Lan.Token = NewToken();
         if (string.IsNullOrWhiteSpace(c.Lan.WebhookToken)) c.Lan.WebhookToken = NewToken();

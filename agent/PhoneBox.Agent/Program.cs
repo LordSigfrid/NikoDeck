@@ -67,6 +67,7 @@ builder.Services.AddSingleton<AudioControl>();
 builder.Services.AddSingleton<AppCatalog>();
 builder.Services.AddSingleton(_ => new ShortcutIconUploads(Path.Combine(configDir, "icons")));
 builder.Services.AddSingleton(_ => new WallpaperStore(configDir));
+builder.Services.AddSingleton(_ => new VisorMediaStore(configDir));
 builder.Services.AddSingleton<PairingCodes>();
 builder.Services.AddSingleton<SpotifyControl>();
 builder.Services.AddSingleton<PlexControl>();
@@ -159,7 +160,7 @@ app.MapPost("/api/controls/spotify/disconnect", async (SpotifyControl spotify, C
 app.MapGet("/api/controls/spotify/callback", async (string? state, string? code, SpotifyControl spotify, CancellationToken ct) =>
 {
     try { return state is not null && code is not null && await spotify.Complete(state, code, ct)
-        ? Results.Text("Spotify connected. Return to PhoneBox settings; this tab can be closed.", "text/plain")
+        ? Results.Text("Spotify connected. Return to NikoDeck settings; this tab can be closed.", "text/plain")
         : Results.BadRequest("Spotify sign-in expired or was refused. Start again from desktop settings."); }
     catch { return Results.BadRequest("Spotify sign-in failed. Start again from desktop settings."); }
 });
@@ -219,7 +220,7 @@ app.MapGet("/api/latency", () => Results.Json(timings.Summary()));
 //  - Local port 8765 listens on 127.0.0.1 only; the Host check blocks DNS rebinding. From browsers only the settings
 //    page itself (same origin) is accepted (no CSRF).
 //  - The phone's USB tunnel ends on a port of its own (UsbLink): every app on the phone can reach the tunnel, so it
-//    is TLS with the certificate the app pins (handed over adb), needs the key the PhoneBox app made (read over adb),
+//    is TLS with the certificate the app pins (handed over adb), needs the key the NikoDeck app made (read over adb),
 //    and serves only the phone API.
 //  - The optional Wi-Fi port only serves the phone API, only over TLS, and only with the paired token.
 app.UseWebSockets();
@@ -321,7 +322,7 @@ app.MapPost("/api/pair/start", (ConfigStore cfg, PairingCodes codes) =>
     var hosts = Lan.Addresses();
     var fingerprint = Lan.Fingerprint(lanCert);
     var link = PairingCodes.Link(Environment.MachineName, fingerprint, lanCfg.Port, hosts, code);
-    var apk = $"https://github.com/ersinkoc/phonebox/releases/download/v{AppPaths.Version}/PhoneBox-{AppPaths.Version}.apk";
+    var apk = $"https://github.com/LordSigfrid/NikoDeck/releases/download/v{AppPaths.Version}/NikoDeck-{AppPaths.Version}.apk";
     return Results.Json(new
     {
         enabled = true,
@@ -768,7 +769,7 @@ app.MapPost("/api/steam/launch", (string? id, string? widget, HttpRequest req, S
         : Results.Ok(new { ok = true }));
 // Synced lyrics of the track playing now, from LRCLIB, for the asking widget ("widget=pageId/widgetId"): only when that
 // widget is on an enabled page with "Look up lyrics on LRCLIB" turned on (off by default). The track is the one Now playing
-// shows (the agent's own media snapshot, with PhoneBox's Internet Radio in its place while that plays or is paused, which
+// shows (the agent's own media snapshot, with NikoDeck's Internet Radio in its place while that plays or is paused, which
 // is never looked up): the phone sends no text that could reach LRCLIB.
 app.MapGet("/api/lyrics", async (string? widget, HttpRequest req, MediaMonitor media, ControlDeck deck, LyricsService lyrics, CancellationToken ct) =>
 {
@@ -949,54 +950,66 @@ app.MapGet("/api/spectrum", (SpectrumAnalyzer spectrum) =>
 app.MapGet("/api/widget/{page}/{widget}", (string page, string widget, bool? force, CommandRunner runner) =>
     runner.Get(page, widget, force == true) is { } r ? Results.Json(r) : Results.NotFound());
 
-app.MapGet("/api/config", (ConfigStore cfg, HttpRequest req, ShortcutIconUploads icons, WallpaperStore wallpaper) =>
+app.MapGet("/api/config", (ConfigStore cfg, HttpRequest req, ShortcutIconUploads icons, WallpaperStore wallpaper, VisorMediaStore visorMedia) =>
     Results.Json(new { version = cfg.Version.ToString(), config = cfg.Get().ToPublic(req.Headers["X-PhoneBox-Device"].ToString(),
-        s => icons.Revision(s.Id) is { } up ? (up, true) : (ShortcutIcons.Revision(s), false), wallpaper.Revision()) }));
+        s => icons.Revision(s.Id) is { } up ? (up, true) : (ShortcutIcons.Revision(s), false), wallpaper.Revision(), visorMedia.Revision()) }));
 
-// The panel's wallpaper (Settings › Display). The panel asks with ?v=<revision>, so the picture may be kept for good.
-app.MapGet("/api/wallpaper", (WallpaperStore wallpaper, HttpResponse res, string? v) =>
+// The panel's wallpaper (Settings › Display) and the Visor widget's background media: uploaded files the panel shows.
+// The panel asks with ?v=<revision>, so the file may be kept for good.
+app.MapGet("/api/wallpaper", (WallpaperStore wallpaper, HttpResponse res, string? v) => ServeMedia(wallpaper, res, v));
+app.MapGet("/api/visor-media", (VisorMediaStore media, HttpResponse res, string? v) => ServeMedia(media, res, v));
+// Uploading and removing them: under /api/settings, so local only like the rest of the settings API. The version bump
+// tells connected phones to load the config, and with it the new revision.
+app.MapPost("/api/settings/wallpaper", (HttpRequest req, ConfigStore cfg, WallpaperStore wallpaper) => UploadMedia(req, cfg, wallpaper));
+app.MapDelete("/api/settings/wallpaper", (HttpRequest req, ConfigStore cfg, WallpaperStore wallpaper) => RemoveMedia(req, cfg, wallpaper));
+app.MapPost("/api/settings/visor-media", (HttpRequest req, ConfigStore cfg, VisorMediaStore media) => UploadMedia(req, cfg, media));
+app.MapDelete("/api/settings/visor-media", (HttpRequest req, ConfigStore cfg, VisorMediaStore media) => RemoveMedia(req, cfg, media));
+
+static IResult ServeMedia(MediaStore store, HttpResponse res, string? v)
 {
-    if (wallpaper.Read() is not { } found) return Results.NotFound();
+    if (store.Read() is not { } found) return Results.NotFound();
     // kept for good only when these very bytes are the revision asked for (the revision is their hash): an upload
-    // between the config and this request must not leave the new picture cached under the old revision's address
-    res.Headers.CacheControl = v == WallpaperStore.ContentRevision(found.Bytes).ToString(System.Globalization.CultureInfo.InvariantCulture)
+    // between the config and this request must not leave the new file cached under the old revision's address
+    res.Headers.CacheControl = v == MediaStore.ContentRevision(found.Bytes).ToString(System.Globalization.CultureInfo.InvariantCulture)
         ? "private, max-age=31536000, immutable" : "no-store";
     res.Headers.XContentTypeOptions = "nosniff";
     return Results.File(found.Bytes, found.ContentType);
-});
-// Uploading and removing it: under /api/settings, so local only like the rest of the settings API. The version bump
-// tells connected phones to load the config, and with it the new revision.
-app.MapPost("/api/settings/wallpaper", async (HttpRequest req, ConfigStore cfg, WallpaperStore wallpaper) =>
+}
+
+static async Task<IResult> UploadMedia(HttpRequest req, ConfigStore cfg, MediaStore store)
 {
     var configVersion = req.Headers["X-Config-Version"].ToString();
     if (cfg.VersionConflict(configVersion)) return Results.Json(new { error = ConfigStore.Conflict }, statusCode: StatusCodes.Status409Conflict);
-    var bytes = await WallpaperStore.ReadBounded(req.Body);
+    // a body known to be too large is refused before it is read, with the message a save would give
+    if (req.ContentLength > store.Limit) return Results.BadRequest(new { error = store.TooLargeMessage });
+    var bytes = await MediaStore.ReadBounded(req.Body, store.Limit);
     lock (IconCommit)
     {
         if (cfg.VersionConflict(configVersion)) return Results.Json(new { error = ConfigStore.Conflict }, statusCode: StatusCodes.Status409Conflict);
-        var before = wallpaper.Revision();
-        if (wallpaper.Save(bytes) is { } err)
+        var before = store.Revision();
+        if (store.Save(bytes) is { } err)
         {
-            // a save that failed halfway can still have changed the picture served: the panels must hear of it
-            if (wallpaper.Revision() == before) return Results.BadRequest(new { error = err });
+            // a save that failed halfway can still have changed the file served: the panels must hear of it
+            if (store.Revision() == before) return Results.BadRequest(new { error = err });
             cfg.Touch();
             return Results.Json(new { error = err, version = cfg.VersionText }, statusCode: StatusCodes.Status409Conflict);
         }
         cfg.Touch();
         return Results.Ok(new { version = cfg.VersionText });
     }
-});
-app.MapDelete("/api/settings/wallpaper", (HttpRequest req, ConfigStore cfg, WallpaperStore wallpaper) =>
+}
+
+static IResult RemoveMedia(HttpRequest req, ConfigStore cfg, MediaStore store)
 {
     lock (IconCommit)
     {
         if (cfg.VersionConflict(req.Headers["X-Config-Version"])) return Results.Json(new { error = ConfigStore.Conflict }, statusCode: StatusCodes.Status409Conflict);
-        var error = wallpaper.Remove();
+        var error = store.Remove();
         cfg.Touch(); // also when a file stayed: the panel must load whatever is there now
         return error is null ? Results.Ok(new { version = cfg.VersionText })
             : Results.Json(new { error, version = cfg.VersionText }, statusCode: StatusCodes.Status409Conflict);
     }
-});
+}
 
 // Phones that have talked to this agent, with their settings (Settings › Phones).
 app.MapGet("/api/phones", (ConfigStore cfg) =>
@@ -1128,8 +1141,12 @@ app.MapDelete("/api/settings/shortcut-icon", (string id, HttpRequest req, Config
 });
 
 app.Lifetime.ApplicationStarted.Register(() =>
-    app.Logger.LogInformation("PhoneBox agent {Version} ready on http://127.0.0.1:{Port}, phone USB port {UsbPort} (config: {Path})",
-        AppPaths.Version, Port, usb.Port, configPath));
+{
+    if (AppPaths.MigratedFrom is { } legacy)
+        app.Logger.LogInformation("first run: copied the PhoneBox settings from {Legacy} (that folder is left as it was)", legacy);
+    app.Logger.LogInformation("NikoDeck agent {Version} ready on http://127.0.0.1:{Port}, phone USB port {UsbPort} (config: {Path})",
+        AppPaths.Version, Port, usb.Port, configPath);
+});
 
 app.Run();
 

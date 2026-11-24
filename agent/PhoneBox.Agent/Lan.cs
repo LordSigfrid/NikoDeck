@@ -25,7 +25,7 @@ public static class Lan
             catch { /* corrupt: recreate below */ }
         }
         using var key = ECDsa.Create(ECCurve.NamedCurves.nistP256);
-        var req = new CertificateRequest($"CN=PhoneBox agent ({Environment.MachineName})", key, HashAlgorithmName.SHA256);
+        var req = new CertificateRequest($"CN=NikoDeck agent ({Environment.MachineName})", key, HashAlgorithmName.SHA256);
         req.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, false));
         req.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, false));
         req.CertificateExtensions.Add(new X509EnhancedKeyUsageExtension([new Oid("1.3.6.1.5.5.7.3.1")], false)); // server auth
@@ -94,6 +94,8 @@ public static class Lan
         || path.StartsWithSegments("/api/media") || path.StartsWithSegments("/api/volume") || path.StartsWithSegments("/api/quotas")
         // the Synced lyrics widget: the playing track's lyrics (LRCLIB is asked only for a widget with its lookup on)
         || path == "/api/lyrics" || path == "/api/wallpaper"
+        // the Visor widget's uploaded background (a picture or a short video), read-only like the wallpaper
+        || path == "/api/visor-media"
         || path.StartsWithSegments("/api/work") || path.StartsWithSegments("/api/procs") || path.StartsWithSegments("/api/run")
         || path.StartsWithSegments("/api/apps") || path.StartsWithSegments("/api/shortcuts/icon") || path.StartsWithSegments("/api/console") || path == "/api/dictate"
         // the Steam library widget: the list of installed games, an installed game's cover (the tiles' <img>), and starting a

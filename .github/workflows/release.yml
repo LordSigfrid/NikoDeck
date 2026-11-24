@@ -5,9 +5,11 @@ name: release
 #
 # The APK must be signed with the same key as the app already on the phones, or Android refuses the update. Add the
 # key as repository secrets: PHONEBOX_KEYSTORE_BASE64 (base64 of the .jks / .keystore file), PHONEBOX_STORE_PASSWORD,
-# PHONEBOX_KEY_ALIAS and PHONEBOX_KEY_PASSWORD. Without them the workflow stops before publishing anything.
-# The macOS agent is signed with PhoneBox's own certificate, MACOS_SIGNING_P12_BASE64 and MACOS_SIGNING_P12_PASSWORD
-# (tools/make-macos-signing-cert.sh); without them the workflow stops too.
+# PHONEBOX_KEY_ALIAS and PHONEBOX_KEY_PASSWORD. Without them the workflow stops before publishing anything. A PKCS12
+# keystore works as is (the JDK's default type); the optional repository variable PHONEBOX_STORE_TYPE forces one.
+# macOS agents and disk images are built only while the repository variable RELEASE_MACOS is 'true'. They are then
+# signed with NikoDeck's own certificate, MACOS_SIGNING_P12_BASE64 and MACOS_SIGNING_P12_PASSWORD
+# (tools/make-macos-signing-cert.sh), and the workflow stops early without them.
 on:
   workflow_dispatch:
     inputs:
@@ -32,6 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.v.outputs.version }}
+      macos: ${{ steps.platforms.outputs.macos }}
+      agent-matrix: ${{ steps.platforms.outputs.matrix }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: v
@@ -43,6 +47,25 @@ jobs:
           echo "version=$v" >> "$GITHUB_OUTPUT"
       - name: Check release metadata
         run: python3 tools/check-release.py
+      # The agent builds of this release. macOS needs the signing secrets (an ad hoc signature would make every Mac
+      # lose the Accessibility permission, #269), so it is opt-in through the repository variable RELEASE_MACOS.
+      - id: platforms
+        name: Choose the agent platforms
+        env:
+          RELEASE_MACOS: ${{ vars.RELEASE_MACOS }}
+          MACOS_P12: ${{ secrets.MACOS_SIGNING_P12_BASE64 }}
+          MACOS_P12_PASSWORD: ${{ secrets.MACOS_SIGNING_P12_PASSWORD }}
+        run: |
+          include='{"os":"windows-latest","rid":"win-x64","tfm":"net10.0-windows10.0.19041.0"},{"os":"ubuntu-latest","rid":"linux-x64","tfm":"net10.0"},{"os":"ubuntu-24.04-arm","rid":"linux-arm64","tfm":"net10.0"}'
+          if [ "$RELEASE_MACOS" = true ]; then
+            if [ -z "$MACOS_P12" ] || [ -z "$MACOS_P12_PASSWORD" ]; then echo "::error::RELEASE_MACOS is true: add the MACOS_SIGNING_P12_BASE64 and MACOS_SIGNING_P12_PASSWORD secrets (see the top of release.yml)"; exit 1; fi
+            include="$include"',{"os":"macos-latest","rid":"osx-arm64","tfm":"net10.0"},{"os":"macos-15-intel","rid":"osx-x64","tfm":"net10.0"}'
+            echo "macos=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::macOS agents are not built (set the repository variable RELEASE_MACOS to true to include them)"
+            echo "macos=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "matrix={\"include\":[$include]}" >> "$GITHUB_OUTPUT"
 
   apk:
     needs: version
@@ -59,7 +82,7 @@ jobs:
           KEYSTORE: ${{ secrets.PHONEBOX_KEYSTORE_BASE64 }}
         run: |
           if [ -z "$KEYSTORE" ]; then echo "::error::add the PHONEBOX_KEYSTORE_BASE64 secret (see the top of release.yml)"; exit 1; fi
-          echo "$KEYSTORE" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          printf '%s' "$KEYSTORE" | tr -d '\r\n ' | base64 -d > "$RUNNER_TEMP/release.keystore"
       - name: Build the release APK
         working-directory: android
         env:
@@ -67,11 +90,19 @@ jobs:
           PHONEBOX_STORE_PASSWORD: ${{ secrets.PHONEBOX_STORE_PASSWORD }}
           PHONEBOX_KEY_ALIAS: ${{ secrets.PHONEBOX_KEY_ALIAS }}
           PHONEBOX_KEY_PASSWORD: ${{ secrets.PHONEBOX_KEY_PASSWORD }}
+          PHONEBOX_STORE_TYPE: ${{ vars.PHONEBOX_STORE_TYPE }}
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease --console=plain
           mkdir -p ../dist
-          cp app/build/outputs/apk/release/app-release.apk "../dist/PhoneBox-${{ needs.version.outputs.version }}.apk"
+          cp app/build/outputs/apk/release/app-release.apk "../dist/NikoDeck-${{ needs.version.outputs.version }}.apk"
+      # Gradle falls back to the debug key when the keystore is missing; such an APK must never be released.
+      - name: Check the APK signature
+        run: |
+          apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -n1)
+          certs=$("$apksigner" verify --print-certs "dist/NikoDeck-${{ needs.version.outputs.version }}.apk")
+          echo "$certs" | grep -E '^Signer #1 certificate (DN|SHA-256 digest):'
+          if grep -q 'CN=Android Debug' <<<"$certs"; then echo "::error::the APK is signed with the debug key"; exit 1; fi
       - name: Remove the signing key
         if: always()
         run: rm -f "$RUNNER_TEMP/release.keystore"
@@ -83,13 +114,8 @@ jobs:
   agent:
     needs: version
     strategy:
-      matrix:
-        include:
-          - { os: windows-latest, rid: win-x64, tfm: net10.0-windows10.0.19041.0 }
-          - { os: ubuntu-latest, rid: linux-x64, tfm: net10.0 }
-          - { os: ubuntu-24.04-arm, rid: linux-arm64, tfm: net10.0 }
-          - { os: macos-latest, rid: osx-arm64, tfm: net10.0 }
-          - { os: macos-15-intel, rid: osx-x64, tfm: net10.0 }
+      # win-x64, linux-x64, linux-arm64, and osx-arm64 + osx-x64 when RELEASE_MACOS is 'true' (the version job)
+      matrix: ${{ fromJSON(needs.version.outputs.agent-matrix) }}
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -106,58 +132,58 @@ jobs:
       # loose next to the exe instead of being extracted to the temp folder at run time.
       - name: Publish (self-contained, single file)
         run: dotnet publish agent/PhoneBox.Agent -c Release -f ${{ matrix.tfm }} -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -o out --nologo
-      # PhoneBox's own certificate (tools/make-macos-signing-cert.sh): every release has the same designated
+      # NikoDeck's own certificate (tools/make-macos-signing-cert.sh): every release has the same designated
       # requirement, so macOS keeps the Accessibility permission across updates (#269). Without the secrets the release
       # stops: an ad hoc signature would make every Mac lose the permission again.
       - name: Sign the macOS agent
         if: startsWith(matrix.rid, 'osx-')
         uses: ./.github/actions/sign-macos-agent
         with:
-          binary: out/PhoneBoxAgent
+          binary: out/NikoDeck
           p12-base64: ${{ secrets.MACOS_SIGNING_P12_BASE64 }}
           p12-password: ${{ secrets.MACOS_SIGNING_P12_PASSWORD }}
       # Authenticode signing through SignPath Foundation, before the smoke test, the zip, the checksums, the attestation
       # and the Scoop/winget hash, which all cover the signed file. It is on while the repository variable
       # SIGNPATH_SIGNING_POLICY names a policy (release-signing); each request waits for a manual approval in SignPath.
-      - name: Sign PhoneBoxAgent.exe (SignPath)
+      - name: Sign NikoDeck.exe (SignPath)
         if: matrix.rid == 'win-x64' && vars.SIGNPATH_SIGNING_POLICY != ''
         uses: ./.github/actions/sign-windows-agent
         with:
-          exe: out/PhoneBoxAgent.exe
+          exe: out/NikoDeck.exe
           signing-policy: ${{ vars.SIGNPATH_SIGNING_POLICY }}
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           trusted: ${{ vars.SIGNPATH_SIGNING_POLICY == 'release-signing' }}
       - name: Smoke-test the published agent on its native architecture
         shell: pwsh
         run: |
-          $exe = if ($IsWindows) { 'out/PhoneBoxAgent.exe' } else { 'out/PhoneBoxAgent' }
+          $exe = if ($IsWindows) { 'out/NikoDeck.exe' } else { 'out/NikoDeck' }
           python tools/smoke-agent.py $exe --version '${{ needs.version.outputs.version }}'
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - name: Zip
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
-          Compress-Archive -Path out/* -DestinationPath "dist/PhoneBoxAgent-${{ needs.version.outputs.version }}-${{ matrix.rid }}.zip"
-      # The same signed agent as in the zip, in PhoneBox.app inside a disk image. The app is signed with the same
+          Compress-Archive -Path out/* -DestinationPath "dist/NikoDeckAgent-${{ needs.version.outputs.version }}-${{ matrix.rid }}.zip"
+      # The same signed agent as in the zip, in NikoDeck.app inside a disk image. The app is signed with the same
       # certificate and identifier, so its designated requirement equals the zip's (checked below) and every release of
       # the app satisfies the same requirement. Not notarized: a downloaded copy is blocked the first time and needs
       # System Settings > Privacy & Security > Open Anyway.
       - name: Build the macOS app
         if: startsWith(matrix.rid, 'osx-')
-        run: tools/make-macos-dmg.sh app out '${{ needs.version.outputs.version }}' "$RUNNER_TEMP/dmg/PhoneBox.app"
+        run: tools/make-macos-dmg.sh app out '${{ needs.version.outputs.version }}' "$RUNNER_TEMP/dmg/NikoDeck.app"
       - name: Sign the macOS app
         if: startsWith(matrix.rid, 'osx-')
         uses: ./.github/actions/sign-macos-agent
         with:
-          binary: ${{ runner.temp }}/dmg/PhoneBox.app
+          binary: ${{ runner.temp }}/dmg/NikoDeck.app
           p12-base64: ${{ secrets.MACOS_SIGNING_P12_BASE64 }}
           p12-password: ${{ secrets.MACOS_SIGNING_P12_PASSWORD }}
       - name: Build and check the disk image
         if: startsWith(matrix.rid, 'osx-')
         run: |
-          dmg="dist/PhoneBox-${{ needs.version.outputs.version }}-${{ matrix.rid }}.dmg"
-          tools/make-macos-dmg.sh dmg "$RUNNER_TEMP/dmg/PhoneBox.app" '${{ needs.version.outputs.version }}' "$dmg"
-          tools/check-macos-dmg.sh "$dmg" out/PhoneBoxAgent '${{ needs.version.outputs.version }}'
+          dmg="dist/NikoDeck-${{ needs.version.outputs.version }}-${{ matrix.rid }}.dmg"
+          tools/make-macos-dmg.sh dmg "$RUNNER_TEMP/dmg/NikoDeck.app" '${{ needs.version.outputs.version }}' "$dmg"
+          tools/check-macos-dmg.sh "$dmg" out/NikoDeck '${{ needs.version.outputs.version }}'
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-agent-${{ matrix.rid }}
@@ -177,25 +203,28 @@ jobs:
           path: dist
           pattern: release-*
           merge-multiple: true
+      # dist holds only the APK, the agent zips and, with macOS, the disk images; the checksums step counts them
       - name: Attest release artifacts
         id: provenance
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
-          subject-path: |
-            dist/*.apk
-            dist/*.zip
-            dist/*.dmg
+          subject-path: dist/*
       - name: Save the provenance bundle
         env:
           BUNDLE: ${{ steps.provenance.outputs.bundle-path }}
-        run: cp "$BUNDLE" "dist/PhoneBox-${{ needs.version.outputs.version }}.intoto.jsonl"
+        run: cp "$BUNDLE" "dist/NikoDeck-${{ needs.version.outputs.version }}.intoto.jsonl"
       - name: Checksums
         working-directory: dist
+        env:
+          MACOS: ${{ needs.version.outputs.macos }}
         run: |
-          test "$(find . -maxdepth 1 -type f | wc -l)" -eq 9
-          test "$(find . -maxdepth 1 -type f -name '*.zip' | wc -l)" -eq 5
-          test "$(find . -maxdepth 1 -type f -name '*.dmg' | wc -l)" -eq 2
+          # 3 agent zips (win-x64, linux-x64, linux-arm64), plus a zip and a disk image per macOS rid
+          if [ "$MACOS" = true ]; then zips=5; dmgs=2; else zips=3; dmgs=0; fi
+          test "$(find . -maxdepth 1 -type f | wc -l)" -eq $((zips + dmgs + 2))
+          test "$(find . -maxdepth 1 -type f -name '*.zip' | wc -l)" -eq "$zips"
+          test "$(find . -maxdepth 1 -type f -name '*.dmg' | wc -l)" -eq "$dmgs"
           test "$(find . -maxdepth 1 -type f -name '*.apk' | wc -l)" -eq 1
+          test "$(find . -maxdepth 1 -type f -name '*.intoto.jsonl' | wc -l)" -eq 1
           sha256sum * > "SHA256SUMS-${{ needs.version.outputs.version }}.txt"
           cat "SHA256SUMS-${{ needs.version.outputs.version }}.txt"
       - name: Release notes from CHANGELOG.md
@@ -205,31 +234,33 @@ jobs:
           section() { awk -v v="$1" '/^## /{ if (on) exit; on = ($2 == v); next } on' CHANGELOG.md; }
           section "$v" > notes.md
           [ -s notes.md ] || section Unreleased > notes.md
-          [ -s notes.md ] || echo "PhoneBox $v" > notes.md
+          [ -s notes.md ] || echo "NikoDeck $v" > notes.md
           cat >> notes.md <<'EOF'
 
           ---
-          [Code signing policy](https://github.com/ersinkoc/phonebox#code-signing-policy) · [Privacy policy](https://github.com/ersinkoc/phonebox/blob/main/PRIVACY.md)
+          [Code signing policy](https://github.com/LordSigfrid/NikoDeck#code-signing-policy) · [Privacy policy](https://github.com/LordSigfrid/NikoDeck/blob/main/PRIVACY.md)
           EOF
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           v="${{ needs.version.outputs.version }}"
-          gh release create "v$v" dist/* --title "PhoneBox $v" --notes-file notes.md --target "${{ github.sha }}" ${{ inputs.draft && '--draft' || '' }}
-      # a draft's downloads are not public yet, so the package manifests follow only published releases
+          gh release create "v$v" dist/* --title "NikoDeck $v" --notes-file notes.md --target "${{ github.sha }}" ${{ inputs.draft && '--draft' || '' }}
+      # a draft's downloads are not public yet, so the package manifests follow only published releases; and only a
+      # release of main, since the commit below is rebased onto main and pushed there (from another branch it would
+      # put that branch's commits on main)
       - name: Update the Scoop bucket and the winget manifests
-        if: ${{ !inputs.draft }}
+        if: ${{ !inputs.draft && github.ref == 'refs/heads/main' }}
         run: |
           v="${{ needs.version.outputs.version }}"
-          sha=$(sha256sum "dist/PhoneBoxAgent-$v-win-x64.zip" | cut -d' ' -f1)
+          sha=$(sha256sum "dist/NikoDeckAgent-$v-win-x64.zip" | cut -d' ' -f1)
           python3 - "$v" "$sha" <<'PY'
           import json, sys
           v, sha = sys.argv[1], sys.argv[2]
-          p = 'bucket/phonebox.json'
+          p = 'bucket/nikodeck.json'
           m = json.load(open(p, encoding='utf-8'))
           m['version'] = v
-          m['architecture']['64bit']['url'] = f'https://github.com/ersinkoc/phonebox/releases/download/v{v}/PhoneBoxAgent-{v}-win-x64.zip'
+          m['architecture']['64bit']['url'] = f'https://github.com/LordSigfrid/NikoDeck/releases/download/v{v}/NikoDeckAgent-{v}-win-x64.zip'
           m['architecture']['64bit']['hash'] = sha
           # the agent is self-contained since 0.9.7: no .NET runtime to suggest
           m.get('suggest', {}).pop('.NET Desktop Runtime 10', None)
@@ -238,7 +269,7 @@ jobs:
           python3 packaging/winget/make-manifests.py "$v" "$sha"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add bucket/phonebox.json packaging/winget/manifests
+          git add bucket/nikodeck.json packaging/winget/manifests
           git commit -m "Scoop and winget manifests for $v"
           # main may have moved on while the release ran (0.9.28): put the commit on top of it, then push
           for attempt in 1 2 3; do

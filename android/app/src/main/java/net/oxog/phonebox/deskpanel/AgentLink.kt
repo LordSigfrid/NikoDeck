@@ -22,7 +22,7 @@ import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.X509TrustManager
 
 /**
- * Connection to the PhoneBox agent on the PC.
+ * Connection to the NikoDeck agent on the PC.
  *
  * 1. USB: https://127.0.0.1:8765, tunnelled by "adb reverse" while the cable is plugged in. Every app on the phone can
  *    reach that address, so the TLS certificate is pinned (the agent writes the pin over adb) and each request carries
@@ -503,7 +503,7 @@ class AgentLink(private val context: Context) {
 
     /** Why a pairing failed, so the shell can say it in the phone's language instead of English inside a dialog. */
     sealed class PairFailure {
-        /** No address answered: not the same network, or the firewall blocked PhoneBox. */
+        /** No address answered: not the same network, or the firewall blocked NikoDeck. */
         data class Unreachable(val pc: String, val hosts: List<String>) : PairFailure()
 
         /** The agent refused the one-time code (it works once, for five minutes). */
@@ -541,7 +541,7 @@ class AgentLink(private val context: Context) {
 
             /**
              * Only the addresses the agent offers: private network (10/8, 172.16/12, 192.168/16) and Tailscale
-             * (100.64/10) IPv4. A link pointing anywhere else is not a PhoneBox pairing link.
+             * (100.64/10) IPv4. A link pointing anywhere else is not a NikoDeck pairing link.
              */
             fun isLocalAddress(host: String): Boolean {
                 val p = host.split('.')
@@ -551,15 +551,15 @@ class AgentLink(private val context: Context) {
             }
 
             /**
-             * Reads https://ersinkoc.github.io/phonebox/pair/#v=1&... (the QR code; the data is in the fragment so it
-             * never reaches a web server) or phonebox://pair?v=1&... (the "Open in PhoneBox" button on that page).
+             * Reads https://lordsigfrid.github.io/NikoDeck/pair/#v=1&... (the QR code; the data is in the fragment so it
+             * never reaches a web server) or nikodeck://pair?v=1&... (the "Open in NikoDeck" button on that page).
              * Anything malformed returns null.
              */
             fun parse(uri: Uri?): PairLink? {
                 if (uri == null) return null
                 val raw = when {
-                    uri.scheme == "https" && uri.host == "ersinkoc.github.io" && uri.path?.startsWith("/phonebox/pair") == true -> uri.encodedFragment
-                    uri.scheme == "phonebox" && uri.host == "pair" -> uri.encodedQuery
+                    uri.scheme == "https" && uri.host == "lordsigfrid.github.io" && uri.path?.startsWith("/NikoDeck/pair", ignoreCase = true) == true -> uri.encodedFragment
+                    uri.scheme == "nikodeck" && uri.host == "pair" -> uri.encodedQuery
                     else -> null
                 } ?: return null
                 val q = raw.split('&').mapNotNull { part ->

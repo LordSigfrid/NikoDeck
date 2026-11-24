@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Builds the PhoneBox agent as ready-to-run files from a checkout. Works on macOS and Linux (build.ps1 does the same on Windows).
+# Builds the NikoDeck agent as ready-to-run files from a checkout. Works on macOS and Linux (build.ps1 does the same on Windows).
 #
 #   ./scripts/build.sh                  # for this machine: macOS -> .dmg, Linux -> .tar.gz
 #   ./scripts/build.sh osx-arm64        # one target:  linux-x64 | linux-arm64 | osx-arm64 | osx-x64
 #   ./scripts/build.sh all              # every target buildable here
 #
 # Output lands in dist/ (not tracked by git):
-#   osx-*       PhoneBox-<version>-<rid>.dmg    PhoneBox.app + an Applications shortcut (the .dmg itself needs a Mac)
-#   linux-*     PhoneBoxAgent-<version>-<rid>.tar.gz    a single executable file; the archive keeps the run bit
+#   osx-*       NikoDeck-<version>-<rid>.dmg    NikoDeck.app + an Applications shortcut (the .dmg itself needs a Mac)
+#   linux-*     NikoDeckAgent-<version>-<rid>.tar.gz    a single executable file; the archive keeps the run bit
 #
 # Every file is self-contained: no .NET runtime is needed to run it. Building needs the .NET 10 SDK (or newer).
 # The .dmg is ad-hoc signed, so a copy downloaded to another Mac is blocked the first time (System Settings > Privacy & Security >
@@ -58,11 +58,11 @@ publish() { # publish <rid> <out dir>
 }
 
 make_dmg() { # make_dmg <rid> <published dir>
-  local rid="$1" out="$2" app="$work/PhoneBox-$1.app" dmg="$dist/PhoneBox-$version-$1.dmg"
+  local rid="$1" out="$2" app="$work/NikoDeck-$1.app" dmg="$dist/NikoDeck-$version-$1.dmg"
   "$root/tools/make-macos-dmg.sh" app "$out" "$version" "$app"
-  # Ad hoc signing makes macOS accept the unsigned binary. Releases sign with PhoneBox's own certificate instead
+  # Ad hoc signing makes macOS accept the unsigned binary. Releases sign with NikoDeck's own certificate instead
   # (.github/actions/sign-macos-agent), so a copy built here has a different identity from a release and has to be allowed again.
-  codesign --force --deep --sign - --identifier net.oxog.phonebox.agent "$app" >/dev/null 2>&1
+  codesign --force --deep --sign - --identifier com.lordsigfrid.nikodeck.agent "$app" >/dev/null 2>&1
   "$root/tools/make-macos-dmg.sh" dmg "$app" "$version" "$dmg"
   echo "  $dmg"
 }
@@ -73,14 +73,14 @@ for rid in $targets; do
     win-x64) echo "The Windows .exe has to be built on Windows: run scripts\\build.ps1 there, or take it from a GitHub release." >&2; exit 1 ;;
     *) echo "Unknown target '$rid' (linux-x64, linux-arm64, osx-arm64, osx-x64, all)" >&2; exit 1 ;;
   esac
-  echo "==> PhoneBox agent $version for $rid"
+  echo "==> NikoDeck agent $version for $rid"
   out="$work/out-$rid"
   publish "$rid" "$out"
   case "$rid" in
     osx-*) make_dmg "$rid" "$out" ;;
     linux-*)
-      chmod +x "$out/PhoneBoxAgent"
-      tar -C "$out" -czf "$dist/PhoneBoxAgent-$version-$rid.tar.gz" .
-      echo "  $dist/PhoneBoxAgent-$version-$rid.tar.gz" ;;
+      chmod +x "$out/NikoDeck"
+      tar -C "$out" -czf "$dist/NikoDeckAgent-$version-$rid.tar.gz" .
+      echo "  $dist/NikoDeckAgent-$version-$rid.tar.gz" ;;
   esac
 done

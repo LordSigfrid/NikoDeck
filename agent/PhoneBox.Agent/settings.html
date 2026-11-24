@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PhoneBox Settings</title>
+<title>NikoDeck Settings</title>
 <link rel="icon" href="/favicon.ico">
 <style>
 :root {
@@ -485,7 +485,7 @@ nav a.on::before { color: var(--accent); }
 <body>
 <header id="hdr">
   <img src="/favicon.ico" alt="" width="28" height="28">
-  <h1>PhoneBox</h1><span class="ver" id="ver"></span>
+  <h1>NikoDeck</h1><span class="ver" id="ver"></span>
   <span class="pill" id="phone"><i></i><span data-i18n="s.phoneStatus">Phone…</span></span>
   <button class="btn sm upd-top" id="updTop" hidden></button>
   <div class="spacer"></div>
@@ -619,7 +619,7 @@ nav a.on::before { color: var(--accent); }
           <label class="check"><input type="checkbox" data-bind="photos.subfolders"> <span data-i18n="s.photos.subfolders">Include subfolders</span></label>
         </div>
         <div id="photosImmichBox" hidden>
-          <p class="hint" style="margin:0 0 12px" data-i18n="s.photos.immichHint">PhoneBox reads the album from your Immich server and shows the preview-size pictures Immich makes. A read-only API key is enough: it needs the album.read, asset.read and asset.view permissions (Immich › Account Settings › API Keys). The address and key stay on this computer; only this server is contacted.</p>
+          <p class="hint" style="margin:0 0 12px" data-i18n="s.photos.immichHint">NikoDeck reads the album from your Immich server and shows the preview-size pictures Immich makes. A read-only API key is enough: it needs the album.read, asset.read and asset.view permissions (Immich › Account Settings › API Keys). The address and key stay on this computer; only this server is contacted.</p>
           <div class="field"><label data-i18n="s.photos.immichUrl">Immich address</label>
             <input type="text" data-bind="photos.immichUrl" placeholder="http://192.168.1.10:2283" spellcheck="false" autocomplete="off"></div>
           <div class="field"><label data-i18n="s.photos.immichKey">API key</label>
@@ -669,7 +669,7 @@ nav a.on::before { color: var(--accent); }
       <div class="card">
         <h3 data-i18n="s.discord.title">Discord</h3>
         <div class="row" style="margin-bottom:8px"><label class="switch"><input type="checkbox" data-bind="discord.enabled"><span></span></label> <span data-i18n="s.discord.enable">Connect to the Discord app on this PC (for the Discord widget)</span></div>
-        <p class="hint" style="margin:0 0 12px" data-i18n="s.discord.hint">Create an application at discord.com/developers/applications, add the redirect http://127.0.0.1 under OAuth2, and copy its client ID and secret here. Discord asks you to approve PhoneBox once. If it refuses the login, add your account under the application's App Testers. Step by step: docs/DISCORD.md.</p>
+        <p class="hint" style="margin:0 0 12px" data-i18n="s.discord.hint">Create an application at discord.com/developers/applications, add the redirect http://127.0.0.1 under OAuth2, and copy its client ID and secret here. Discord asks you to approve NikoDeck once. If it refuses the login, add your account under the application's App Testers. Step by step: docs/DISCORD.md.</p>
         <div class="grid2">
           <div class="field"><label data-i18n="s.discord.clientId">Client ID</label><input type="text" data-bind="discord.clientId" autocomplete="off" spellcheck="false"></div>
           <div class="field"><label data-i18n="s.discord.clientSecret">Client secret</label><input type="password" data-bind="discord.clientSecret" autocomplete="off"></div>
@@ -677,9 +677,9 @@ nav a.on::before { color: var(--accent); }
         <div class="row" style="margin:12px 0 4px"><label class="switch"><input type="checkbox" data-bind="discord.allowControl" aria-labelledby="discordAllowControlLabel"><span></span></label> <span id="discordAllowControlLabel" data-i18n="s.discord.allowControl">Let shortcuts and custom widgets control Discord, without a Discord widget</span></div>
         <p class="hint" style="margin:0" data-i18n="s.discord.allowControlHint">For the agent's /api/discord actions: mute, deafen, input mode, leave and join. Off: they work only while a Discord widget with Control on is on an enabled page. On: they work without one. Either way, anything that can call the agent can use them, not only the widget: the paired phone (USB or Wi-Fi) and programs on this computer.</p>
         <div class="row" style="margin:12px 0 4px"><label class="switch"><input type="checkbox" data-bind="discord.screenShare" aria-labelledby="discordScreenShareLabel"><span></span></label> <span id="discordScreenShareLabel" data-i18n="s.discord.screenShare">Start and stop Discord screen shares from the phone</span></div>
-        <p class="hint" style="margin:0" data-i18n="s.discord.screenShareHint">Asks Discord for permission to start screen shares, so Discord asks you to approve PhoneBox once more. While the share view is open on the phone, PhoneBox lists the apps with a window on this computer (names only). Discord decides what it can share directly; for anything else use its picker on the computer. Also needs a Discord widget with Control on.</p>
+        <p class="hint" style="margin:0" data-i18n="s.discord.screenShareHint">Asks Discord for permission to start screen shares, so Discord asks you to approve NikoDeck once more. While the share view is open on the phone, NikoDeck lists the apps with a window on this computer (names only). Discord decides what it can share directly; for anything else use its picker on the computer. Also needs a Discord widget with Control on.</p>
         <div class="row" style="margin:12px 0 4px"><label class="switch"><input type="checkbox" data-bind="discord.chat" aria-labelledby="discordChatLabel"><span></span></label> <span id="discordChatLabel" data-i18n="s.discord.chat">Show Discord chat and new-message dots on the phone (read-only)</span></div>
-        <p class="hint" style="margin:0" data-i18n="s.discord.chatHint">Sends the text of the channels you open in the widget to the phone. Asks Discord for permission to read messages, so Discord asks you to approve PhoneBox once more. The text stays in memory only (never in a file or the log) and is gone when Discord disconnects or this is turned off. If you decline, only the chat stays off.</p>
+        <p class="hint" style="margin:0" data-i18n="s.discord.chatHint">Sends the text of the channels you open in the widget to the phone. Asks Discord for permission to read messages, so Discord asks you to approve NikoDeck once more. The text stays in memory only (never in a file or the log) and is gone when Discord disconnects or this is turned off. If you decline, only the chat stays off.</p>
       </div>
 
       <div class="card">
@@ -721,7 +721,7 @@ nav a.on::before { color: var(--accent); }
           <div class="field" style="margin:0"><label data-i18n="lang.label">Language</label>
             <select data-bind="display.language" id="displayLangSel"></select></div>
           <div class="field" style="margin:0"><label data-i18n="s.display.theme">Theme</label>
-            <select data-bind="display.theme"><option value="default" data-i18n="s.display.theme.default">Default</option><option value="amoled" data-i18n="s.display.theme.amoled">AMOLED black</option><option value="midnight" data-i18n="s.display.theme.midnight">Midnight blue</option><option value="warm" data-i18n="s.display.theme.warm">Warm</option><option value="graphite" data-i18n="s.display.theme.graphite">Graphite</option></select></div>
+            <select data-bind="display.theme"><option value="niko" data-i18n="s.display.theme.niko">Niko</option><option value="default" data-i18n="s.display.theme.default">Default</option><option value="amoled" data-i18n="s.display.theme.amoled">AMOLED black</option><option value="midnight" data-i18n="s.display.theme.midnight">Midnight blue</option><option value="warm" data-i18n="s.display.theme.warm">Warm</option><option value="graphite" data-i18n="s.display.theme.graphite">Graphite</option></select></div>
           <div class="field" style="margin:0"><label data-i18n="s.display.accent">Accent colour</label><input type="color" data-bind="display.accent" style="width:56px;height:36px;padding:2px"></div>
           <label class="check" style="margin-bottom:8px"><input type="checkbox" data-bind="display.artTint"> <span data-i18n="s.display.artTint">Tint the background with the album art</span></label>
         </div>
@@ -791,13 +791,13 @@ nav a.on::before { color: var(--accent); }
         <label class="check"><input type="checkbox" data-bind="display.pin"> <span data-i18n="s.kiosk.pin">Pin the panel: Home and Recents stay on it (Android asks once; hold Back and Overview together to unpin)</span></label>
         <label class="check"><input type="checkbox" data-bind="display.homeScreen"> <span data-i18n="s.kiosk.homeScreen">Use the panel as the phone's home screen: it starts after a reboot and Home returns to it (turn off to get your launcher back)</span></label>
         <label class="check"><input type="checkbox" data-bind="display.keepAwake"> <span data-i18n="s.kiosk.keepAwake">Keep the phone awake: turn off Android's screen saver (it starts on the charger) and keep the screen on while plugged in (set over USB)</span></label>
-        <label class="check"><input type="checkbox" data-bind="display.openOnConnect"> <span data-i18n="s.kiosk.openOnConnect">Open PhoneBox when the phone is plugged in: wake the phone and bring the panel to the front whenever it connects over USB (turn off to open it yourself, for a phone you also use for app testing)</span></label>
-        <label class="check" id="followComputerLockOption" style="display:none"><input type="checkbox" data-bind="display.followComputerLock"> <span data-i18n="s.kiosk.followLock">Follow the computer lock: turn the phone screen off when macOS locks; wake it and open PhoneBox when macOS unlocks (ADB required; unlock phones secured by a PIN or password manually)</span></label>
+        <label class="check"><input type="checkbox" data-bind="display.openOnConnect"> <span data-i18n="s.kiosk.openOnConnect">Open NikoDeck when the phone is plugged in: wake the phone and bring the panel to the front whenever it connects over USB (turn off to open it yourself, for a phone you also use for app testing)</span></label>
+        <label class="check" id="followComputerLockOption" style="display:none"><input type="checkbox" data-bind="display.followComputerLock"> <span data-i18n="s.kiosk.followLock">Follow the computer lock: turn the phone screen off when macOS locks; wake it and open NikoDeck when macOS unlocks (ADB required; unlock phones secured by a PIN or password manually)</span></label>
       </div>
 
       <div class="card">
         <h3 data-i18n="s.battery.title">Battery care</h3>
-        <p class="hint" style="margin:0 0 12px"><span data-i18n="s.battery.leadHead">A phone that is plugged in all the time wears its battery out. PhoneBox can keep it between two</span>
+        <p class="hint" style="margin:0 0 12px"><span data-i18n="s.battery.leadHead">A phone that is plugged in all the time wears its battery out. NikoDeck can keep it between two</span>
           <span data-i18n="s.battery.leadMid">levels by switching the phone's power on and off. Phones cannot stop charging by themselves without root, so the power is switched</span>
           <span data-i18n-html="s.battery.leadTail">where it comes from: a <b>smart plug in Home Assistant</b> (the phone on its own charger), or two <b>shortcuts</b>, for example
           <code>uhubctl</code> for a USB hub with switchable ports. Without USB power the panel keeps running over Wi-Fi.</span></p>
@@ -832,7 +832,7 @@ nav a.on::before { color: var(--accent); }
         <h3 data-i18n="s.approvals.title">AI coding agent permission prompts</h3>
         <p class="hint" style="margin:0 0 12px" data-i18n-html="s.approvals.hint">When Codex or Claude Code asks for permission, the phone shows the request with <b>Allow</b> and <b>Deny</b>. Install the hook for each agent you use; existing hook files are preserved and backed up.</p>
         <div class="row" style="margin-bottom:8px"><b style="min-width:92px" data-i18n="s.approvals.codex">Codex</b><button class="btn" id="codexHookBtn" data-i18n="s.claude.installHook">Install hook</button><span class="hint" id="codexHookState"></span></div>
-        <p class="hint" id="codexHookTrust" style="display:none;margin:-2px 0 12px 100px" data-i18n-html="s.approvals.codexTrust">Required once: start a new Codex session, then trust the PhoneBox hook in <b>Settings › Hooks</b> (desktop) or <code>/hooks</code> (CLI).</p>
+        <p class="hint" id="codexHookTrust" style="display:none;margin:-2px 0 12px 100px" data-i18n-html="s.approvals.codexTrust">Required once: start a new Codex session, then trust the NikoDeck hook in <b>Settings › Hooks</b> (desktop) or <code>/hooks</code> (CLI).</p>
         <div class="row" style="margin-bottom:12px"><b style="min-width:92px" data-i18n="s.approvals.claude">Claude Code</b><button class="btn" id="claudeHookBtn" data-i18n="s.claude.installHook">Install hook</button><span class="hint" id="claudeHookState"></span></div>
         <div class="row" style="margin-bottom:8px"><label class="switch"><input type="checkbox" data-bind="claude.phoneApprovals"><span></span></label> <span data-i18n="s.claude.askOnPhone">Ask on the phone</span></div>
         <label class="check"><input type="checkbox" data-bind="claude.shareSessionTitles"> <span data-i18n="s.claude.shareSessionTitles">Show Claude Code chat titles on the phone (Claude Code often draws them from your first prompt)</span></label>
@@ -1251,11 +1251,13 @@ function optVal(w, o) {
   // The previous Clock alignment value is an alias for the logical start.
   return w.type === 'clock' && o.key === 'align' && value === 'left' ? 'start' : value;
 }
-/** An option with showWhen {key, not} is drawn only while the widget's option <key> is not set to <not> (an option that does nothing while another is off is not offered). */
+/** An option with showWhen {key, not} is drawn only while the widget's option <key> is not set to <not>, and one with
+ *  showWhen {key, is} only while it is set to <is> (an option that does nothing while another is off is not offered). */
 function optionShown(w, d, o) {
   if (!o.showWhen) return true;
   const driver = d.options.find((x) => x.key === o.showWhen.key);
   const v = driver ? optVal(w, driver) : undefined;
+  if ('is' in o.showWhen) return v === o.showWhen.is;
   return v !== o.showWhen.not;
 }
 /** The catalog's defaults for a widget type, written out so the panel and the agent see what the inspector shows. */
@@ -1487,6 +1489,7 @@ function sendPreview() {
   // the settings file has no wallpaper revision (the agent adds it for the phone): the preview gets the picture shown
   // here, so the darkening and blur being edited can be seen on it
   config.wallpaperRev = wallpaperShown;
+  config.visorMediaRev = visorMediaShown; // the same for the Visor's background media, once its editor has shown it
   if (previewFrame && previewReady && stageMode === 'live')
     previewFrame.contentWindow.postMessage({ type: 'phonebox-preview', config, page: selPage }, location.origin);
   if (appearancePreviewFrame && appearancePreviewReady)
@@ -1897,10 +1900,13 @@ function optionField(w, o, onValChange) {
           if (e.target.checked) picked.add(k); else picked.delete(k);
           const knownOrder = currentChoices.map((c) => c[0]).filter((x) => picked.has(x));
           const preservedUnknown = [...picked].filter((x) => !knownOrder.includes(x));
-          const next = [...knownOrder, ...preservedUnknown];
+          // an ordered list (the Visor's metrics) keeps the order the boxes were ticked in: a new one goes last
+          const next = o.ordered ? [...cur().filter((x) => picked.has(x)), ...(e.target.checked && !cur().includes(k) ? [k] : [])]
+            : [...knownOrder, ...preservedUnknown];
           if (!next.length) { e.target.checked = true; toast(t('s.js.keepOne'), true); return; }
           set(o.key, next);
-        } }), l)));
+          if (o.ordered) renderChoices(currentChoices); // the position numbers move
+        } }), l, o.ordered && selected.includes(k) ? h('span', { class: 'hint', style: { marginInlineStart: '6px' } }, `#${selected.indexOf(k) + 1}`) : null)));
       };
       const withSaved = (list) => {
         const seen = new Set(list.map((c) => c[0]));
@@ -1953,8 +1959,11 @@ function optionField(w, o, onValChange) {
     case 'lines':
       return field(h('textarea', { rows: 5, oninput: (e) => set(o.key, e.target.value.split('\n').map((x) => x.trim()).filter(Boolean)) }, (Array.isArray(v) ? v : []).join('\n')));
     case 'color':
-      return field(h('div', { class: 'row', style: { gap: '8px' } }, h('input', { type: 'color', value: v || '#fbbf24', oninput: (e) => set(o.key, e.target.value) }),
-        h('div', { class: 'swatches' }, ...COLORS.map((c) => h('button', { style: { background: c }, onclick: () => { set(o.key, c); renderInspector(); } })))));
+      // a colour whose default is empty follows the theme until one is picked; its Theme button goes back to that
+      return field(h('div', { class: 'row', style: { gap: '8px' } }, h('input', { type: 'color', value: v || (o.default === '' ? '#00afff' : '#fbbf24'), oninput: (e) => set(o.key, e.target.value) }),
+        h('div', { class: 'swatches' }, ...COLORS.map((c) => h('button', { style: { background: c }, onclick: () => { set(o.key, c); renderInspector(); } }))),
+        o.default === '' ? h('button', { class: 'btn sm', type: 'button', 'aria-pressed': String(!v), onclick: () => { set(o.key, ''); renderInspector(); } }, t('s.display.theme')) : null));
+    case 'visor-media': return visorMediaEditor(o);
     case 'camera':
       return field(h('select', { onchange: (e) => set(o.key, e.target.value) }, h('option', { value: '' }, t('s.camera.pick')),
         ...(cfg.cameras?.sources || []).map((c) => h('option', { value: c.id, selected: c.id === v }, c.name || (c.url || '').replace(/\/\/[^/@]*@/, '//')))));
@@ -1983,6 +1992,97 @@ function optionField(w, o, onValChange) {
       return field(h('input', { type: 'text', value: v ?? '', oninput: (e) => set(o.key, e.target.value) }),
         w.type === 'push' && o.key === 'key' ? h('span', { class: 'hint' }, t('s.js.pushHint')) : null);
   }
+}
+
+// Visor widget: the background picture, GIF or video. Uploaded and removed on its own, like the wallpaper (one file for
+// every Visor widget, the agent's visor-media.<ext>): the agent bumps the settings version, which tells the phones.
+// Each refresh is numbered, so an older one that answers late cannot undo a newer one. The inspector is drawn again on
+// every edit, so the file is kept here under the agent's revision and downloaded again only when that changes (or after
+// an upload or a removal), not on each redraw.
+let visorMediaRefresh = 0, visorMediaShown = null, visorMediaCache = null; // { rev, url, video }
+// the agent's limits (VisorMediaStore): checked here too, so a file that is too large is not sent at all
+const VISOR_MEDIA_MAX_MB = { image: 8, video: 20 };
+const visorMediaMaxMb = (f) => (/^video\//.test(f.type) || /\.(mp4|webm)$/i.test(f.name) ? VISOR_MEDIA_MAX_MB.video : VISOR_MEDIA_MAX_MB.image);
+function visorMediaEditor(o) {
+  const thumb = h('div', { style: { display: 'none', width: '96px', height: '54px', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--line)', flex: 'none' } });
+  const file = h('input', { type: 'file', style: { display: 'none' },
+    accept: '.jpg,.jpeg,.png,.webp,.gif,.mp4,.webm,image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm' });
+  const remove = h('button', { class: 'btn sm', type: 'button', style: { display: 'none' } }, t('s.k.remove'));
+  const choose = h('button', { class: 'btn sm', type: 'button', onclick: () => file.click() }, t('s.visor.choose'));
+  const show = (m) => {
+    if (!m) {
+      thumb.replaceChildren();
+      thumb.style.display = 'none';
+      remove.style.display = 'none';
+      return;
+    }
+    const fit = { width: '100%', height: '100%', objectFit: 'cover', display: 'block' };
+    const el = m.video ? h('video', { src: m.url, muted: true, loop: true, autoplay: true, playsinline: true, style: fit })
+      : h('img', { src: m.url, alt: '', style: fit });
+    if (el.tagName === 'VIDEO') el.muted = true; // the attribute alone does not mute a video that is already loading
+    thumb.replaceChildren(el);
+    thumb.style.display = '';
+    remove.style.display = '';
+  };
+  const drop = () => {
+    if (visorMediaCache) URL.revokeObjectURL(visorMediaCache.url);
+    visorMediaCache = null;
+  };
+  const refresh = async (force) => {
+    const mine = ++visorMediaRefresh;
+    if (force) drop();
+    show(visorMediaCache); // what is already here, at once, while the revision is checked
+    try {
+      // the revision the agent gives the phones (the settings file has none): a small request on every redraw
+      const cr = await fetch('/api/config', { cache: 'no-store' });
+      if (!cr.ok) throw new Error();
+      const rev = (await cr.json())?.config?.visorMediaRev ?? null;
+      if (mine !== visorMediaRefresh) return;
+      if (rev == null) throw new Error();
+      if (visorMediaCache?.rev !== rev) {
+        const res = await fetch('/api/visor-media?v=' + encodeURIComponent(rev), { cache: 'no-store' });
+        if (mine !== visorMediaRefresh) return;
+        if (!res.ok) throw new Error();
+        const blob = await res.blob();
+        if (mine !== visorMediaRefresh) return;
+        drop();
+        visorMediaCache = { rev, url: URL.createObjectURL(blob), video: /^video\//.test(blob.type) };
+      }
+      show(visorMediaCache);
+      visorMediaShown = 'settings-' + rev; // an address of its own for each file, so the preview loads a new one
+    } catch (_) {
+      if (mine !== visorMediaRefresh) return;
+      drop();
+      show(null);
+      visorMediaShown = null;
+    }
+    queuePreview();
+  };
+  const send = async (method, body, type) => {
+    const headers = {};
+    if (type) headers['Content-Type'] = type;
+    if (cfgVersion) headers['X-Config-Version'] = cfgVersion;
+    try {
+      const res = await fetch('/api/settings/visor-media', { method, headers, body });
+      const j = await res.json().catch(() => ({}));
+      if (j.version) cfgVersion = j.version; // also on a failure that moved the settings version (see sendWallpaper)
+      if (!res.ok) throw new Error(j.error || t('s.k.uploadFailed'));
+      toast(t(method === 'DELETE' ? 's.visor.removed' : 's.visor.saved'));
+    } catch (err) { toast(err.message, true); }
+    refresh(true);
+  };
+  file.onchange = (e) => {
+    const f = e.target.files[0];
+    e.target.value = '';
+    if (!f) return;
+    const mb = visorMediaMaxMb(f);
+    if (f.size > mb * 1024 * 1024) { toast(t('s.k.tooLarge', { mb }), true); return; }
+    send('POST', f, f.type);
+  };
+  remove.onclick = () => send('DELETE');
+  refresh(false);
+  return h('div', { class: 'field' }, h('label', {}, o.label),
+    h('div', { class: 'row', style: { gap: '8px', alignItems: 'center', flexWrap: 'wrap' } }, thumb, choose, remove, file));
 }
 
 // Steam library: tick the favorite games, read from Steam's files on this computer when the editor opens. They come
@@ -2325,7 +2425,7 @@ async function importPages() {
   renderPages(); changed();
   toast(`Imported ${clean.length} page(s)` + (dropped ? ` (${dropped} unknown widget(s) left out)` : '') + ' — remember to save');
 }
-$('downloadJson').onclick = () => download('phonebox-settings', cfg);
+$('downloadJson').onclick = () => download('nikodeck-settings', cfg);
 $('uploadJson').onclick = async () => {
   const text = await pickFile();
   if (text == null) return;
@@ -3581,7 +3681,7 @@ function localizeCatalog() {
 function applyLanguageUi(langPref) {
   const I18n = window.PhoneBoxI18n;
   if (!I18n) return;
-  I18n.setLang(langPref || 'auto');
+  I18n.setLang(langPref); // nothing chosen yet: i18n.js uses its default (pt-BR)
   localizeCatalog();
   I18n.populateSelect($('langSel'), true);
   I18n.populateSelect($('displayLangSel'), true);
@@ -3598,11 +3698,11 @@ function applyLanguageUi(langPref) {
 function bindLanguage() {
   const I18n = window.PhoneBoxI18n;
   if (!I18n) return;
-  const pref = cfg.display?.language || 'auto';
+  const pref = cfg.display?.language || I18n.DEFAULT_LANG;
   applyLanguageUi(pref);
   const onPick = (val) => {
     cfg.display ??= {};
-    cfg.display.language = val || 'auto';
+    cfg.display.language = val || I18n.DEFAULT_LANG;
     applyLanguageUi(cfg.display.language);
     // every section holds localized strings: rebuild them all, not only the pages editor
     renderAppearanceSettings();
@@ -3717,7 +3817,7 @@ async function loadInfo() {
     $('usbProblem').replaceChildren(...(i.usbProblem ? [icon('warn', 'm'), i.usbProblem] : []));
     $('webviewProblem').hidden = !i.webviewProblem;
     $('webviewProblem').replaceChildren(...(i.webviewProblem ? [icon('warn', 'm'), i.webviewProblem] : []));
-    if (i.appMissing?.length) $('appMissingText').textContent = `${i.appMissing.join(', ')} has no PhoneBox app yet`;
+    if (i.appMissing?.length) $('appMissingText').textContent = `${i.appMissing.join(', ')} has no NikoDeck app yet`;
     const sel = $('serial');
     const cur = cfg.deviceSerial || '';
     const opts = [['', t('s.conn.allDevices')], ...i.devices.map((d) => [d, d])];
@@ -3757,10 +3857,10 @@ async function loadInfo() {
 // The form reads every section it binds and renders, so a config without one — an older export, or a
 // hand-trimmed paste in Apply JSON — gets the same defaults a fresh load does before anything renders.
 function fillDefaults() {
-  cfg.pages = fitPages(cfg.pages); cfg.shortcuts ??= []; cfg.rules ??= []; cfg.display ??= {}; cfg.display.wallpaper ??= { dim: 45, blur: 0 }; cfg.night = { enabled: true, start: '00:30', end: '07:30', brightness: 0.02, ...cfg.night }; cfg.weather ??= {}; cfg.weather.unit ??= 'celsius'; cfg.weather.model ??= ''; cfg.photos ??= { source: 'folder', folder: '', subfolders: true, immichUrl: '', immichKey: '', immichAlbum: '', immichAlbumName: '' }; cfg.lan ??= { enabled: false, port: 8766 }; cfg.updates ??= { auto: true, repo: 'ersinkoc/phonebox' }; cfg.claude ??= { phoneApprovals: true, timeoutSec: 90, onlyWhenAway: false, shareSessionTitles: false, shareConversation: false, watchWsl: false }; cfg.opencode ??= { phoneApprovals: false, timeoutSec: 90, onlyWhenAway: false, alwaysCountdownSec: 10, watchWsl: false, shareSessionTitles: false, sessions: false };
+  cfg.pages = fitPages(cfg.pages); cfg.shortcuts ??= []; cfg.rules ??= []; cfg.display ??= {}; cfg.display.wallpaper ??= { dim: 45, blur: 0 }; cfg.night = { enabled: false, start: '00:30', end: '07:30', brightness: 0.02, ...cfg.night }; cfg.weather ??= {}; cfg.weather.unit ??= 'celsius'; cfg.weather.model ??= ''; cfg.photos ??= { source: 'folder', folder: '', subfolders: true, immichUrl: '', immichKey: '', immichAlbum: '', immichAlbumName: '' }; cfg.lan ??= { enabled: false, port: 8766 }; cfg.updates ??= { auto: true, repo: 'LordSigfrid/NikoDeck' }; cfg.claude ??= { phoneApprovals: true, timeoutSec: 90, onlyWhenAway: false, shareSessionTitles: false, shareConversation: false, watchWsl: false }; cfg.opencode ??= { phoneApprovals: false, timeoutSec: 90, onlyWhenAway: false, alwaysCountdownSec: 10, watchWsl: false, shareSessionTitles: false, sessions: false };
   cfg.codexBar ??= { providers: ['claude', 'codex', 'antigravity'], rotate: true, pageSize: 2, rotateInterval: 8 };
-  for (const [k, v] of Object.entries({ language: 'auto', hour12: false, idleReturnSec: 90, switchCountdownSec: 3, touchGraceSec: 20, minDwellSec: 15, holdMaxMin: 30, keepAwake: true, openOnConnect: true,
-    showSeconds: true, vibrate: true, finishToast: true, finishSound: false, finishSoundVolume: 70, volumeKeys: true, artTint: true, nightWhenUnreachable: false, unreachableNightDelayMin: 5, proximityWake: true, orientation: 'landscape', theme: 'default', accent: '#2dd4bf' })) cfg.display[k] ??= v;
+  for (const [k, v] of Object.entries({ language: window.PhoneBoxI18n?.DEFAULT_LANG || 'pt-BR', hour12: false, idleReturnSec: 90, switchCountdownSec: 3, touchGraceSec: 20, minDwellSec: 15, holdMaxMin: 30, keepAwake: true, openOnConnect: true,
+    showSeconds: true, vibrate: true, finishToast: true, finishSound: false, finishSoundVolume: 70, volumeKeys: true, artTint: true, nightWhenUnreachable: false, unreachableNightDelayMin: 5, proximityWake: true, orientation: 'landscape', theme: 'niko', accent: '#00afff' })) cfg.display[k] ??= v;
   cfg.charge ??= { enabled: false, min: 50, max: 80, method: 'ha' };
   cfg.steam ??= { enabled: false };
 }
@@ -3773,7 +3873,7 @@ async function load() {
   fillDefaults();
   // the saved language must be active before the first render: the settings page is built in JavaScript, so a browser
   // in English that has display.language = "vi" would otherwise render every editor in English and never rebuild them
-  if (window.PhoneBoxI18n) applyLanguageUi(cfg.display?.language || 'auto');
+  if (window.PhoneBoxI18n) applyLanguageUi(cfg.display?.language);
   else localizeCatalog();
   renderPages(); renderDeck(); renderRules(); renderCalendars(); renderFeeds(); renderCameras(); renderConsole(); renderNetAdapters(); renderCharge(); bindForm();
   // the editors fill in the sections and fields they own (feeds, cameras, an action's "enabled", ...), so the
@@ -3838,7 +3938,7 @@ $('openPhone').onclick = async () => {
 $('cityBtn').onclick = searchCity;
 function renderUpdate(u) {
   const s = u.status;
-  $('updRepo').textContent = cfg.updates?.repo || 'ersinkoc/phonebox';
+  $('updRepo').textContent = cfg.updates?.repo || 'LordSigfrid/NikoDeck';
   const line = (k, v) => [h('dt', {}, k), h('dd', {}, v)];
   $('updInfo').replaceChildren(
     ...line(t('s.adv.agent'), s.agentVersion + (s.agentUpdate ? ` → ${s.latest}` : ' ' + t('s.adv.upToDate')) + (u.installed ? '' : ' · ' + t('s.adv.notInstalledCopy'))),
@@ -3903,6 +4003,7 @@ for (const name of ['codex', 'claude']) $(`${name}HookBtn`).onclick = async () =
 // Uploaded and removed on its own, like a shortcut icon: the agent bumps the settings version, which tells the phones.
 // Each refresh is numbered: an older one that answers late (the first load racing an upload) must not undo a newer one.
 let wallpaperRefresh = 0, wallpaperShown = null;
+const WALLPAPER_MAX_MB = 4; // the agent's WallpaperStore.MaxBytes: a picture that is too large is not sent at all
 async function refreshWallpaper() {
   const img = $('wallpaperPreview');
   const mine = ++wallpaperRefresh;
@@ -3945,7 +4046,9 @@ $('wallpaperUpload').onclick = () => $('wallpaperFile').click();
 $('wallpaperFile').onchange = (e) => {
   const f = e.target.files[0];
   e.target.value = '';
-  if (f) sendWallpaper('POST', f, f.type);
+  if (!f) return;
+  if (f.size > WALLPAPER_MAX_MB * 1024 * 1024) { toast(t('s.k.tooLarge', { mb: WALLPAPER_MAX_MB }), true); return; }
+  sendWallpaper('POST', f, f.type);
 };
 $('wallpaperRemove').onclick = () => sendWallpaper('DELETE');
 refreshWallpaper();
@@ -3953,7 +4056,7 @@ $('modalClose').onclick = closeModal;
 $('lanPair').onclick = pairOverWifi;
 $('modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); };
 const whTry = (fn, ok) => async () => { try { await fn(); toast(tc(ok)); loadPushed(); } catch (e) { toast(e.message, true); } };
-$('whNotify').onclick = whTry(() => postJson('/api/notify', { title: 'PhoneBox', text: tc('Hello from the settings page'), level: 'ok' }), 'Sent — look at the phone');
+$('whNotify').onclick = whTry(() => postJson('/api/notify', { title: 'NikoDeck', text: tc('Hello from the settings page'), level: 'ok' }), 'Sent — look at the phone');
 $('whPush').onclick = whTry(() => postJson('/api/push/demo', { value: Math.round(Math.random() * 100), unit: '%', sub: tc('sent ') + new Date().toLocaleTimeString() }), 'Pushed "demo"');
 $('whRefresh').onclick = whTry(() => postJson('/api/refresh'), 'The panel refreshes');
 $('whReload').onclick = whTry(() => postJson('/api/refresh?reload=1'), 'The panel reloads');
@@ -4003,7 +4106,7 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 route();
-applyLanguageUi(window.PhoneBoxI18n?.getPref() || 'auto');
+applyLanguageUi(window.PhoneBoxI18n?.getPref());
 fitLeads();
 load();
 setInterval(loadInfo, 5000);

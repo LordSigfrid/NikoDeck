@@ -1,6 +1,25 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 — 2026-11-24
+
+The first release of NikoDeck, a fork of [PhoneBox](https://github.com/ersinkoc/phonebox) by Ersin Koc: its own
+name, icons and theme, Brazilian Portuguese first, and a Modo Visor widget. This release has Windows and Linux agents
+and the Android app; there are no macOS builds yet.
+
+**NikoDeck**
+- Niko theme, now the default (near-black background, deep blue panels, electric blue and cyan metrics, an orange
+  accent), and panel motion: pages slide in, shortcut tiles press down, numbers count to their new value, gauges and
+  bars move. Nothing moves when the system asks for less motion.
+- Brazilian Portuguese first: the panel, the settings page, the tray and the installers start in pt-BR when no
+  language is chosen; an explicit choice still wins, and **auto** still follows the device.
+- Modo Visor: a widget that fills a page with one big glowing metric (CPU/GPU load or temperature, RAM), a ring that
+  turns orange and red past its limits, and an animated background or a picture, GIF or short video of your own.
+- NikoDeck everywhere: app name, icons, Android app id `com.lordsigfrid.nikodeck` (it installs next to PhoneBox),
+  `NikoDeck.exe`, and downloads and updates from LordSigfrid/NikoDeck. Settings live in their own `NikoDeck` folder;
+  the first run copies an existing PhoneBox settings folder once.
+- The night screen is off by default, so the phone's panel stays lit.
+
+Also in this release, from PhoneBox since 0.9.29:
 
 **Widgets**
 - News feeds on Windows: a headline opens the article in the default browser again, not in File Explorer. Links now go
@@ -55,7 +74,7 @@
   Settings › Privacy & Security › Open Anyway. The app updates itself from the next release's disk image: the image
   is checked against the release's checksums and must be signed by the same identity, and the old app is kept until
   the new one is in place. `scripts/build.sh` builds a .dmg on a Mac or a .tar.gz on Linux from a checkout (#436,
-  #437, [Vasilispapg](https://github.com/Vasilispapg)).
+  #437, [Vasilispapg](https://github.com/Vasilispapg)). NikoDeck 1.0.0 has no macOS builds, so no disk image yet.
 
 ## 0.9.29 — 2026-11-23
 

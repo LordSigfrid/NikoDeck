@@ -11,10 +11,10 @@ with tempfile.TemporaryDirectory() as tmp:
     generator = pathlib.Path(shutil.copyfile(GENERATOR, pathlib.Path(tmp, GENERATOR.name)))
     version = '0.0.1'
     subprocess.run([sys.executable, str(generator), version, 'a' * 64], check=True)
-    directory = pathlib.Path(tmp, 'manifests/e/ersinkoc/PhoneBox', version)
-    locale = (directory / 'ersinkoc.PhoneBox.locale.en-US.yaml').read_text(encoding='utf-8')
-    installer = (directory / 'ersinkoc.PhoneBox.installer.yaml').read_text(encoding='utf-8')
-    notes = f'ReleaseNotesUrl: https://github.com/ersinkoc/phonebox/releases/tag/v{version}'
+    directory = pathlib.Path(tmp, 'manifests/l/LordSigfrid/NikoDeck', version)
+    locale = (directory / 'LordSigfrid.NikoDeck.locale.en-US.yaml').read_text(encoding='utf-8')
+    installer = (directory / 'LordSigfrid.NikoDeck.installer.yaml').read_text(encoding='utf-8')
+    notes = f'ReleaseNotesUrl: https://github.com/LordSigfrid/NikoDeck/releases/tag/v{version}'
     assert notes in locale.splitlines(), 'WinGet default locale must carry the release notes URL'
     assert notes not in installer.splitlines(), 'WinGet installer has no release notes field'
     print('PASS: WinGet release notes live in the default locale')

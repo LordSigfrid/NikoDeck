@@ -1,8 +1,9 @@
-// PhoneBox desk panel: core, pages, navigation and data from the agent. The widgets live in widgets/*.js;
+// NikoDeck desk panel: core, pages, navigation and data from the agent. The widgets live in widgets/*.js;
 // they import what they need from here, so this module must not run code that needs them while it loads
 // (the start section at the end runs after every module has loaded).
 import { W } from './registry.js';
 import './appearance.js';
+import { pageIn, reducedMotion, setShownPage } from './motion.js';
 import { cached } from './widgets/helpers.js';
 import './widgets/basic.js';
 import './widgets/stack.js';
@@ -18,9 +19,10 @@ import './widgets/camera.js';
 import './widgets/spectrum.js';
 import './widgets/steam-library.js';
 import './widgets/lyrics.js';
+import './widgets/visor.js';
 
-// PhoneBox desk panel. Pages are 12 × 6 grids of widgets, designed in the agent's settings page.
-// The panel talks to the PhoneBox agent through "/agent/*", which the Android shell proxies over USB
+// NikoDeck desk panel. Pages are 12 × 6 grids of widgets, designed in the agent's settings page.
+// The panel talks to the NikoDeck agent through "/agent/*", which the Android shell proxies over USB
 // (adb reverse) or Wi-Fi to the computer.
 
 export const API = '/agent/api';
@@ -81,7 +83,7 @@ export const FALLBACK_PAGES = [{
 
 export const DEFAULT_CFG = {
   weather: { city: 'Tallinn', lat: 59.437, lon: 24.745, unit: 'celsius', model: '' },
-  night: { enabled: true, start: '00:30', end: '07:30', brightness: 0.02 },
+  night: { enabled: false, start: '00:30', end: '07:30', brightness: 0.02 },
   display: { showSeconds: true, idleReturnSec: 90, vibrate: true, finishToast: true, finishSound: false, finishSoundVolume: 70, volumeKeys: true, nightWhenUnreachable: false, unreachableNightDelayMin: 5, pageBar: 'dots', pageBarSide: 'bottom' },
   opencode: { alwaysCountdownSec: 10 },
   pages: FALLBACK_PAGES,
@@ -591,7 +593,7 @@ export const METRICS = {
   up: { label: 'UPLOAD', name: 'Upload', color: '--up', rate: true, max: netMax, val: (s) => s.pc?.netUpBps },
   ping: { label: 'PING', name: 'Ping', color: '#38bdf8', unit: 'ms', max: () => Math.max(50, ...hist.ping) * 1.2, val: (s) => s.ping?.ms,
     sub: (s) => (s.ping ? tpv('avg {avg} ms · loss {loss}%', { avg: s.ping.avgMs ?? '—', loss: s.ping.lossPct }) : '') },
-  gputemp: { label: 'GPU TEMP', name: 'GPU temperature', color: '#f97316', unit: '°C', max: () => 100, hot: [75, 85], val: (s) => gpuOf(s)?.temp,
+  gputemp: { label: 'GPU TEMP', name: 'GPU temperature', color: '--temp', unit: '°C', max: () => 100, hot: [75, 85], val: (s) => gpuOf(s)?.temp,
     sub: (s) => {
       const g = gpuOf(s);
       if (!g) return tp('No GPU data');
@@ -617,7 +619,7 @@ export const METRICS = {
     } },
   gpuclock: { label: 'GPU CLOCK', name: 'GPU clock', color: '#a78bfa', unit: 'MHz', max: () => Math.max(1000, ...hist.gpuclock) * 1.1, val: (s) => gpuOf(s)?.clock,
     sub: (s) => { const g = gpuOf(s); return g?.memClock != null ? tpv('Memory {n} MHz', { n: Math.round(g.memClock) }) : g?.clock == null ? tp('No clock data') : ''; } },
-  cputemp: { label: 'CPU TEMP', name: 'CPU temperature', color: '#fb7185', unit: '°C', max: () => 100, hot: [75, 85], val: (s) => s.pc?.cpuTemp,
+  cputemp: { label: 'CPU TEMP', name: 'CPU temperature', color: '--cputemp', unit: '°C', max: () => 100, hot: [75, 85], val: (s) => s.pc?.cpuTemp,
     sub: (s) => (s.pc?.cpuTemp == null ? tp('needs LibreHardwareMonitor') : shortCpu(s.pc?.cpuName)) },
   cpupower: { label: 'CPU POWER', name: 'CPU power', color: '#a3e635', unit: 'W', max: () => Math.max(...hist.cpupower, 50), val: (s) => s.pc?.cpuPower,
     sub: (s) => (s.pc?.cpuPower != null ? shortCpu(s.pc?.cpuName) : s.os === 'windows' ? tp('needs LibreHardwareMonitor') : tp('No power data')) },
@@ -896,7 +898,7 @@ export const setMediaState = (m) => {
   emit('state');
 };
 // The background glow: the accent colour (Settings › Display), or the album art's colour while music plays.
-export let DEFAULT_AMBIENT = '45, 212, 191';
+export let DEFAULT_AMBIENT = '0, 175, 255'; // Niko's blue until the settings say otherwise
 export let artTint = true;
 export let currentArtColor = null;
 export const setArtColor = (c) => { currentArtColor = c; setAmbient(c); };
@@ -1437,10 +1439,13 @@ export function handleEvent(e) {
 export const WIDGET_ICONS = { camera: '📹', dictate: '🎙️', spectrum: '📶', 'app-console': '🎛️', discord: '💬', steam: '👥', 'steam-activity': '🔔', rules: '⚡', chargecare: '🔋', nextup: '⏭️', moon: '🌙', wordclock: '🔤', clock: '🕒', weather: '⛅', forecast: '🌦️', media: '🎵', lyrics: '🎤', stat: '📈', gauge: '⏲️', chart: '📊', meters: '💾', gpu: '🎮', quotas: '✳️', sessions: '🤖',
   github: '🐙', processes: '⚙️', shortcuts: '🎛️', button: '🔘', worldclock: '🌍', calendar: '📅', pomodoro: '🍅', countdown: '⏳', note: '📝', command: '💻',
   push: '📡', inbox: '📬', label: '🔤', analog: '🕰️', progress: '📆', stopwatch: '⏱️', timer: '⏲️', counter: '🔢', breathe: '🫁', quote: '💬',
-  checklist: '✅', battery: '🔋', topprocs: '🔥', quotaring: '🎯', volume: '🔊', sun: '🌅', air: '🍃', hackernews: '📰', feeds: '🗞️', photos: '🖼️', exchange: '💱', crypto: '🪙', image: '🖼️', pcswitch: '🖥️', pagebuttons: '🧭', 'plex-queue': '🎛️', 'plex-playlists': '🎶' };
+  checklist: '✅', battery: '🔋', topprocs: '🔥', quotaring: '🎯', volume: '🔊', sun: '🌅', air: '🍃', hackernews: '📰', feeds: '🗞️', photos: '🖼️', exchange: '💱', crypto: '🪙', image: '🖼️', pcswitch: '🖥️', pagebuttons: '🧭', visor: '🌡️', 'plex-queue': '🎛️', 'plex-playlists': '🎶' };
 
 // ================================================================= pages
 export const pager = $('pager');
+/** Tells the widgets that run their own animations (Visor) that what is on screen may have changed: a page turn, the
+ *  night screen, the app paused. They check for themselves whether they still show, and stop when they don't. */
+export function shownChanged() { window.dispatchEvent(new CustomEvent('phonebox-shown')); }
 export let pages = [];       // enabled pages
 export let mounted = [];     // { pi, def, inst, ctx, dirty }
 export let layoutKey = '';
@@ -1467,8 +1472,9 @@ export function buildLayout() {
   const next = enabled.length ? enabled : FALLBACK_PAGES;
   const portrait = isPortrait();
   const h12 = hour12();
-  // the active language belongs in the key: the widgets render their texts once, when they are created
-  const key = JSON.stringify([next, cfg.shortcuts, cfg.display?.showSeconds, cfg.display?.hour12, h12, cfg.display?.appearance, portrait, I18n?.getLang()]);
+  applyTheme(); // before the widgets read their colours
+  // the active language and theme belong in the key: the widgets render their texts and colours once, when they are created
+  const key = JSON.stringify([next, cfg.shortcuts, cfg.display?.showSeconds, cfg.display?.hour12, h12, cfg.display?.appearance, portrait, I18n?.getLang(), document.body.dataset.theme]);
   if (key === layoutKey) return;
   layoutKey = key;
   lastHour12 = h12;
@@ -1664,16 +1670,20 @@ export function updateDots() {
 }
 
 export let snapTimer = 0;
+let jumpDir = 0; // the side an instant jump comes from (+1 forward, -1 back), for onScroll's entrance animation
 /** The width of one page: the pager's, which a docked side page bar makes narrower than the window. */
 const pageWidth = () => pager.clientWidth || window.innerWidth;
-export function goPage(i, instant = false) {
+/** dir: the way the jump looks to the user, where it differs from the indexes (a wrap from the last page to the first). */
+export function goPage(i, instant = false, dir = 0) {
   i = Math.max(0, Math.min(pages.length - 1, i));
   if (curPage >= 0 && i !== curPage && pagePaused) setPagePaused(false, { feedback: false, resume: false });
-  if (!instant) { pager.scrollTo({ left: i * pageWidth(), behavior: 'smooth' }); return; }
+  if (!instant) { pager.scrollTo({ left: i * pageWidth(), behavior: reducedMotion() ? 'auto' : 'smooth' }); return; }
   // scroll-snap-stop: always would stop a programmatic jump at the next page, so snapping is paused for the jump.
   pager.style.scrollSnapType = 'none';
   pager.scrollLeft = i * pageWidth();
+  jumpDir = dir || Math.sign(i - curPage);
   onScroll();
+  jumpDir = 0;
   clearTimeout(snapTimer);
   snapTimer = setTimeout(() => (pager.style.scrollSnapType = ''), 120);
 }
@@ -1949,11 +1959,17 @@ export function onScroll() {
   const p = Math.round(pager.scrollLeft / pageWidth());
   if (p === curPage) return;
   const prev = curPage;
+  const wasActive = activeSet(); // the pages already drawn (and, for the neighbours, partly seen in a swipe)
   curPage = p;
+  setShownPage(pager.children[p]);
+  shownChanged();
   if (prev >= 0 && pagePaused) setPagePaused(false, { feedback: false, resume: false });
   updateDots();
   flashTitle();
   setActive();
+  // after setActive, so the entrance plays on what the widgets have just drawn. Only for a jump or a page that was not
+  // drawn yet: a swipe reaches the neighbour halfway through, already on screen, which must not empty and refill.
+  if (prev >= 0 && (jumpDir || !wasActive.has(p))) pageIn(pager.children[p], jumpDir);
   if (sheet) closeSheet();
   if (pageOf('procs')) loadProcs();
 }
@@ -2198,10 +2214,10 @@ pager.addEventListener('touchend', (e) => {
   if (dt < 700 && Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
     if (dx < 0 && swipeStartPage === pages.length - 1 && curPage === pages.length - 1) {
       haptic();
-      goPage(0, true);
+      goPage(0, true, 1);
     } else if (dx > 0 && swipeStartPage === 0 && curPage === 0) {
       haptic();
-      goPage(pages.length - 1, true);
+      goPage(pages.length - 1, true, -1);
     }
   }
 }, { passive: true });
@@ -2213,8 +2229,8 @@ window.onAndroidKey = (k) => {
   lastTouch = lastUserTouch = Date.now();
   if (nightOn) { wakeUntil = Date.now() + 30_000; setNight(false); return; }
   if (!$('overview').hidden) closeOverview();
-  if (k === 'next') goPage(curPage + 1 >= pages.length ? 0 : curPage + 1, true);
-  else if (k === 'prev') goPage(curPage - 1 < 0 ? pages.length - 1 : curPage - 1, true);
+  if (k === 'next') goPage(curPage + 1 >= pages.length ? 0 : curPage + 1, true, 1);
+  else if (k === 'prev') goPage(curPage - 1 < 0 ? pages.length - 1 : curPage - 1, true, -1);
 };
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
@@ -2266,6 +2282,7 @@ export function setNight(on) {
   nightOn = on;
   document.body.classList.toggle('night', on);
   applyBrightness(true);
+  shownChanged();
 }
 let unreachableSince = 0;
 
@@ -2424,24 +2441,36 @@ function applyWallpaper(w = {}) {
   }
 }
 
+const THEMES = ['niko', 'default', 'amoled', 'midnight', 'warm', 'graphite'];
+/** Niko unless the settings name another theme ("default" is the earlier default look, kept for whoever chose it).
+ *  It goes on <html> too: the widgets read the metric colours from there, once, when they are built. */
+function applyTheme() {
+  const t = cfg.display?.theme;
+  const theme = THEMES.includes(t) ? t : 'niko';
+  if (document.documentElement.dataset.theme === theme && document.body.dataset.theme === theme) return false;
+  document.documentElement.dataset.theme = theme;
+  document.body.dataset.theme = theme;
+  return true;
+}
+
 export function applyDisplay() {
   const d = cfg.display || {};
-  const langChanged = I18n ? I18n.setLang(d.language || 'auto') : false;
+  const langChanged = I18n ? I18n.setLang(d.language) : false; // no language saved yet: i18n.js uses its default (pt-BR)
   LOCALE = I18n ? I18n.getLocale() : 'en-GB';
   I18n?.applyDom();
   // theme and accent apply in the preview and the browser too
-  document.body.dataset.theme = ['amoled', 'midnight', 'warm', 'graphite'].includes(d.theme) ? d.theme : 'default';
+  const themeChanged = applyTheme();
   const accent = hexToRgb(d.accent);
   const before = DEFAULT_AMBIENT;
-  DEFAULT_AMBIENT = accent || '45, 212, 191';
+  DEFAULT_AMBIENT = accent || (document.body.dataset.theme === 'niko' ? '0, 175, 255' : '45, 212, 191');
   document.documentElement.style.setProperty('--accent', `rgb(${DEFAULT_AMBIENT})`);
   artTint = d.artTint !== false;
   if (before !== DEFAULT_AMBIENT || !artTint) setAmbient(artTint ? currentArtColor : null);
   applyWallpaper(d.wallpaper);
-  if (langChanged) { buildLayout(); renderApproval(); }
+  if (langChanged) { buildLayout(); renderApproval(); } else if (themeChanged) buildLayout();
   renderRulesBtn();
   if (PREVIEW || !bridge) return;
-  try { bridge.setLanguage?.(I18n?.getPref() || 'auto'); } catch (_) {}
+  try { if (I18n) bridge.setLanguage?.(I18n.getPref()); } catch (_) {} // getPref() is always a language code or 'auto'
   try { bridge.setVolumeKeys && bridge.setVolumeKeys(d.volumeKeys !== false); } catch (_) {}
   try { bridge.setPinned && bridge.setPinned(d.pin === true); } catch (_) {}
   try { bridge.setOrientation && bridge.setOrientation(['portrait', 'auto'].includes(d.orientation) ? d.orientation : 'landscape'); } catch (_) {}
@@ -2660,6 +2689,7 @@ export const idle = () => appPaused || document.hidden;
 window.onAppPause = (paused) => {
   const was = idle();
   appPaused = !!paused;
+  shownChanged();
   if (was && !idle()) wokeUp();
 };
 document.addEventListener('visibilitychange', () => { if (!document.hidden && !appPaused) wokeUp(); });

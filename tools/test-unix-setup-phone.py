@@ -16,12 +16,12 @@ class SetupPhoneTests(unittest.TestCase):
     def install(self, mode, root, expected_code=0):
         bin_dir = root / 'bin'
         bin_dir.mkdir()
-        agent = root / 'PhoneBox/app'
-        archive = root / 'PhoneBoxAgent-0.0.1-linux-x64.zip'
-        apk = root / 'PhoneBox-0.0.1.apk'
+        agent = root / 'NikoDeck/app'
+        archive = root / 'NikoDeckAgent-0.0.1-linux-x64.zip'
+        apk = root / 'NikoDeck-0.0.1.apk'
         apk.write_bytes(b'fixture APK')
         with ZipFile(archive, 'w') as bundle:
-            bundle.writestr('PhoneBoxAgent', '#!/bin/sh\nprintf "%s\\n" "$PHONEBOX_TEST_AGENT"\n')
+            bundle.writestr('NikoDeck', '#!/bin/sh\nprintf "%s\\n" "$PHONEBOX_TEST_AGENT"\n')
         (root / 'SHA256SUMS-0.0.1.txt').write_text(
             ''.join(f'{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n'
                     for p in (archive, apk)),
@@ -72,10 +72,10 @@ esac''')
                    DISPLAY='', WAYLAND_DISPLAY='')
         result = subprocess.run(
             ['/bin/bash', str(SETUP), '--yes', '--no-autostart', '--no-extras', '--version', '0.0.1'],
-            env=env, capture_output=True, text=True, timeout=20,
+            env=env, capture_output=True, text=True, encoding='utf-8', timeout=20,
         )
         self.assertEqual(result.returncode, expected_code, result.stdout + result.stderr)
-        self.assertEqual((agent / 'PhoneBoxAgent').exists(), expected_code == 0)
+        self.assertEqual((agent / 'NikoDeck').exists(), expected_code == 0)
         self.assertEqual((root / 'agent-started').exists(), expected_code == 0,
                          result.stdout + result.stderr)
         return result
@@ -85,14 +85,14 @@ esac''')
             with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 result = self.install(mode, root)
-                self.assertIn('Phone app skipped', result.stdout)
-                self.assertIn('PhoneBox is running', result.stdout)
+                self.assertIn('App do celular pulado', result.stdout)
+                self.assertIn('O NikoDeck está em execução', result.stdout)
                 self.assertFalse((root / 'phone-installed').exists())
 
     def test_unverified_agent_still_blocks_installation(self):
         with tempfile.TemporaryDirectory() as directory:
             result = self.install('corrupt-agent', Path(directory), expected_code=1)
-            self.assertIn('the agent download could not be verified', result.stderr)
+            self.assertIn('não foi possível verificar o agente baixado', result.stderr)
 
     def test_verified_apk_still_reaches_the_phone(self):
         with tempfile.TemporaryDirectory() as directory:

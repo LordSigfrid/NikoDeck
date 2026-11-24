@@ -78,7 +78,7 @@ open class Context {
     open fun getSystemService(name: String): Any? = null
     private val prefs = mutableMapOf<String, SharedPreferencesImpl>()
     open fun getSharedPreferences(name: String, mode: Int): SharedPreferences = prefs.getOrPut(name) { SharedPreferencesImpl() }
-    open val packageName: String get() = "net.oxog.phonebox.deskpanel"
+    open val packageName: String get() = "com.lordsigfrid.nikodeck"
     open val packageManager: android.content.pm.PackageManager get() = android.content.pm.PackageManager()
     open val contentResolver: ContentResolver get() = ContentResolver()
     open fun getString(resId: Int, vararg args: Any): String = "err:$resId"

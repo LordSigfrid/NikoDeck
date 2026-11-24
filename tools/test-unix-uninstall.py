@@ -13,11 +13,11 @@ class UninstallTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='phonebox removal ') as directory:
             root = pathlib.Path(directory)
             home = root / 'home'
-            app = home / 'Library/Application Support/PhoneBox/app'
+            app = home / 'Library/Application Support/NikoDeck/app'
             app.mkdir(parents=True)
             settings = app.parent / 'settings.json'
             settings.write_text('{}', encoding='utf-8')
-            (app / 'PhoneBoxAgent').write_text('fixture', encoding='utf-8')
+            (app / 'NikoDeck').write_text('fixture', encoding='utf-8')
             fake_bin = root / 'bin'
             fake_bin.mkdir()
             calls = root / 'calls'
@@ -34,7 +34,7 @@ class UninstallTests(unittest.TestCase):
                        PHONEBOX_TEST_CALLS=str(calls))
             with UNINSTALLER.open('rb') as stream:
                 result = subprocess.run(['/bin/bash', '-s', '--', *options], stdin=stream,
-                                        env=env, capture_output=True, text=True, timeout=10)
+                                        env=env, capture_output=True, text=True, encoding='utf-8', timeout=10)
             self.assertEqual(app.exists(), not removes_agent, result.stdout + result.stderr)
             self.assertEqual(calls.exists(), removes_agent)
             self.assertTrue(settings.exists())
@@ -43,11 +43,11 @@ class UninstallTests(unittest.TestCase):
 
     def test_help_never_removes_the_install(self):
         result = self.run_uninstaller('--help', code=0, removes_agent=False)
-        self.assertIn('Usage:', result.stdout)
+        self.assertIn('Uso:', result.stdout)
 
     def test_unknown_option_never_removes_the_install(self):
         result = self.run_uninstaller('--pugre', code=2, removes_agent=False)
-        self.assertIn('unknown option: --pugre', result.stderr)
+        self.assertIn('opção desconhecida: --pugre', result.stderr)
 
     def test_default_removal_keeps_settings(self):
         self.run_uninstaller(code=0, removes_agent=True)

@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -32,11 +32,11 @@
 透過 USB 或 Wi-Fi 檢視電腦資訊、AI 程式開發工作階段和音樂，並使用觸控操作。</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>試試現場演示</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>下載</b></a>
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>試試現場演示</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>下載</b></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox 顯示自動化、家庭和計劃頁面 Android 電話"></p>
+<p align="center"><img src="hero-0.6.png" width="900" alt="NikoDeck 顯示自動化、家庭和計劃頁面 Android 電話"></p>
 
 ## 可以做什麼
 
@@ -46,7 +46,7 @@
 - 顯示時鐘、天氣、日曆、筆記、媒體和 Home Assistant 控件。
 - 使用視覺化編輯器配置頁面與小工具，並在儲存前預覽變更。
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="PhoneBox 遊戲展示通知、權限提示和自動頁面切換"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="NikoDeck 遊戲展示通知、權限提示和自動頁面切換"></a><br>
 <sub>示範資料：通知、權限提示和自動頁面切換。 <a href="tour-0.6.mp4">觀看 MP4</a></sub></p>
 
 ## 快速入門
@@ -58,13 +58,13 @@
 在 Windows 10/11 x64 上，請在 PowerShell 執行以下指令。
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 在 Linux 或 macOS 上，請用一般使用者帳號執行以下指令。
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 安裝指令碼會驗證發行檔的總和檢查碼並開啟設定頁面，也能透過 USB 安裝手機應用程式。再次執行可更新或修復安裝，並保留設定與配對。
@@ -78,7 +78,7 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 
 ## 隱私和安全
 
-PhoneBox 會直接連接手機與電腦。無須註冊帳號，也不會傳送遙測資料。部分選用的小工具會連線到您設定的服務。
+NikoDeck 會直接連接手機與電腦。無須註冊帳號，也不會傳送遙測資料。部分選用的小工具會連線到您設定的服務。
 
 ## 文件
 
@@ -92,4 +92,4 @@ PhoneBox 會直接連接手機與電腦。無須註冊帳號，也不會傳送�
 
 ## 授權
 
-[PhoneBox 是以MIT授權條款發佈的](../LICENSE)
+[NikoDeck 是以MIT授權條款發佈的](../LICENSE)

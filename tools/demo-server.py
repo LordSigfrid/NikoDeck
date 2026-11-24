@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PhoneBox demo server: serves the web demo (tools/pages) straight from the sources, so the real panel and settings page
+NikoDeck demo server: serves the web demo (tools/pages) straight from the sources, so the real panel and settings page
 run in a desktop browser with made-up data; no phone, agent or Windows needed. Handy for working on the UI and for
 screenshots. The made-up data lives in tools/pages/demo.js (the same as on the live demo); this server adds the
 webhook API, so curl can push values, notifications and page switches into the open browser tabs.
@@ -137,6 +137,6 @@ class Handler(BaseHTTPRequestHandler):
 if __name__ == '__main__':
     ThreadingHTTPServer.daemon_threads = True
     srv = ThreadingHTTPServer(('127.0.0.1', PORT), Handler)
-    print(f'PhoneBox demo: http://127.0.0.1:{PORT}/  ·  panel /panel/  ·  settings /settings/  ·  webhooks: curl -X POST http://127.0.0.1:{PORT}/api/notify -d hello')
+    print(f'NikoDeck demo: http://127.0.0.1:{PORT}/  ·  panel /panel/  ·  settings /settings/  ·  webhooks: curl -X POST http://127.0.0.1:{PORT}/api/notify -d hello')
     try: srv.serve_forever()
     except KeyboardInterrupt: pass

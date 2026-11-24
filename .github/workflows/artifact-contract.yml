@@ -25,7 +25,7 @@ jobs:
           for directory in ('apk', 'agents', 'intermediate', 'expected'):
               (root / directory).mkdir()
           # Deliberately invalid APK bytes: this is a CI transfer fixture, never a public release.
-          (root / 'apk/probe.apk').write_bytes(b'PhoneBox artifact transfer fixture\n')
+          (root / 'apk/probe.apk').write_bytes(b'NikoDeck artifact transfer fixture\n')
           for rid in ('win-x64', 'linux-x64', 'linux-arm64', 'osx-x64', 'osx-arm64'):
               with zipfile.ZipFile(root / f'agents/probe-{rid}.zip', 'w') as archive:
                   archive.writestr('payload.txt', rid)

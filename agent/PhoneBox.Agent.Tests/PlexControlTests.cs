@@ -149,7 +149,7 @@ public sealed class PlexControlTests
         await plex.Snapshot(default);
         Assert.All(seen, h =>
         {
-            Assert.Equal("PhoneBox", h.GetValues("X-Plex-Product").Single());
+            Assert.Equal("NikoDeck", h.GetValues("X-Plex-Product").Single());
             Assert.Matches("^[0-9a-f]{32}$", h.GetValues("X-Plex-Client-Identifier").Single());
         });
         Assert.Single(seen.Select(h => h.GetValues("X-Plex-Client-Identifier").Single()).Distinct());

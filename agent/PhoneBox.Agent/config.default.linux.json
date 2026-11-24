@@ -1,5 +1,5 @@
 {
-  // PhoneBox settings. Easiest to edit at http://127.0.0.1:8765.
+  // NikoDeck settings. Easiest to edit at http://127.0.0.1:8765.
   // Manual edits are picked up on the next request; no restart needed.
 
   // Only use the phone with this serial number (null = every connected Android device)
@@ -18,7 +18,7 @@
 
   // Ping target for the ping metric and the "ping high" rule, every 5 s (empty = off)
   "ping": { "host": "1.1.1.1", "adapters": [] },
-  // Discord widget: talks to the Discord desktop app on this computer. Create an application at discord.com/developers/applications, add the redirect http://127.0.0.1, and enter its client ID and secret (see docs/DISCORD.md). "allowControl" lets shortcuts and custom widgets mute, deafen, leave and join without a Discord widget (off by default). screenShare (off by default) lets the phone start and stop screen shares; it asks Discord for the rpc.screenshare scopes, so Discord asks you to approve PhoneBox again
+  // Discord widget: talks to the Discord desktop app on this computer. Create an application at discord.com/developers/applications, add the redirect http://127.0.0.1, and enter its client ID and secret (see docs/DISCORD.md). "allowControl" lets shortcuts and custom widgets mute, deafen, leave and join without a Discord widget (off by default). screenShare (off by default) lets the phone start and stop screen shares; it asks Discord for the rpc.screenshare scopes, so Discord asks you to approve NikoDeck again
   "discord": { "enabled": false, "clientId": null, "clientSecret": null, "allowControl": false, "screenShare": false, "chat": false },
   // Cursor agent chats on the AI sessions widget (off by default). Windows: "watchWsl" also reads the chats of projects opened over Remote - WSL, in the running distros (off by default)
   "cursor": { "sessions": false, "watchWsl": false },
@@ -36,11 +36,11 @@
   "steam": { "enabled": false, "steamId": null, "apiKey": null },
 
   // Night mode: between these times the screen dims and only the clock stays. Tap to wake it for 30 s.
-  "night": { "enabled": true, "start": "00:30", "end": "07:30", "brightness": 0.02 },
+  "night": { "enabled": false, "start": "00:30", "end": "07:30", "brightness": 0.02 },
 
   // Clock seconds, return to the first page after N idle seconds (0 = never), vibrate on session events, a message when a session finishes,
-  // switch pages with the phone's volume keys
-  "display": { "showSeconds": true, "idleReturnSec": 90, "vibrate": true, "finishToast": true, "finishSound": false, "finishSoundVolume": 70, "volumeKeys": true, "pixelShift": false, "controlsTop": false, "pageBar": "dots", "pageBarSide": "bottom", "idleDimMin": 0, "nightWhenUnreachable": false, "unreachableNightDelayMin": 5, "language": "auto", "wallpaper": { "dim": 45, "blur": 0 } },
+  // switch pages with the phone's volume keys, the interface language ("auto" follows the phone / browser)
+  "display": { "showSeconds": true, "idleReturnSec": 90, "vibrate": true, "finishToast": true, "finishSound": false, "finishSoundVolume": 70, "volumeKeys": true, "pixelShift": false, "controlsTop": false, "pageBar": "dots", "pageBarSide": "bottom", "idleDimMin": 0, "nightWhenUnreachable": false, "unreachableNightDelayMin": 5, "language": "pt-BR", "wallpaper": { "dim": 45, "blur": 0 } },
 
   // Plex music control (Caldera Amp or another Plex Companion player): the server address and token, and the player address.
   // None of these go to the phone; the token is sent only to the server, never to the player.
@@ -56,32 +56,32 @@
   // Pages in the order they appear on the phone. Each page is a 12 x 6 grid of widgets; the settings page has a
   // visual editor. { "template": "<id>" } creates a page from templates.json (home, ai, work, system, procs, deck,
   // music, clock, focus, world, dashboard, devops, feeds, ambient, markets, daily, status, calm) and is replaced by
-  // its widgets on the first save.
+  // its widgets on the first save. "title" names the page (the template's own title when left out).
   "pages": [
-    { "template": "home" },
-    { "template": "ai" },
-    { "template": "work" },
-    { "template": "system" },
-    { "template": "procs" },
-    { "template": "deck" },
-    { "template": "music" },
-    { "template": "focus", "enabled": false },
-    { "template": "world", "enabled": false }
+    { "template": "home", "title": "Início" },
+    { "template": "ai", "title": "Cotas de IA" },
+    { "template": "work", "title": "Sessões" },
+    { "template": "system", "title": "Sistema" },
+    { "template": "procs", "title": "Processos" },
+    { "template": "deck", "title": "Atalhos" },
+    { "template": "music", "title": "Música" },
+    { "template": "focus", "title": "Foco", "enabled": false },
+    { "template": "world", "title": "Mundo", "enabled": false }
   ],
 
   // Shortcut keys. The phone only sends the "id"; commands live in this file only.
   // cmd: a program, a URL, or builtin:lock | builtin:monitor-off | builtin:mute
   "shortcuts": [
     { "id": "terminal", "label": "Terminal", "icon": "\u2328\ufe0f", "color": "#4b5563", "cmd": "x-terminal-emulator" },
-    { "id": "files", "label": "Files", "icon": "\ud83d\udcc1", "color": "#e5b84b", "cmd": "xdg-open", "args": "~" },
+    { "id": "files", "label": "Arquivos", "icon": "\ud83d\udcc1", "color": "#e5b84b", "cmd": "xdg-open", "args": "~" },
     { "id": "vscode", "label": "VS Code", "icon": "\ud83d\udcdd", "color": "#2f80ed", "cmd": "code" },
-    { "id": "browser", "label": "Browser", "icon": "\ud83c\udf10", "color": "#0ea5e9", "cmd": "https://github.com" },
+    { "id": "browser", "label": "Navegador", "icon": "\ud83c\udf10", "color": "#0ea5e9", "cmd": "https://github.com" },
     { "id": "spotify", "label": "Spotify", "icon": "\ud83c\udfa7", "color": "#1db954", "cmd": "spotify" },
-    { "id": "calc", "label": "Calculator", "icon": "\ud83e\uddee", "color": "#64748b", "cmd": "gnome-calculator" },
-    { "id": "settings", "label": "Settings", "icon": "\u2699\ufe0f", "color": "#94a3b8", "cmd": "gnome-control-center" },
-    { "id": "monitor", "label": "System Monitor", "icon": "\ud83d\udcca", "color": "#22c55e", "cmd": "gnome-system-monitor" },
-    { "id": "mute", "label": "Mute", "icon": "\ud83d\udd07", "color": "#f59e0b", "cmd": "builtin:mute" },
-    { "id": "monitoroff", "label": "Screen Off", "icon": "\ud83c\udf19", "color": "#6366f1", "cmd": "builtin:monitor-off" },
-    { "id": "lock", "label": "Lock", "icon": "\ud83d\udd12", "color": "#ef4444", "cmd": "builtin:lock" }
+    { "id": "calc", "label": "Calculadora", "icon": "\ud83e\uddee", "color": "#64748b", "cmd": "gnome-calculator" },
+    { "id": "settings", "label": "Configurações", "icon": "\u2699\ufe0f", "color": "#94a3b8", "cmd": "gnome-control-center" },
+    { "id": "monitor", "label": "Monitor do sistema", "icon": "\ud83d\udcca", "color": "#22c55e", "cmd": "gnome-system-monitor" },
+    { "id": "mute", "label": "Mudo", "icon": "\ud83d\udd07", "color": "#f59e0b", "cmd": "builtin:mute" },
+    { "id": "monitoroff", "label": "Desligar tela", "icon": "\ud83c\udf19", "color": "#6366f1", "cmd": "builtin:monitor-off" },
+    { "id": "lock", "label": "Bloquear", "icon": "\ud83d\udd12", "color": "#ef4444", "cmd": "builtin:lock" }
   ]
 }

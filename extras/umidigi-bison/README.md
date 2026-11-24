@@ -1,6 +1,6 @@
 # UMIDIGI BISON tune-up (no root)
 
-Optional clean-up used on the phone that PhoneBox was built for (UMIDIGI BISON, Android 11, MediaTek Helio P60).
+Optional clean-up used on the phone that NikoDeck was built for (UMIDIGI BISON, Android 11, MediaTek Helio P60).
 Everything here is reversible and works without unlocking the bootloader.
 
 ## Remove bloat

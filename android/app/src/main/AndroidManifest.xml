@@ -19,7 +19,7 @@
     <application
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
-        android:label="PhoneBox"
+        android:label="NikoDeck"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:localeConfig="@xml/locales_config"
@@ -29,7 +29,7 @@
              be granted to an installed app, so no other app on the phone can read it. -->
         <provider
             android:name=".UsbKeyProvider"
-            android:authorities="net.oxog.phonebox.deskpanel.usb"
+            android:authorities="${applicationId}.usb"
             android:exported="true"
             android:readPermission="android.permission.DUMP"
             android:writePermission="android.permission.DUMP" />
@@ -45,18 +45,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <!-- Pairing without USB: the QR code on the computer's settings page. Android 12+ opens unverified https
-                 links in the browser; that page then offers phonebox://pair (the second filter). -->
+                 links in the browser; that page then offers nikodeck://pair (the second filter). -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="ersinkoc.github.io" android:pathPrefix="/phonebox/pair" />
+                <data android:scheme="https" android:host="lordsigfrid.github.io" android:pathPrefix="/NikoDeck/pair" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="phonebox" android:host="pair" />
+                <data android:scheme="nikodeck" android:host="pair" />
             </intent-filter>
         </activity>
 
@@ -74,14 +74,14 @@
             </intent-filter>
         </activity-alias>
 
-        <!-- Quick Settings tile (Edit tiles › PhoneBox): opens the panel. Tiles exist from Android 7.0; below that the
+        <!-- Quick Settings tile (Edit tiles › NikoDeck): opens the panel. Tiles exist from Android 7.0; below that the
              service is disabled (values/bools.xml vs values-v24). -->
         <service
             android:name=".PanelTile"
             android:enabled="@bool/quick_settings_tile"
             android:exported="true"
             android:icon="@drawable/ic_tile"
-            android:label="PhoneBox"
+            android:label="NikoDeck"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
             tools:targetApi="n">
             <intent-filter>

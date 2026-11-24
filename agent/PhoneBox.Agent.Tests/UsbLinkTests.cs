@@ -3,7 +3,7 @@ using PhoneBox.Agent;
 using Xunit;
 
 /// <summary>
-/// The phone's USB port: every app on the phone can reach the adb reverse tunnel, so only the key the PhoneBox app
+/// The phone's USB port: every app on the phone can reach the adb reverse tunnel, so only the key the NikoDeck app
 /// made opens it, and only for the phone API (never settings, shortcut tests or pairing control).
 /// </summary>
 public class UsbLinkTests
@@ -105,36 +105,36 @@ public class UsbLinkTests
         Assert.Equal(Key, UsbLink.ParseKey($"Row: 0 key={Key}\n"));
         Assert.Equal(Key, UsbLink.ParseKey($"Row: 0 key={Key}\r\n"));
         Assert.Null(UsbLink.ParseKey("No result found.\n"));
-        Assert.Null(UsbLink.ParseKey("Error while accessing provider:net.oxog.phonebox.deskpanel.usb\njava.lang.SecurityException"));
+        Assert.Null(UsbLink.ParseKey("Error while accessing provider:com.lordsigfrid.nikodeck.usb\njava.lang.SecurityException"));
         Assert.Null(UsbLink.ParseKey("Row: 0 key=short\n"));
         Assert.Null(UsbLink.ParseKey($"Row: 0 key={Key} extra\n"));
     }
 
-    private const string Owned = "Packages:\n  Package [net.oxog.phonebox.deskpanel] (1a2b3c):\n    versionName=0.9.24\n"
-        + "ContentProvider Authorities:\n  [net.oxog.phonebox.deskpanel.usb]:\n    Provider{3ec2f24 net.oxog.phonebox.deskpanel/.UsbKeyProvider}\n"
-        + "      applicationInfo=ApplicationInfo{a39b11a net.oxog.phonebox.deskpanel}\n";
+    private const string Owned = "Packages:\n  Package [com.lordsigfrid.nikodeck] (1a2b3c):\n    versionName=0.9.24\n"
+        + "ContentProvider Authorities:\n  [com.lordsigfrid.nikodeck.usb]:\n    Provider{3ec2f24 com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.UsbKeyProvider}\n"
+        + "      applicationInfo=ApplicationInfo{a39b11a com.lordsigfrid.nikodeck}\n";
 
     [Fact]
     public void TheKeyIsTrustedOnlyFromTheAppsOwnProvider()
     {
         Assert.True(UsbLink.OwnsKeyProvider(Owned));
         Assert.True(UsbLink.OwnsKeyProvider(Owned.Replace("\n", "\r\n")));
-        Assert.True(UsbLink.OwnsKeyProvider(Owned.Replace("/.UsbKeyProvider", "/net.oxog.phonebox.deskpanel.UsbKeyProvider")));
-        // an older PhoneBox without the provider: the name may belong to another app, so no key is read
-        Assert.False(UsbLink.OwnsKeyProvider("Packages:\n  Package [net.oxog.phonebox.deskpanel] (1a2b3c):\n    versionName=0.9.23\n"));
+        Assert.True(UsbLink.OwnsKeyProvider(Owned.Replace("/net.oxog.phonebox.deskpanel.UsbKeyProvider", "/.UsbKeyProvider")));
+        // an older NikoDeck without the provider: the name may belong to another app, so no key is read
+        Assert.False(UsbLink.OwnsKeyProvider("Packages:\n  Package [com.lordsigfrid.nikodeck] (1a2b3c):\n    versionName=0.9.23\n"));
         // another package's provider under the same name, or another class
-        Assert.False(UsbLink.OwnsKeyProvider(Owned.Replace("Provider{3ec2f24 net.oxog.phonebox.deskpanel/", "Provider{3ec2f24 com.evil.app/")));
+        Assert.False(UsbLink.OwnsKeyProvider(Owned.Replace("Provider{3ec2f24 com.lordsigfrid.nikodeck/", "Provider{3ec2f24 com.evil.app/")));
         Assert.False(UsbLink.OwnsKeyProvider(Owned.Replace("UsbKeyProvider}", "Other}")));
-        Assert.False(UsbLink.OwnsKeyProvider(Owned.Replace("[net.oxog.phonebox.deskpanel.usb]", "[net.oxog.phonebox.deskpanel.usb2]")));
+        Assert.False(UsbLink.OwnsKeyProvider(Owned.Replace("[com.lordsigfrid.nikodeck.usb]", "[com.lordsigfrid.nikodeck.usb2]")));
         Assert.False(UsbLink.OwnsKeyProvider(""));
     }
 
     [Fact]
     public void TheAppVersionIsReadFromDumpsys()
     {
-        const string dump = "Packages:\n  Package [net.oxog.phonebox.deskpanel] (1a2b3c):\n    versionCode=43 minSdk=21 targetSdk=35\n    versionName=0.9.22\n";
+        const string dump = "Packages:\n  Package [com.lordsigfrid.nikodeck] (1a2b3c):\n    versionCode=43 minSdk=21 targetSdk=35\n    versionName=0.9.22\n";
         Assert.Equal("0.9.22", UsbLink.ParseVersionName(dump));
-        Assert.Null(UsbLink.ParseVersionName("Unable to find package: net.oxog.phonebox.deskpanel"));
+        Assert.Null(UsbLink.ParseVersionName("Unable to find package: com.lordsigfrid.nikodeck"));
     }
 
     [Fact]
