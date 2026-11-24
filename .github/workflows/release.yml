@@ -99,10 +99,14 @@ jobs:
       # Gradle falls back to the debug key when the keystore is missing; such an APK must never be released.
       - name: Check the APK signature
         run: |
-          apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -n1)
-          certs=$("$apksigner" verify --print-certs "dist/NikoDeck-${{ needs.version.outputs.version }}.apk")
-          echo "$certs" | grep -E '^Signer #1 certificate (DN|SHA-256 digest):'
+          apk="dist/NikoDeck-${{ needs.version.outputs.version }}.apk"
+          apksigner=$(ls "${ANDROID_HOME:-$ANDROID_SDK_ROOT}"/build-tools/*/apksigner 2>/dev/null | sort -V | tail -n1)
+          if [ -z "$apksigner" ]; then echo "::error::apksigner not found under the Android SDK build-tools"; exit 1; fi
+          echo "apksigner: $apksigner"; ls -l "$apk"
+          certs=$("$apksigner" verify --print-certs "$apk" 2>&1) || { echo "$certs"; echo "::error::apksigner could not verify $apk"; exit 1; }
+          echo "$certs"
           if grep -q 'CN=Android Debug' <<<"$certs"; then echo "::error::the APK is signed with the debug key"; exit 1; fi
+          if ! grep -q 'certificate DN' <<<"$certs"; then echo "::error::no signer certificate in $apk"; exit 1; fi
       - name: Remove the signing key
         if: always()
         run: rm -f "$RUNNER_TEMP/release.keystore"
