@@ -29,9 +29,9 @@ public sealed record DiscordSnapshot(bool Connected, string? Error, string? User
 public sealed partial class DiscordMonitor(ConfigStore config, ILogger<DiscordMonitor> log) : BackgroundService
 {
     private static readonly string[] Scopes = ["rpc", "rpc.voice.read", "rpc.voice.write", "rpc.notifications.read"];
-    /// <summary>Only asked for while screen share is on (<see cref="DiscordConfig.ScreenShare"/>), so nobody else has to approve PhoneBox again.</summary>
+    /// <summary>Only asked for while screen share is on (<see cref="DiscordConfig.ScreenShare"/>), so nobody else has to approve NikoDeck again.</summary>
     internal static readonly string[] ShareScopes = ["rpc.screenshare.read", "rpc.screenshare.write"];
-    /// <summary>Only asked for while the chat setting is on (<see cref="DiscordConfig.Chat"/>), so nobody else has to approve PhoneBox again.</summary>
+    /// <summary>Only asked for while the chat setting is on (<see cref="DiscordConfig.Chat"/>), so nobody else has to approve NikoDeck again.</summary>
     internal const string ChatScope = "messages.read";
     /// <summary>The permissions the settings want beyond the base ones (<see cref="Scopes"/>).</summary>
     internal static string[] ExtraScopes(DiscordConfig cfg) =>
@@ -201,7 +201,7 @@ public sealed partial class DiscordMonitor(ConfigStore config, ILogger<DiscordMo
         Task<Dictionary<string, IReadOnlyList<DiscordMember>>>? roomsTask = null; // reads beside the loop, so a slow answer never holds up mute or deafen
         try
         {
-            _snap = Empty("Waiting for you to approve PhoneBox in Discord…");
+            _snap = Empty("Waiting for you to approve NikoDeck in Discord…");
             var user = await Authenticate(cfg, ct);
             _loggedIn = true;
             log.LogInformation("discord: connected");
@@ -331,10 +331,10 @@ public sealed partial class DiscordMonitor(ConfigStore config, ILogger<DiscordMo
     // AUTHORIZE (asks you in Discord) → token exchange → AUTHENTICATE
     private async Task<string> Login(DiscordConfig cfg, string[] extras, CancellationToken ct)
     {
-        const string retry = " PhoneBox will not ask again until you change the Discord settings (or turn Discord off and save, wait a few seconds, then turn it on and save again).";
+        const string retry = " NikoDeck will not ask again until you change the Discord settings (or turn Discord off and save, wait a few seconds, then turn it on and save again).";
         JsonNode? granted;
         try { granted = await Request("AUTHORIZE", AuthorizeArgs(cfg.ClientId, extras), null, ct, TimeSpan.FromMinutes(2)); }
-        catch (TimeoutException) { throw new LoginRefusedException("PhoneBox was not approved in Discord in time." + retry, prompt: true); }
+        catch (TimeoutException) { throw new LoginRefusedException("NikoDeck was not approved in Discord in time." + retry, prompt: true); }
         catch (Exception ex) when (ex is not (OperationCanceledException or IOException)) { throw new LoginRefusedException(Refusal(ex.Message) + retry, prompt: true); }
         // no answer at all means the connection ended (Discord closed or restarted): that is not a refusal
         var code = granted?["code"]?.GetValue<string>() ?? throw new IOException("Discord closed the connection");
@@ -344,7 +344,7 @@ public sealed partial class DiscordMonitor(ConfigStore config, ILogger<DiscordMo
         {
             // approved in Discord, but the code couldn't be traded (discord.com unreachable, or its token service failing):
             // the code is single-use, so a retry would show the prompt again every 30 s; stop like after a refusal
-            throw new LoginRefusedException($"PhoneBox could not finish the Discord login ({ex.Message})." + retry);
+            throw new LoginRefusedException($"NikoDeck could not finish the Discord login ({ex.Message})." + retry);
         }
         tokens = tokens
             ?? throw new LoginRefusedException("Discord refused the client secret or the redirect (add http://127.0.0.1 under OAuth2 › Redirects)." + retry);

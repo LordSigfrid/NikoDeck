@@ -64,7 +64,7 @@ object UsbKey {
 }
 
 /**
- * Hands [UsbKey] to the computer: "adb shell content query --uri content://net.oxog.phonebox.deskpanel.usb/key", and
+ * Hands [UsbKey] to the computer: "adb shell content query --uri content://com.lordsigfrid.nikodeck.usb/key", and
  * takes the agent's certificate fingerprint: "adb shell content insert --uri content://…usb/pin --bind fp:s:<sha256>".
  * The manifest guards both with android.permission.DUMP, which the adb shell holds and no installed app can get, so
  * other apps on the phone can neither read the key nor set the pin. (call() is not used: Android doesn't check the

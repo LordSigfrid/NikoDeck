@@ -7,7 +7,7 @@ using Xunit;
 /// <summary>
 /// The Claude quota check through its seams: a fake HTTP handler and a credentials file of the test's own, so nothing
 /// here reads the real token or reaches api.anthropic.com. The usage endpoint is rate limited per account and shared
-/// with Claude Code, so these tests count the requests PhoneBox would send.
+/// with Claude Code, so these tests count the requests NikoDeck would send.
 /// </summary>
 public sealed class ClaudeQuotaScheduleTests : IDisposable
 {

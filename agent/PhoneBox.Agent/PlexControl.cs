@@ -96,7 +96,7 @@ public sealed class PlexControl : IDisposable
             // the player is asked with no Accept header: that is what answered XML in the hand check
             if (server) request.Headers.TryAddWithoutValidation("Accept", "application/json");
             request.Headers.TryAddWithoutValidation("X-Plex-Client-Identifier", ClientId);
-            request.Headers.TryAddWithoutValidation("X-Plex-Product", "PhoneBox");
+            request.Headers.TryAddWithoutValidation("X-Plex-Product", "NikoDeck");
             if (server) request.Headers.TryAddWithoutValidation("X-Plex-Token", token);
             using var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, limit.Token);
             if (server && response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)

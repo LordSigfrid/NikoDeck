@@ -19,59 +19,59 @@ public class UpdateChecksumTests
 {
   "assets": [
     {
-      "browser_download_url": "https://github.com/ersinkoc/phonebox/releases/download/v0.9.9/PhoneBox-0.9.9.apk",
-      "name": "PhoneBox-0.9.9.apk",
-      "url": "https://api.github.com/repos/ersinkoc/phonebox/releases/assets/752008188"
+      "browser_download_url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.9/NikoDeck-0.9.9.apk",
+      "name": "NikoDeck-0.9.9.apk",
+      "url": "https://api.github.com/repos/LordSigfrid/NikoDeck/releases/assets/752008188"
     },
     {
-      "browser_download_url": "https://github.com/ersinkoc/phonebox/releases/download/v0.9.9/PhoneBox-0.9.9.intoto.jsonl",
-      "name": "PhoneBox-0.9.9.intoto.jsonl",
-      "url": "https://api.github.com/repos/ersinkoc/phonebox/releases/assets/752008185"
+      "browser_download_url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.9/NikoDeck-0.9.9.intoto.jsonl",
+      "name": "NikoDeck-0.9.9.intoto.jsonl",
+      "url": "https://api.github.com/repos/LordSigfrid/NikoDeck/releases/assets/752008185"
     },
     {
-      "browser_download_url": "https://github.com/ersinkoc/phonebox/releases/download/v0.9.9/PhoneBoxAgent-0.9.9-linux-arm64.zip",
-      "name": "PhoneBoxAgent-0.9.9-linux-arm64.zip",
-      "url": "https://api.github.com/repos/ersinkoc/phonebox/releases/assets/752008190"
+      "browser_download_url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.9/NikoDeckAgent-0.9.9-linux-arm64.zip",
+      "name": "NikoDeckAgent-0.9.9-linux-arm64.zip",
+      "url": "https://api.github.com/repos/LordSigfrid/NikoDeck/releases/assets/752008190"
     },
     {
-      "browser_download_url": "https://github.com/ersinkoc/phonebox/releases/download/v0.9.9/PhoneBoxAgent-0.9.9-linux-x64.zip",
-      "name": "PhoneBoxAgent-0.9.9-linux-x64.zip",
-      "url": "https://api.github.com/repos/ersinkoc/phonebox/releases/assets/752008184"
+      "browser_download_url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.9/NikoDeckAgent-0.9.9-linux-x64.zip",
+      "name": "NikoDeckAgent-0.9.9-linux-x64.zip",
+      "url": "https://api.github.com/repos/LordSigfrid/NikoDeck/releases/assets/752008184"
     },
     {
-      "browser_download_url": "https://github.com/ersinkoc/phonebox/releases/download/v0.9.9/PhoneBoxAgent-0.9.9-osx-arm64.zip",
-      "name": "PhoneBoxAgent-0.9.9-osx-arm64.zip",
-      "url": "https://api.github.com/repos/ersinkoc/phonebox/releases/assets/752008193"
+      "browser_download_url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.9/NikoDeckAgent-0.9.9-osx-arm64.zip",
+      "name": "NikoDeckAgent-0.9.9-osx-arm64.zip",
+      "url": "https://api.github.com/repos/LordSigfrid/NikoDeck/releases/assets/752008193"
     },
     {
-      "browser_download_url": "https://github.com/ersinkoc/phonebox/releases/download/v0.9.9/PhoneBoxAgent-0.9.9-osx-x64.zip",
-      "name": "PhoneBoxAgent-0.9.9-osx-x64.zip",
-      "url": "https://api.github.com/repos/ersinkoc/phonebox/releases/assets/752008208"
+      "browser_download_url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.9/NikoDeckAgent-0.9.9-osx-x64.zip",
+      "name": "NikoDeckAgent-0.9.9-osx-x64.zip",
+      "url": "https://api.github.com/repos/LordSigfrid/NikoDeck/releases/assets/752008208"
     },
     {
-      "browser_download_url": "https://github.com/ersinkoc/phonebox/releases/download/v0.9.9/PhoneBoxAgent-0.9.9-win-x64.zip",
-      "name": "PhoneBoxAgent-0.9.9-win-x64.zip",
-      "url": "https://api.github.com/repos/ersinkoc/phonebox/releases/assets/752008218"
+      "browser_download_url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.9/NikoDeckAgent-0.9.9-win-x64.zip",
+      "name": "NikoDeckAgent-0.9.9-win-x64.zip",
+      "url": "https://api.github.com/repos/LordSigfrid/NikoDeck/releases/assets/752008218"
     },
     {
-      "browser_download_url": "https://github.com/ersinkoc/phonebox/releases/download/v0.9.9/SHA256SUMS-0.9.9.txt",
+      "browser_download_url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.9/SHA256SUMS-0.9.9.txt",
       "name": "SHA256SUMS-0.9.9.txt",
-      "url": "https://api.github.com/repos/ersinkoc/phonebox/releases/assets/752008305"
+      "url": "https://api.github.com/repos/LordSigfrid/NikoDeck/releases/assets/752008305"
     }
   ],
-  "html_url": "https://github.com/ersinkoc/phonebox/releases/tag/v0.9.9",
+  "html_url": "https://github.com/LordSigfrid/NikoDeck/releases/tag/v0.9.9",
   "tag_name": "v0.9.9"
 }
 """;
 
     private const string Sums099 = """
-da72c2917e3575e171c5419ac20f5accf689972f2694b1a569e6deb04994bf08  PhoneBox-0.9.9.apk
-07d2d81e217d7067807673ea63924a9ab373a6142f82a84829f5d2c40cf5263b  PhoneBox-0.9.9.intoto.jsonl
-a37fdd69197d0b7635f91dca4e0c4358c76a4aacf5fc3a3afbfe977ee3dff839  PhoneBoxAgent-0.9.9-linux-arm64.zip
-b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-0.9.9-linux-x64.zip
-39114b5f1db06d66df3aa6c123a5eff7b66b6fcae5315a6af21bb3414745e58c  PhoneBoxAgent-0.9.9-osx-arm64.zip
-18f620183523c014668475deddc737f313912239d767bb8dcd6876d12f8f4818  PhoneBoxAgent-0.9.9-osx-x64.zip
-17e70d3df7db81eb767ee3328bdbdfc9f6492f69ebc63fe814afc96cf0990fd0  PhoneBoxAgent-0.9.9-win-x64.zip
+da72c2917e3575e171c5419ac20f5accf689972f2694b1a569e6deb04994bf08  NikoDeck-0.9.9.apk
+07d2d81e217d7067807673ea63924a9ab373a6142f82a84829f5d2c40cf5263b  NikoDeck-0.9.9.intoto.jsonl
+a37fdd69197d0b7635f91dca4e0c4358c76a4aacf5fc3a3afbfe977ee3dff839  NikoDeckAgent-0.9.9-linux-arm64.zip
+b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  NikoDeckAgent-0.9.9-linux-x64.zip
+39114b5f1db06d66df3aa6c123a5eff7b66b6fcae5315a6af21bb3414745e58c  NikoDeckAgent-0.9.9-osx-arm64.zip
+18f620183523c014668475deddc737f313912239d767bb8dcd6876d12f8f4818  NikoDeckAgent-0.9.9-osx-x64.zip
+17e70d3df7db81eb767ee3328bdbdfc9f6492f69ebc63fe814afc96cf0990fd0  NikoDeckAgent-0.9.9-win-x64.zip
 """;
 
     [Theory]
@@ -85,8 +85,8 @@ b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-
         using var doc = JsonDocument.Parse(Release099);
         var r = UpdateService.SelectAssets(doc.RootElement, rid);
         Assert.Equal("0.9.9", r.Version);
-        Assert.Equal($"PhoneBoxAgent-0.9.9-{rid}.zip", UpdateService.AssetName(r.AgentZip!));
-        Assert.Equal("PhoneBox-0.9.9.apk", UpdateService.AssetName(r.Apk!));
+        Assert.Equal($"NikoDeckAgent-0.9.9-{rid}.zip", UpdateService.AssetName(r.AgentZip!));
+        Assert.Equal("NikoDeck-0.9.9.apk", UpdateService.AssetName(r.Apk!));
         Assert.Equal("SHA256SUMS-0.9.9.txt", UpdateService.AssetName(r.Sums!));
         Assert.NotNull(UpdateService.ExpectedSha256(Sums099, UpdateService.AssetName(r.AgentZip!)));
         Assert.NotNull(UpdateService.ExpectedSha256(Sums099, UpdateService.AssetName(r.Apk!)));
@@ -95,8 +95,8 @@ b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-
     [Fact]
     public void TheLinuxX64ZipIsNotTakenForTheArm64One()
     {
-        var x64 = UpdateService.ExpectedSha256(Sums099, "PhoneBoxAgent-0.9.9-linux-x64.zip");
-        var arm = UpdateService.ExpectedSha256(Sums099, "PhoneBoxAgent-0.9.9-linux-arm64.zip");
+        var x64 = UpdateService.ExpectedSha256(Sums099, "NikoDeckAgent-0.9.9-linux-x64.zip");
+        var arm = UpdateService.ExpectedSha256(Sums099, "NikoDeckAgent-0.9.9-linux-arm64.zip");
         Assert.NotNull(x64);
         Assert.NotNull(arm);
         Assert.NotEqual(x64, arm);
@@ -106,14 +106,14 @@ b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-
     public void ListingFormatsAreRead()
     {
         var hash = new string('a', 64);
-        Assert.Equal(hash, UpdateService.ExpectedSha256($"{hash}  PhoneBox-1.0.0.apk\n", "PhoneBox-1.0.0.apk"));     // text mode
-        Assert.Equal(hash, UpdateService.ExpectedSha256($"{hash} *PhoneBox-1.0.0.apk\r\n", "PhoneBox-1.0.0.apk")); // binary mode, CRLF
-        Assert.Equal(hash, UpdateService.ExpectedSha256($"{hash.ToUpperInvariant()}  PhoneBox-1.0.0.apk", "PhoneBox-1.0.0.apk"));
+        Assert.Equal(hash, UpdateService.ExpectedSha256($"{hash}  NikoDeck-1.0.0.apk\n", "NikoDeck-1.0.0.apk"));     // text mode
+        Assert.Equal(hash, UpdateService.ExpectedSha256($"{hash} *NikoDeck-1.0.0.apk\r\n", "NikoDeck-1.0.0.apk")); // binary mode, CRLF
+        Assert.Equal(hash, UpdateService.ExpectedSha256($"{hash.ToUpperInvariant()}  NikoDeck-1.0.0.apk", "NikoDeck-1.0.0.apk"));
     }
 
     [Theory]
-    [InlineData("PhoneBox-0.9.9.apk.idsig")]  // only a suffix more
-    [InlineData("PhoneBox-0.9.9")]            // only a prefix
+    [InlineData("NikoDeck-0.9.9.apk.idsig")]  // only a suffix more
+    [InlineData("NikoDeck-0.9.9")]            // only a prefix
     [InlineData("phonebox-0.9.9.apk")]        // file names are compared exactly
     [InlineData("SHA256SUMS-0.9.9.txt")]      // the listing does not list itself
     public void NamesThatAreNotListedGiveNothing(string name) => Assert.Null(UpdateService.ExpectedSha256(Sums099, name));
@@ -121,14 +121,14 @@ b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-
     [Theory]
     [InlineData("<!DOCTYPE html><html><body>Rate limit</body></html>")] // an error page saved instead of the listing
     [InlineData("")]
-    [InlineData("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  PhoneBox-0.9.9.apk")] // not hex
-    public void TextThatIsNotAListingGivesNothing(string text) => Assert.Null(UpdateService.ExpectedSha256(text, "PhoneBox-0.9.9.apk"));
+    [InlineData("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  NikoDeck-0.9.9.apk")] // not hex
+    public void TextThatIsNotAListingGivesNothing(string text) => Assert.Null(UpdateService.ExpectedSha256(text, "NikoDeck-0.9.9.apk"));
 
     [Fact]
     public void TheAssetNameComesFromTheLinkNotTheCachedName()
     {
-        Assert.Equal("PhoneBoxAgent-0.9.9-win-x64.zip",
-            UpdateService.AssetName("https://github.com/ersinkoc/phonebox/releases/download/v0.9.9/PhoneBoxAgent-0.9.9-win-x64.zip"));
+        Assert.Equal("NikoDeckAgent-0.9.9-win-x64.zip",
+            UpdateService.AssetName("https://github.com/LordSigfrid/NikoDeck/releases/download/v0.9.9/NikoDeckAgent-0.9.9-win-x64.zip"));
     }
 
     [Fact]
@@ -136,7 +136,7 @@ b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-
     {
         using var doc = JsonDocument.Parse("""
             { "tag_name": "v1.0.0", "html_url": "https://example.invalid", "assets": [
-              { "name": "PhoneBox-1.0.0.apk", "browser_download_url": "https://example.invalid/PhoneBox-1.0.0.apk" } ] }
+              { "name": "NikoDeck-1.0.0.apk", "browser_download_url": "https://example.invalid/NikoDeck-1.0.0.apk" } ] }
             """);
         var r = UpdateService.SelectAssets(doc.RootElement, "win-x64");
         Assert.Null(r.Sums);
@@ -148,10 +148,10 @@ b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-
     public void AFileMatchesOnlyItsOwnHash()
     {
         var file = Path.Combine(Path.GetTempPath(), "phonebox-hash-" + Guid.NewGuid().ToString("N"));
-        File.WriteAllText(file, "PhoneBox");
+        File.WriteAllText(file, "NikoDeck");
         try
         {
-            var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData("PhoneBox"u8.ToArray()));
+            var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData("NikoDeck"u8.ToArray()));
             Assert.True(UpdateService.HashMatches(file, hash));                     // upper case from the listing works too
             Assert.False(UpdateService.HashMatches(file, new string('0', 64)));
             File.AppendAllText(file, "!");                                         // a damaged or partial copy
@@ -174,7 +174,7 @@ b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-
     {
         // a new Android on an old kernel cannot splice() the streamed APK; a pushed one installs (#353)
         Assert.True(UpdateService.RetryWithoutStreaming(
-            "Performing Streamed Install\nadb.exe: failed to install PhoneBox.apk: Error: failed to write; splice failed: EINVAL (Invalid argument)\n"));
+            "Performing Streamed Install\nadb.exe: failed to install NikoDeck.apk: Error: failed to write; splice failed: EINVAL (Invalid argument)\n"));
         Assert.False(UpdateService.RetryWithoutStreaming("Performing Streamed Install\nSuccess\n"));
         // refusals by the package manager are not a transfer problem
         Assert.False(UpdateService.RetryWithoutStreaming("adb: failed to install x.apk: Failure [INSTALL_FAILED_UPDATE_INCOMPATIBLE: signatures do not match]"));
@@ -185,7 +185,7 @@ b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-
     public void APhoneUpdatedAnotherWayIsNotInstalledAgain()
     {
         // installed by hand after a failed update: the retry ends without installing, so "update available" clears (#353)
-        const string dump = "Packages:\n  Package [net.oxog.phonebox.deskpanel] (3ec2f24):\n    versionCode=47 minSdk=21 targetSdk=35\n    versionName=0.9.26\n";
+        const string dump = "Packages:\n  Package [com.lordsigfrid.nikodeck] (3ec2f24):\n    versionCode=47 minSdk=21 targetSdk=35\n    versionName=0.9.26\n";
         Assert.True(UpdateService.AppCurrentOn(dump, "0.9.26"));
         Assert.True(UpdateService.AppCurrentOn(dump.Replace("0.9.26", "0.9.27"), "0.9.26"));
         Assert.False(UpdateService.AppCurrentOn(dump.Replace("0.9.26", "0.9.25"), "0.9.26"));
@@ -247,13 +247,13 @@ b47da3d09583268d7bacef2d4375555313bf455af8a3ab16fd4d7ee95082826e  PhoneBoxAgent-
 
             var ver = AppPaths.Version;
             var apkBytes = "apk-v-test"u8.ToArray();
-            var sums = $"{Convert.ToHexStringLower(SHA256.HashData(apkBytes))}  PhoneBox-{ver}.apk\n";
+            var sums = $"{Convert.ToHexStringLower(SHA256.HashData(apkBytes))}  NikoDeck-{ver}.apk\n";
             var relJson = $$"""
                 {
                   "tag_name": "v{{ver}}",
                   "html_url": "https://example.invalid/release",
                   "assets": [
-                    { "name": "PhoneBox-{{ver}}.apk", "browser_download_url": "https://example.invalid/PhoneBox-{{ver}}.apk" },
+                    { "name": "NikoDeck-{{ver}}.apk", "browser_download_url": "https://example.invalid/NikoDeck-{{ver}}.apk" },
                     { "name": "SHA256SUMS-{{ver}}.txt", "browser_download_url": "https://example.invalid/SHA256SUMS-{{ver}}.txt" }
                   ]
                 }

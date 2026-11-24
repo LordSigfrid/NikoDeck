@@ -1,4 +1,4 @@
-// PhoneBox desk panel: core, pages, navigation and data from the agent. The widgets live in widgets/*.js;
+// NikoDeck desk panel: core, pages, navigation and data from the agent. The widgets live in widgets/*.js;
 // they import what they need from here, so this module must not run code that needs them while it loads
 // (the start section at the end runs after every module has loaded).
 import { W } from './registry.js';
@@ -21,8 +21,8 @@ import './widgets/steam-library.js';
 import './widgets/lyrics.js';
 import './widgets/visor.js';
 
-// PhoneBox desk panel. Pages are 12 × 6 grids of widgets, designed in the agent's settings page.
-// The panel talks to the PhoneBox agent through "/agent/*", which the Android shell proxies over USB
+// NikoDeck desk panel. Pages are 12 × 6 grids of widgets, designed in the agent's settings page.
+// The panel talks to the NikoDeck agent through "/agent/*", which the Android shell proxies over USB
 // (adb reverse) or Wi-Fi to the computer.
 
 export const API = '/agent/api';
@@ -83,7 +83,7 @@ export const FALLBACK_PAGES = [{
 
 export const DEFAULT_CFG = {
   weather: { city: 'Tallinn', lat: 59.437, lon: 24.745, unit: 'celsius', model: '' },
-  night: { enabled: true, start: '00:30', end: '07:30', brightness: 0.02 },
+  night: { enabled: false, start: '00:30', end: '07:30', brightness: 0.02 },
   display: { showSeconds: true, idleReturnSec: 90, vibrate: true, finishToast: true, finishSound: false, finishSoundVolume: 70, volumeKeys: true, nightWhenUnreachable: false, unreachableNightDelayMin: 5, pageBar: 'dots', pageBarSide: 'bottom' },
   opencode: { alwaysCountdownSec: 10 },
   pages: FALLBACK_PAGES,

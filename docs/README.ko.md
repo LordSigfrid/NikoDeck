@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -32,11 +32,11 @@
 USB 또는 Wi-Fi로 연결해 PC 상태, AI 코딩 세션, 음악을 확인하고 터치로 제어할 수 있습니다.</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>라이브 데모를 시도해 보세요</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>다운로드</b></a>
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>라이브 데모를 시도해 보세요</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>다운로드</b></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox 3개의 Android 전화기에서 자동화, 홈 및 플래너 페이지를 보여주는 모습"></p>
+<p align="center"><img src="hero-0.6.png" width="900" alt="NikoDeck 3개의 Android 전화기에서 자동화, 홈 및 플래너 페이지를 보여주는 모습"></p>
 
 ## 할 수 있는 일
 
@@ -46,7 +46,7 @@ USB 또는 Wi-Fi로 연결해 PC 상태, AI 코딩 세션, 음악을 확인하�
 - 시계, 날씨, 일정, 노트, 미디어 및 Home Assistant 컨트롤을 보여줍니다.
 - 시각적 편집기에서 페이지와 위젯을 배치하고 저장하기 전에 미리 봅니다.
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="알림, 권한 프롬프트 및 자동 페이지 전환을 보여주는 PhoneBox 투어"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="알림, 권한 프롬프트 및 자동 페이지 전환을 보여주는 NikoDeck 투어"></a><br>
 <sub>데모 데이터: 알림, 권한 프롬프트 및 자동 페이지 전환. <a href="tour-0.6.mp4">MP4를 보세요</a></sub></p>
 
 ## 빠른 시작
@@ -58,13 +58,13 @@ Android 5.0 이상의 전화(Android 6 이상이 권장됨)와 지원되는 컴�
 Windows 10/11 x64에서는 PowerShell에서 다음 명령을 실행합니다.
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 Linux 또는 macOS에서는 일반 사용자 계정에서 다음 명령을 실행합니다.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 설치 스크립트는 릴리스 체크섬을 확인하고 설정 페이지를 엽니다. USB로 휴대전화 앱을 설치할 수도 있습니다. 설정과 페어링을 유지하면서 업데이트하거나 복구하려면 스크립트를 다시 실행하세요.
@@ -78,7 +78,7 @@ Windows 트레이에서 설정 페이지를 열거나 아래 주소를 방문하
 
 ## 개인정보 보호 및 보안
 
-PhoneBox는 휴대전화와 컴퓨터를 직접 연결합니다. 계정이 필요 없고 원격 측정 데이터를 보내지 않습니다. 일부 선택 위젯은 사용자가 설정한 서비스에 연결합니다.
+NikoDeck은 휴대전화와 컴퓨터를 직접 연결합니다. 계정이 필요 없고 원격 측정 데이터를 보내지 않습니다. 일부 선택 위젯은 사용자가 설정한 서비스에 연결합니다.
 
 ## 문서화
 
@@ -92,4 +92,4 @@ PhoneBox는 휴대전화와 컴퓨터를 직접 연결합니다. 계정이 필�
 
 ## 라이선스
 
-[PhoneBox MIT 라이선스로 배포됩니다.](../LICENSE)
+[NikoDeck MIT 라이선스로 배포됩니다.](../LICENSE)

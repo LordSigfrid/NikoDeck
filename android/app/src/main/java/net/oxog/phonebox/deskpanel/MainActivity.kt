@@ -51,7 +51,7 @@ import java.util.Locale
 
 /**
  * Full-screen desk panel. The UI is plain HTML/JS bundled in assets/www.
- * The UI calls "/agent/..." URLs; they are intercepted here and forwarded to the PhoneBox agent on the PC,
+ * The UI calls "/agent/..." URLs; they are intercepted here and forwarded to the NikoDeck agent on the PC,
  * over USB (adb reverse) or, once paired, over Wi-Fi / Tailscale (see AgentLink). The WebView itself therefore
  * never makes local-network requests (no CORS, mixed-content or local-network-access issues).
  */
@@ -102,7 +102,7 @@ class MainActivity : Activity(), SensorEventListener {
         web = try { WebView(this) } catch (e: Exception) {
             // Some Android 5.1 vendor systems cannot start any WebView update ("Invalid reflection", #385): say so
             // instead of crashing at every launch.
-            Log.e("PhoneBox", "WebView failed to start", e)
+            Log.e("NikoDeck", "WebView failed to start", e)
             setContentView(TextView(this).apply {
                 text = getString(R.string.webview_failed)
                 setTextColor(0xFFFFFFFF.toInt())
@@ -598,7 +598,8 @@ class MainActivity : Activity(), SensorEventListener {
         @JavascriptInterface
         fun setHomeScreen(key: String, on: Boolean) {
             if (!ok(key)) return
-            val alias = ComponentName(this@MainActivity, "$packageName.HomeAlias")
+            // the alias lives in the Kotlin package (the manifest's ".HomeAlias"), not under the applicationId
+            val alias = ComponentName(this@MainActivity, "${MainActivity::class.java.name.substringBeforeLast('.')}.HomeAlias")
             val want = if (on) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
             if (packageManager.getComponentEnabledSetting(alias) != want)
                 packageManager.setComponentEnabledSetting(alias, want, PackageManager.DONT_KILL_APP)

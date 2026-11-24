@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox simgesi"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck simgesi"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -30,26 +30,26 @@
 
 <p align="center"><b>Eski bir Android telefonu bilgisayarınız için bir masaüstü kontrol paneline dönüştürün.</b><br>
 USB veya Wi-Fi üzerinden PC istatistikleri, yapay zekâ kodlama oturumları, müzik ve dokunmatik kontroller.<br>
-Windows, Linux ve macOS. Root, PhoneBox hesabı veya bulut hizmeti gerekmez.</p>
+Windows, Linux ve macOS. Root, NikoDeck hesabı veya bulut hizmeti gerekmez.</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>Canlı demoyu dene</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>İndir</b></a> ·
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>Canlı demoyu dene</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>İndir</b></a> ·
   <a href="#hızlı-başlangıç"><b>Hızlı başlangıç</b></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml"><img src="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml/badge.svg" alt="Derleme durumu"></a>
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Son sürüm"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml"><img src="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml/badge.svg" alt="Derleme durumu"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><img src="https://img.shields.io/github/v/release/LordSigfrid/NikoDeck?label=release" alt="Son sürüm"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT lisansı"></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="Otomasyon, ana sayfa ve planlayıcı sayfalarını gösteren üç telefonda PhoneBox"><br>
+<p align="center"><img src="hero-0.6.png" width="900" alt="Otomasyon, ana sayfa ve planlayıcı sayfalarını gösteren üç telefonda NikoDeck"><br>
 <sub>Demo verileriyle örnek düzenler.</sub></p>
 
-PhoneBox, tam ekran bir **Android uygulamasını** küçük bir **masaüstü ajanıyla** eşleştirir. Tarayıcı tabanlı görsel düzenleyicide panelinizi oluşturun: **124 widget**, **30 şablon**, çoklu sayfalar ve canlı önizleme. Birden fazla telefonu kendi düzenleriyle bağlayın veya tek bir telefonu eşleştirilmiş bilgisayarlar arasında değiştirin.
+NikoDeck, tam ekran bir **Android uygulamasını** küçük bir **masaüstü ajanıyla** eşleştirir. Tarayıcı tabanlı görsel düzenleyicide panelinizi oluşturun: **124 widget**, **30 şablon**, çoklu sayfalar ve canlı önizleme. Birden fazla telefonu kendi düzenleriyle bağlayın veya tek bir telefonu eşleştirilmiş bilgisayarlar arasında değiştirin.
 
 ## Neler yapabilirsiniz?
 
@@ -63,7 +63,7 @@ PhoneBox, tam ekran bir **Android uygulamasını** küçük bir **masaüstü aja
 
 Model, zamanlama ve token ayrıntıları için bir yapay zekâ oturumuna dokunun. Telefondan **İzin ver** veya **Reddet** yanıtı vermek için Claude Code izin istemlerini etkinleştirin. İsteğe bağlı [CodexBar entegrasyonu](GUIDE.md#widgets) kota sağlayıcıları ve maliyet özeti ekler.
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="Bildirimler, Claude Code izin istemi ve otomatik sayfa geçişini gösteren PhoneBox turu"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="Bildirimler, Claude Code izin istemi ve otomatik sayfa geçişini gösteren NikoDeck turu"></a><br>
 <sub>Demo verileriyle tur: bildirimler, izin istemleri ve otomatik sayfa geçişi. <a href="tour-0.6.mp4">MP4 izle</a></sub></p>
 
 ## Hızlı başlangıç
@@ -75,13 +75,13 @@ Model, zamanlama ve token ayrıntıları için bir yapay zekâ oturumuna dokunun
 **Windows 10/11 x64** — normal bir PowerShell penceresine yapıştırın:
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 **Linux veya macOS** — kendi kullanıcınızla çalıştırın:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 Kurulum en son sürümü indirir, SHA-256 sağlama toplamını doğrular, eksik bağımlılıkları ve oturum açılışında başlatmayı sunar ve <http://127.0.0.1:8765> adresinde ayarları açar. Android uygulamasını USB üzerinden de yükleyebilir. Ayarları ve eşleştirmeleri koruyarak güncellemek veya onarmak için kurulumu tekrar çalıştırabilirsiniz.
@@ -95,7 +95,7 @@ Kurulum en son sürümü indirir, SHA-256 sağlama toplamını doğrular, eksik 
 
 | USB | Yalnızca Wi-Fi |
 |---|---|
-| **Geliştirici seçenekleri → USB hata ayıklama**'yı açın, veri kablosunu bağlayın ve telefondaki yetkilendirme istemini onaylayın. Kurulumun uygulamayı yüklemesine izin verin veya **Ayarlar → Genel → Telefon uygulamasını yükle**'yi kullanın. | [Son sürümden](https://github.com/ersinkoc/phonebox/releases/latest) APK'yı yükleyin. **Ayarlar → Genel → Wi-Fi & Tailscale**'i etkinleştirin, istendiğinde ajanı yeniden başlatın ve **Telefonu Wi-Fi ile eşleştir**'i seçin. Eşleştirme QR kodunu tarayın ve doğrulama kodunu onaylayın. |
+| **Geliştirici seçenekleri → USB hata ayıklama**'yı açın, veri kablosunu bağlayın ve telefondaki yetkilendirme istemini onaylayın. Kurulumun uygulamayı yüklemesine izin verin veya **Ayarlar → Genel → Telefon uygulamasını yükle**'yi kullanın. | [Son sürümden](https://github.com/LordSigfrid/NikoDeck/releases/latest) APK'yı yükleyin. **Ayarlar → Genel → Wi-Fi & Tailscale**'i etkinleştirin, istendiğinde ajanı yeniden başlatın ve **Telefonu Wi-Fi ile eşleştir**'i seçin. Eşleştirme QR kodunu tarayın ve doğrulama kodunu onaylayın. |
 | Bağlandığında ekranı uyandırır ve paneli açar; adb üzerinden uygulama güncellemelerini destekler. | adb veya geliştirici seçenekleri gerekmez; daha sonra USB yapılandırmadıkça uygulama güncellemelerini elle yükleyin. |
 
 Otomatik USB/Wi-Fi geçişi için Wi-Fi'yi etkinleştirin ve telefonu bir kez USB üzerinden bağlayın.
@@ -145,7 +145,7 @@ Ekran görüntüleri demo verileri kullanır. [Şablon galerisi ve widget'lara g
 
 ## Güvenlik ve gizlilik
 
-Masaüstü ayar sunucusu `127.0.0.1:8765` adresini dinler; USB bağlantısı `adb reverse` üzerinden ulaşır. İsteğe bağlı Wi-Fi bağlantısı 8766 portunda sabitlenmiş sertifika ve eşleştirilmiş anahtarla HTTPS kullanır. Ayarlar ve eşleştirme uç noktaları yerel kalır. PhoneBox kendi telemetri, analiz veya hesap sistemine sahip değildir. Ayrıntılar için [gizlilik politikasına](../PRIVACY.md) ve [SECURITY.md](../SECURITY.md) dosyasına bakın.
+Masaüstü ayar sunucusu `127.0.0.1:8765` adresini dinler; USB bağlantısı `adb reverse` üzerinden ulaşır. İsteğe bağlı Wi-Fi bağlantısı 8766 portunda sabitlenmiş sertifika ve eşleştirilmiş anahtarla HTTPS kullanır. Ayarlar ve eşleştirme uç noktaları yerel kalır. NikoDeck kendi telemetri, analiz veya hesap sistemine sahip değildir. Ayrıntılar için [gizlilik politikasına](../PRIVACY.md) ve [SECURITY.md](../SECURITY.md) dosyasına bakın.
 
 ## Geliştirme
 
@@ -185,11 +185,11 @@ python tools/demo-server.py
 
 ## Star History
 
-<a href="https://www.star-history.com/#ersinkoc/phonebox&Date">
+<a href="https://www.star-history.com/#LordSigfrid/NikoDeck&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date&theme=dark">
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date">
-    <img alt="ersinkoc/phonebox yıldız geçmişi" src="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date">
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date&theme=dark">
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date">
+    <img alt="LordSigfrid/NikoDeck yıldız geçmişi" src="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date">
   </picture>
 </a>
 

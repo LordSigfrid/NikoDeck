@@ -15,7 +15,7 @@ public sealed record DiscordShareError(string Code, string Error);
 /// rpc.screenshare.read / .write scopes). Discord's TOGGLE_SCREENSHARE starts a share of a given process, or with no
 /// process shows Discord's own picker on the computer (or goes live with the game Discord detects), and the same command
 /// stops a share. SCREENSHARE_STATE_UPDATE says whether you are sharing: once right after subscribing, then on changes.
-/// Which apps Discord can share directly is left to Discord: PhoneBox doesn't look games up anywhere, it asks and watches
+/// Which apps Discord can share directly is left to Discord: NikoDeck doesn't look games up anywhere, it asks and watches
 /// whether the share starts.
 /// </summary>
 public sealed partial class DiscordMonitor
@@ -26,11 +26,11 @@ public sealed partial class DiscordMonitor
     internal TimeSpan ShareStartWait = TimeSpan.FromSeconds(4); // internal: tests wait less
     internal int ShareAppsCacheMs = 10_000; // internal: tests make it old
 
-    // Windows that are not apps you would share (the shell, Discord itself, PhoneBox).
+    // Windows that are not apps you would share (the shell, Discord itself, NikoDeck).
     private static readonly HashSet<string> ShareSkip = new(StringComparer.OrdinalIgnoreCase)
     {
         "discord", "discordptb", "discordcanary", "explorer", "textinputhost", "shellexperiencehost", "searchhost",
-        "startmenuexperiencehost", "lockapp", "applicationframehost", "systemsettings", "phoneboxagent",
+        "startmenuexperiencehost", "lockapp", "applicationframehost", "systemsettings", "nikodeck",
     };
 
     // guarded by _lock
@@ -241,7 +241,7 @@ public sealed partial class DiscordMonitor
             var cfg = config.Get();
             if (!WidgetControl(cfg)) return new("control", "controlling Discord is turned off in the widget's settings");
             if (!cfg.Discord.ScreenShare) return new("off", "screen share is turned off");
-            return ShareOn ? null : new("notAllowed", "Discord has not allowed PhoneBox to share the screen");
+            return ShareOn ? null : new("notAllowed", "Discord has not allowed NikoDeck to share the screen");
         }
     }
 }

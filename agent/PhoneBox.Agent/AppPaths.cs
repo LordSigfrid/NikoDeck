@@ -5,21 +5,21 @@ namespace PhoneBox.Agent;
 /// <summary>File locations. The install folder is replaced on update; settings and logs are kept.</summary>
 public static class AppPaths
 {
-    public const string AppName = "PhoneBox";
+    public const string AppName = "NikoDeck";
 
     private static string Home => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile, Environment.SpecialFolderOption.DoNotVerify);
     private static string Xdg(string variable, string fallback) =>
         Environment.GetEnvironmentVariable(variable) is { Length: > 0 } v ? v : Path.Combine(Home, fallback);
 
-    /// <summary>%APPDATA%\PhoneBox — user settings (config.json).</summary>
-    /// <summary>Windows: %APPDATA%\PhoneBox. Linux: ~/.config/PhoneBox. macOS: ~/Library/Application Support/PhoneBox.</summary>
+    /// <summary>%APPDATA%\NikoDeck — user settings (config.json).</summary>
+    /// <summary>Windows: %APPDATA%\NikoDeck. Linux: ~/.config/NikoDeck. macOS: ~/Library/Application Support/NikoDeck.</summary>
     public static readonly string ConfigDir = Path.Combine(
         OperatingSystem.IsWindows() ? Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
         : OperatingSystem.IsMacOS() ? Path.Combine(Home, "Library", "Application Support")
         : Xdg("XDG_CONFIG_HOME", ".config"), AppName);
 
-    /// <summary>%LOCALAPPDATA%\PhoneBox — logs and the installed binaries.</summary>
-    /// <summary>Windows: %LOCALAPPDATA%\PhoneBox. Linux: ~/.local/share/PhoneBox. macOS: same folder as the settings.</summary>
+    /// <summary>%LOCALAPPDATA%\NikoDeck — logs and the installed binaries.</summary>
+    /// <summary>Windows: %LOCALAPPDATA%\NikoDeck. Linux: ~/.local/share/NikoDeck. macOS: same folder as the settings.</summary>
     public static readonly string LocalDir = Path.Combine(
         OperatingSystem.IsWindows() ? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
         : OperatingSystem.IsMacOS() ? Path.Combine(Home, "Library", "Application Support")
@@ -46,9 +46,73 @@ public static class AppPaths
         Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0]
         ?? "0.0.0";
 
-    /// <summary>Writes the default settings file on first run.</summary>
+    /// <summary>The upstream PhoneBox settings folder next to <see cref="ConfigDir"/>; a new NikoDeck install starts from a copy of it.</summary>
+    public static readonly string LegacyConfigDir = Path.Combine(Path.GetDirectoryName(ConfigDir)!, "PhoneBox");
+
+    /// <summary>Set when this run copied the PhoneBox settings (see <see cref="MigrateLegacy"/>); logged at startup.</summary>
+    public static string? MigratedFrom { get; private set; }
+
+    // macOS keeps the install, the logs and the caches in the settings folder too: those stay with PhoneBox
+    private static readonly string[] NotMigrated = ["app", "updates", "photos-cache", "radio-logos", "claude-quota.json"];
+
+    /// <summary>
+    /// First NikoDeck run on a computer that has PhoneBox: copies (never moves) PhoneBox's settings folder once, with
+    /// config.json and its backup, the push data, uploaded icons, wallpapers and the Wi-Fi keys, so both can stay
+    /// installed. Does nothing when <paramref name="configDir"/> already has a config.json or <paramref name="legacyDir"/> has no
+    /// config.json. The copy is made next to the target and renamed into place, so a failed copy leaves no half folder
+    /// (the agent then starts with the default settings). Links are not followed. True when the folder was copied.
+    /// </summary>
+    internal static bool MigrateLegacy(string legacyDir, string configDir)
+    {
+        // the folder itself may already exist without settings (macOS: setup.sh puts the install in it first)
+        if (File.Exists(Path.Combine(configDir, "config.json")) || !File.Exists(Path.Combine(legacyDir, "config.json"))) return false;
+        var staging = configDir.TrimEnd('\\', '/') + ".migrating";
+        try
+        {
+            if (Directory.Exists(staging)) Directory.Delete(staging, true);
+            CopyTree(legacyDir, staging, top: true);
+            if (!Directory.Exists(configDir)) Directory.Move(staging, configDir);
+            else
+            {
+                // move the copied entries in one by one, leaving whatever is already there (the install, its logs)
+                // config.json last: it marks the copy as done, so a move that fails halfway is tried again next run
+                foreach (var entry in new DirectoryInfo(staging).EnumerateFileSystemInfos()
+                             .OrderBy(e => e.Name.Equals("config.json", StringComparison.OrdinalIgnoreCase)))
+                {
+                    var target = Path.Combine(configDir, entry.Name);
+                    if (File.Exists(target) || Directory.Exists(target)) continue;
+                    if (entry is DirectoryInfo dir) dir.MoveTo(target); else ((FileInfo)entry).MoveTo(target);
+                }
+                Directory.Delete(staging, true);
+            }
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            try { if (Directory.Exists(staging)) Directory.Delete(staging, true); }
+            catch (Exception cleanup) when (cleanup is IOException or UnauthorizedAccessException) { }
+            return false;
+        }
+    }
+
+    private static void CopyTree(string from, string to, bool top)
+    {
+        Directory.CreateDirectory(to);
+        foreach (var entry in new DirectoryInfo(from).EnumerateFileSystemInfos())
+        {
+            if (entry.LinkTarget is not null) continue;
+            if (top && (NotMigrated.Contains(entry.Name, StringComparer.OrdinalIgnoreCase)
+                        || entry.Name.StartsWith("agent.log", StringComparison.OrdinalIgnoreCase))) continue;
+            if (entry is DirectoryInfo dir) CopyTree(dir.FullName, Path.Combine(to, dir.Name), top: false);
+            else CopyPrivate(entry.FullName, Path.Combine(to, entry.Name));
+        }
+    }
+
+    /// <summary>Writes the default settings file on first run (after copying PhoneBox's settings, when there are any).</summary>
     public static void EnsureConfig()
     {
+        if (File.Exists(ConfigPath)) return;
+        if (MigrateLegacy(LegacyConfigDir, ConfigDir)) MigratedFrom = LegacyConfigDir;
         if (File.Exists(ConfigPath)) return;
         Directory.CreateDirectory(ConfigDir);
         var name = OperatingSystem.IsMacOS() ? "config.default.macos.json" : OperatingSystem.IsLinux() ? "config.default.linux.json" : "config.default.json";

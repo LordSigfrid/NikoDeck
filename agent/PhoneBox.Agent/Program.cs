@@ -160,7 +160,7 @@ app.MapPost("/api/controls/spotify/disconnect", async (SpotifyControl spotify, C
 app.MapGet("/api/controls/spotify/callback", async (string? state, string? code, SpotifyControl spotify, CancellationToken ct) =>
 {
     try { return state is not null && code is not null && await spotify.Complete(state, code, ct)
-        ? Results.Text("Spotify connected. Return to PhoneBox settings; this tab can be closed.", "text/plain")
+        ? Results.Text("Spotify connected. Return to NikoDeck settings; this tab can be closed.", "text/plain")
         : Results.BadRequest("Spotify sign-in expired or was refused. Start again from desktop settings."); }
     catch { return Results.BadRequest("Spotify sign-in failed. Start again from desktop settings."); }
 });
@@ -220,7 +220,7 @@ app.MapGet("/api/latency", () => Results.Json(timings.Summary()));
 //  - Local port 8765 listens on 127.0.0.1 only; the Host check blocks DNS rebinding. From browsers only the settings
 //    page itself (same origin) is accepted (no CSRF).
 //  - The phone's USB tunnel ends on a port of its own (UsbLink): every app on the phone can reach the tunnel, so it
-//    is TLS with the certificate the app pins (handed over adb), needs the key the PhoneBox app made (read over adb),
+//    is TLS with the certificate the app pins (handed over adb), needs the key the NikoDeck app made (read over adb),
 //    and serves only the phone API.
 //  - The optional Wi-Fi port only serves the phone API, only over TLS, and only with the paired token.
 app.UseWebSockets();
@@ -322,7 +322,7 @@ app.MapPost("/api/pair/start", (ConfigStore cfg, PairingCodes codes) =>
     var hosts = Lan.Addresses();
     var fingerprint = Lan.Fingerprint(lanCert);
     var link = PairingCodes.Link(Environment.MachineName, fingerprint, lanCfg.Port, hosts, code);
-    var apk = $"https://github.com/ersinkoc/phonebox/releases/download/v{AppPaths.Version}/PhoneBox-{AppPaths.Version}.apk";
+    var apk = $"https://github.com/LordSigfrid/NikoDeck/releases/download/v{AppPaths.Version}/NikoDeck-{AppPaths.Version}.apk";
     return Results.Json(new
     {
         enabled = true,
@@ -769,7 +769,7 @@ app.MapPost("/api/steam/launch", (string? id, string? widget, HttpRequest req, S
         : Results.Ok(new { ok = true }));
 // Synced lyrics of the track playing now, from LRCLIB, for the asking widget ("widget=pageId/widgetId"): only when that
 // widget is on an enabled page with "Look up lyrics on LRCLIB" turned on (off by default). The track is the one Now playing
-// shows (the agent's own media snapshot, with PhoneBox's Internet Radio in its place while that plays or is paused, which
+// shows (the agent's own media snapshot, with NikoDeck's Internet Radio in its place while that plays or is paused, which
 // is never looked up): the phone sends no text that could reach LRCLIB.
 app.MapGet("/api/lyrics", async (string? widget, HttpRequest req, MediaMonitor media, ControlDeck deck, LyricsService lyrics, CancellationToken ct) =>
 {
@@ -1141,8 +1141,12 @@ app.MapDelete("/api/settings/shortcut-icon", (string id, HttpRequest req, Config
 });
 
 app.Lifetime.ApplicationStarted.Register(() =>
-    app.Logger.LogInformation("PhoneBox agent {Version} ready on http://127.0.0.1:{Port}, phone USB port {UsbPort} (config: {Path})",
-        AppPaths.Version, Port, usb.Port, configPath));
+{
+    if (AppPaths.MigratedFrom is { } legacy)
+        app.Logger.LogInformation("first run: copied the PhoneBox settings from {Legacy} (that folder is left as it was)", legacy);
+    app.Logger.LogInformation("NikoDeck agent {Version} ready on http://127.0.0.1:{Port}, phone USB port {UsbPort} (config: {Path})",
+        AppPaths.Version, Port, usb.Port, configPath);
+});
 
 app.Run();
 

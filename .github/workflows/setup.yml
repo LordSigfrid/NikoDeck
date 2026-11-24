@@ -53,8 +53,8 @@ jobs:
           $info = Invoke-RestMethod http://127.0.0.1:8765/api/info
           "version $($info.version), adb $($info.adb)"
           if (-not $info.adb) { throw 'setup did not install adb' }
-          if (-not (Test-Path "$env:LOCALAPPDATA\PhoneBox\app\PhoneBoxAgent.exe")) { throw 'agent not in the install folder' }
-          if (-not (Test-Path ([Environment]::GetFolderPath('Startup') + '\PhoneBox.lnk'))) { throw 'no Startup shortcut' }
+          if (-not (Test-Path "$env:LOCALAPPDATA\NikoDeck\app\NikoDeck.exe")) { throw 'agent not in the install folder' }
+          if (-not (Test-Path ([Environment]::GetFolderPath('Startup') + '\NikoDeck.lnk'))) { throw 'no Startup shortcut' }
       - name: Second run replaces a running agent
         shell: powershell
         run: |
@@ -63,7 +63,7 @@ jobs:
       - name: Stop the agent
         if: always()
         shell: powershell
-        run: Get-Process PhoneBoxAgent -ErrorAction SilentlyContinue | Stop-Process -Force
+        run: Get-Process NikoDeck -ErrorAction SilentlyContinue | Stop-Process -Force
 
   unix:
     name: setup.sh (${{ matrix.os }})
@@ -91,6 +91,6 @@ jobs:
       - name: Stop the agent
         if: always()
         run: |
-          launchctl unload "$HOME/Library/LaunchAgents/net.oxog.phonebox.agent.plist" 2>/dev/null || true
-          systemctl --user stop phonebox.service 2>/dev/null || true
-          pkill -x PhoneBoxAgent || true
+          launchctl unload "$HOME/Library/LaunchAgents/com.lordsigfrid.nikodeck.agent.plist" 2>/dev/null || true
+          systemctl --user stop nikodeck.service 2>/dev/null || true
+          pkill -x NikoDeck || true

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-# Review rules for PhoneBox. They repeat CONTRIBUTING.md so the first automated pass catches what maintainers ask for.
+# Review rules for NikoDeck. They repeat CONTRIBUTING.md so the first automated pass catches what maintainers ask for.
 language: en-US
 reviews:
   profile: chill

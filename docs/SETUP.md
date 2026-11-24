@@ -1,26 +1,26 @@
 # Installation and connections
 
-[Back to PhoneBox](../README.md) · [User guide](GUIDE.md) · [Development](DEVELOPMENT.md)
+[Back to NikoDeck](../README.md) · [User guide](GUIDE.md) · [Development](DEVELOPMENT.md)
 
 [Quick start](#quick-start) · [Wi-Fi & Tailscale](#wi-fi--tailscale) · [Updates](#updates) · [FAQ & troubleshooting](#faq--troubleshooting)
 
 ## Quick start
 
-### 1. Install PhoneBox on the computer
+### 1. Install NikoDeck on the computer
 
 **Windows 10/11**: open PowerShell (a normal window, not *Run as administrator*) and paste:
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 **Linux and macOS**: open a terminal and paste (run it as yourself, not with `sudo`):
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
-Setup installs the [latest release](https://github.com/ersinkoc/phonebox/releases/latest) and anything missing:
+Setup installs the [latest release](https://github.com/LordSigfrid/NikoDeck/releases/latest) and anything missing:
 
 1. **Checks the computer**: Windows x64; Linux x64 / ARM64 with glibc; macOS on Apple silicon or Intel.
 2. **Downloads and checks the agent**: the download must match the release's SHA-256 checksums. With the
@@ -34,18 +34,24 @@ Setup installs the [latest release](https://github.com/ersinkoc/phonebox/release
 
    | | Program | Settings (kept on reinstall) |
    |---|---|---|
-   | Windows | `%LOCALAPPDATA%\PhoneBox\app` | `%APPDATA%\PhoneBox` |
-   | Linux | `~/.local/share/PhoneBox/app` | `~/.config/PhoneBox` |
-   | macOS | `~/Library/Application Support/PhoneBox/app` | `~/Library/Application Support/PhoneBox` |
+   | Windows | `%LOCALAPPDATA%\NikoDeck\app` | `%APPDATA%\NikoDeck` |
+   | Linux | `~/.local/share/NikoDeck/app` | `~/.config/NikoDeck` |
+   | macOS | `~/Library/Application Support/NikoDeck/app` | `~/Library/Application Support/NikoDeck` |
 
-   It adds a Start Menu shortcut on Windows, and asks whether to start PhoneBox at login: a Startup-folder shortcut
+   NikoDeck uses its own folders, so it can stay installed next to the original PhoneBox (both use port 8765, so run
+   one at a time). On its first start, when the NikoDeck settings folder does not exist yet but a PhoneBox one does
+   (`%APPDATA%\PhoneBox`, `~/.config/PhoneBox`, `~/Library/Application Support/PhoneBox`), the agent copies it once:
+   settings, pages, uploaded icons and wallpapers. The PhoneBox folder is left as it was. The phone app is a separate
+   app (`com.lordsigfrid.nikodeck`), so pair or connect it again.
+
+   It adds a Start Menu shortcut on Windows, and asks whether to start NikoDeck at login: a Startup-folder shortcut
    on Windows, a systemd user service on Linux, a launchd agent on macOS.
 6. **Puts the app on the phone over USB**, if you want. It shows how to turn on USB debugging and waits for the phone.
 7. **Starts the agent** and opens its settings at <http://127.0.0.1:8765>.
 
 The agent installs for your user. System package managers may request administrator rights for missing dependencies;
 on Linux, setup asks before using `sudo`. Run it again
-any time to update or repair PhoneBox; settings and pairings are kept. Read [`setup.ps1`](../setup.ps1) or
+any time to update or repair NikoDeck; settings and pairings are kept. Read [`setup.ps1`](../setup.ps1) or
 [`setup.sh`](../setup.sh) before you run it if you like. With `-DryRun` / `--dry-run` it downloads and checks everything
 and changes nothing.
 
@@ -56,7 +62,7 @@ and changes nothing.
 | `-Yes` | `--yes` | Take the default answer to every question (unattended) |
 | `-NoPhone` | `--no-phone` | Do not install the app over USB (for a Wi-Fi-only phone) |
 | `-Serial <id>` | `--serial <id>` | The phone to use when several are connected (`adb devices`) |
-| `-NoAutostart` | `--no-autostart` | Do not start PhoneBox at login |
+| `-NoAutostart` | `--no-autostart` | Do not start NikoDeck at login |
 | `-NoStart` | `--no-start` | Install only |
 | — | `--no-extras` | Do not offer the optional helpers |
 | `-Version 0.9.8` | `--version 0.9.8` | Install that release instead of the latest |
@@ -65,23 +71,23 @@ and changes nothing.
 To pass options:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1))) -NoPhone
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1))) -NoPhone
 ```
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash -s -- --no-phone
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash -s -- --no-phone
 ```
 
 </details>
 
 <details><summary><b>Before you run it: warnings</b></summary>
 
-- **The Windows agent is not code-signed yet.** [SignPath Foundation](../README.md#code-signing-policy) accepted the project; releases are signed once its release certificate is issued.
+- **The Windows agent is not code-signed.** NikoDeck releases are unsigned; the SignPath Foundation signing of the upstream PhoneBox project does not cover this fork (see the [code signing policy](../README.md#code-signing-policy)).
   Windows SmartScreen or an antivirus may warn about a new, unsigned program, and some antivirus engines have flagged
   it ([#69](https://github.com/ersinkoc/phonebox/issues/69)). Setup only installs a file that matches the release
-  checksum. If your antivirus removes `PhoneBoxAgent.exe`, setup says so; restore it from quarantine or report it.
+  checksum. If your antivirus removes `NikoDeck.exe`, setup says so; restore it from quarantine or report it.
 - **Smart App Control** (Windows 11) blocks programs that are neither signed nor known to Microsoft. The agent is
-  not code-signed yet (signing through SignPath Foundation waits for its release certificate, [#56](https://github.com/ersinkoc/phonebox/issues/56)),
+  not code-signed (see the upstream PhoneBox discussion in [#56](https://github.com/ersinkoc/phonebox/issues/56)),
   so with Smart App Control on, Windows refuses to start it: "An Application Control policy has blocked this file"
   ([#69](https://github.com/ersinkoc/phonebox/issues/69)). Setup warns you first, still installs it, and explains
   if Windows blocks it. Please keep Smart App Control on: on older Windows builds it cannot be turned back on without
@@ -90,23 +96,23 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 - **USB debugging gives a computer you allow control over the phone.** Allow only your own computers. You can
   withdraw them on the phone under *Developer options › Revoke USB debugging authorisations*.
 - **Wi-Fi is off until you turn it on.** Until then the agent listens only on this computer (`127.0.0.1:8765`).
-  When you turn it on, Windows asks to let PhoneBox through the firewall: allow *Private* networks only. On Linux
-  with ufw or firewalld, open TCP port 8766 for your local network. Every connection PhoneBox makes is listed in
+  When you turn it on, Windows asks to let NikoDeck through the firewall: allow *Private* networks only. On Linux
+  with ufw or firewalld, open TCP port 8766 for your local network. Every connection NikoDeck makes is listed in
   the [privacy policy](../PRIVACY.md).
 - **Linux USB permissions**: if `adb devices` shows `no permissions`, adb also needs udev rules. Install
   `android-sdk-platform-tools-common` on Debian/Ubuntu or `android-udev` on Arch. Some systems also need the
   `plugdev` group (`sudo usermod -aG plugdev $USER`, then log out and in). Setup points this out when it happens.
-- **On macOS**, the agent is signed with PhoneBox's own certificate, not an Apple Developer ID. The first time,
+- **On macOS**, the agent is signed with NikoDeck's own certificate, not an Apple Developer ID. The first time,
   macOS may ask whether it may control Music or Spotify (for Now Playing), or accept incoming connections (with Wi-Fi
   on). Shortcuts that press keys, and the Trackpad widget (its mouse events and its gestures), need *System Settings ›
-  Privacy & Security › Accessibility* for PhoneBoxAgent; it
+  Privacy & Security › Accessibility* for NikoDeck; it
   carries over to later updates. Before 0.9.22 the agent was signed ad hoc, and macOS dropped the permission with every
-  update, so after updating from an older version allow it once more: remove PhoneBoxAgent there with *−* and add it
+  update, so after updating from an older version allow it once more: remove NikoDeck there with *−* and add it
   again, even if it is listed and switched on ([#269](https://github.com/ersinkoc/phonebox/issues/269)).
 - **Windows USB drivers**: if the phone never appears, Windows may need its USB driver. Google phones use the
   Google USB Driver; other brands have one on their support site.
-- **Scoop users**: setup stops if PhoneBox is installed with Scoop, so two copies don't fight over the same port.
-  Keep using `scoop update phonebox`, or `scoop uninstall phonebox` first and then run setup.
+- **Scoop users**: setup stops if NikoDeck is installed with Scoop, so two copies don't fight over the same port.
+  Keep using `scoop update nikodeck`, or `scoop uninstall nikodeck` first and then run setup.
 - **Windows on ARM** and **musl Linux** (Alpine) have no release build yet.
 
 </details>
@@ -122,7 +128,7 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
   Setup installs the app, or use *Settings › General › Install the phone app* later. Then the phone wakes up and
   opens the panel whenever it is plugged in.
 - **Over Wi-Fi only**, with no developer options or adb: install the APK from the
-  [release page](https://github.com/ersinkoc/phonebox/releases/latest) on the phone. Then on the computer turn on
+  [release page](https://github.com/LordSigfrid/NikoDeck/releases/latest) on the phone. Then on the computer turn on
   *Settings › General › Wi-Fi & Tailscale*, click **Pair a phone over Wi-Fi** and scan the QR code (see
   [Wi-Fi & Tailscale](#wi-fi--tailscale)).
 
@@ -130,61 +136,61 @@ The settings are at <http://127.0.0.1:8765>, on Windows also from the tray icon.
 
 ### Other ways to install
 
-- **Manual download**: the [release](https://github.com/ersinkoc/phonebox/releases/latest) has the signed Android
+- **Manual download**: the [release](https://github.com/LordSigfrid/NikoDeck/releases/latest) has the signed Android
   APK and agents for Windows x64, Linux x64/ARM64 and macOS Apple silicon/Intel, with SHA-256 checksums and build
   provenance. Unzip the agent and run it. It can update itself only from the install folder in the table above. On a Mac,
-  the `.dmg` holds `PhoneBox.app`: drag it to Applications (or `~/Applications`) and open it. It has no window; the settings
+  the `.dmg` holds `NikoDeck.app`: drag it to Applications (or `~/Applications`) and open it. It has no window; the settings
   are at http://127.0.0.1:8765. If you installed with `setup.sh`, that agent is already running and holds the port, so first quit it
-  and run `launchctl unload ~/Library/LaunchAgents/net.oxog.phonebox.agent.plist` (otherwise opening the app only reopens its settings,
+  and run `launchctl unload ~/Library/LaunchAgents/com.lordsigfrid.nikodeck.agent.plist` (otherwise opening the app only reopens its settings,
   and the login job starts the old agent again). It is not notarized, so macOS blocks it the first time: open it once, then allow it in *System Settings › Privacy &
   Security › Open Anyway* (right-click › Open works only up to macOS 14). The Accessibility permission is recorded per
-  app, so allow PhoneBox there once more when you move between this app and an agent started from the zip or `setup.sh`.
+  app, so allow NikoDeck there once more when you move between this app and an agent started from the zip or `setup.sh`.
 - **Scoop** (Windows), which can then put the app on the phone from *Settings › General › Install the phone app*:
 
   ```powershell
-  scoop bucket add phonebox https://github.com/ersinkoc/phonebox
-  scoop install main/adb phonebox/phonebox
+  scoop bucket add nikodeck https://github.com/LordSigfrid/NikoDeck
+  scoop install main/adb nikodeck/nikodeck
   ```
 
-- **winget**: a package (`ersinkoc.PhoneBox`) is prepared in [`packaging/winget`](../packaging/winget) for
-  winget-pkgs. Once it is accepted, `winget install ersinkoc.PhoneBox` will install it.
+- **winget**: a package (`LordSigfrid.NikoDeck`) is prepared in [`packaging/winget`](../packaging/winget) for
+  winget-pkgs. Once it is accepted, `winget install LordSigfrid.NikoDeck` will install it.
 - **From source** (for development): needs the [.NET 10 SDK](https://dotnet.microsoft.com/download) and `adb`. To build
   the phone app it also needs **JDK 17** and **Android SDK Platform 35** (for example through Android Studio), with
   `JAVA_HOME` set and `ANDROID_HOME` or `android/local.properties` (`sdk.dir`) pointing at the SDK.
 
   ```powershell
-  git clone https://github.com/ersinkoc/phonebox; cd phonebox
+  git clone https://github.com/LordSigfrid/NikoDeck; cd NikoDeck
   .\scripts\install.ps1 -Apk -Autostart   # add -Serial <id> with several devices; -BuildApk always rebuilds the app
   ```
 
   ```sh
-  git clone https://github.com/ersinkoc/phonebox && cd phonebox
+  git clone https://github.com/LordSigfrid/NikoDeck && cd NikoDeck
   ./scripts/install.sh --apk --autostart  # systemd user service (Linux) or launchd agent (macOS)
   ```
 
 ### Stop and start the agent
 
-On Windows, use **Quit** in the tray menu. Start it again from the Start Menu (search for **PhoneBox**); with
+On Windows, use **Quit** in the tray menu. Start it again from the Start Menu (search for **NikoDeck**); with
 **Start with Windows** on, it also starts at the next sign-in.
-On Linux, setup installs a systemd user service named `phonebox` (no sudo needed):
+On Linux, setup installs a systemd user service named `nikodeck` (no sudo needed):
 
 ```sh
-systemctl --user stop phonebox            # off until the next login; start / restart / status work the same way
-systemctl --user disable --now phonebox   # off, and no longer started at login (enable --now turns both back on)
+systemctl --user stop nikodeck            # off until the next login; start / restart / status work the same way
+systemctl --user disable --now nikodeck   # off, and no longer started at login (enable --now turns both back on)
 ```
 
-On macOS, `launchctl unload ~/Library/LaunchAgents/net.oxog.phonebox.agent.plist` stops it, and `launchctl load`
+On macOS, `launchctl unload ~/Library/LaunchAgents/com.lordsigfrid.nikodeck.agent.plist` stops it, and `launchctl load`
 with the same path starts it again. While the agent is off, the phone shows that it is offline and reconnects by
 itself once the agent runs again.
 
 ### Uninstall
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/scripts/uninstall.ps1))) # add -Purge -Apk
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/scripts/uninstall.ps1))) # add -Purge -Apk
 ```
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/scripts/uninstall.sh | bash -s --   # add --purge --apk
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/scripts/uninstall.sh | bash -s --   # add --purge --apk
 ```
 
 Without options it removes the program and the start-at-login entry and keeps the settings. `-Purge` / `--purge` also
@@ -212,7 +218,7 @@ deletes the settings, and `-Apk` / `--apk` removes the app from the connected ph
 
 On Windows, Now playing shows the apps that appear in Windows' own media controls (the panel above the volume in Quick Settings): Spotify, browsers, Media Player and most streaming apps. A player that does not report itself there, such as VLC 3, stays blank on the phone. While no other app is in those controls, play / pause sends the keyboard's media key, which such a player may act on (VLC does when its media keys are global hotkeys or it is in front), but the phone cannot tell whether it plays.
 
-On macOS, `nowplaying-cli` supplies system media metadata and cover art. The agent labels matching Safari or Chrome tabs as YouTube or YouTube Music. The progress bar advances from the last position supplied by macOS; Safari may report an outdated starting position. Volume follows the selected system output. When macOS does not expose its volume, an optional `m1ddc` installation can read it from a compatible display; display volume is read only in PhoneBox. Unsupported outputs show `n/a`. Apple silicon GPU usage comes from IORegistry when macOS exposes it; temperature, power and VRAM figures may remain unavailable.
+On macOS, `nowplaying-cli` supplies system media metadata and cover art. The agent labels matching Safari or Chrome tabs as YouTube or YouTube Music. The progress bar advances from the last position supplied by macOS; Safari may report an outdated starting position. Volume follows the selected system output. When macOS does not expose its volume, an optional `m1ddc` installation can read it from a compatible display; display volume is read only in NikoDeck. Unsupported outputs show `n/a`. Apple silicon GPU usage comes from IORegistry when macOS exposes it; temperature, power and VRAM figures may remain unavailable.
 
 </details>
 
@@ -225,20 +231,20 @@ both: the card is the main GPU, the GPU details widget can show either.
 
 #### LibreHardwareMonitor on Windows
 
-PhoneBox reads LibreHardwareMonitor's sensor list from `http://127.0.0.1:8085/data.json` whenever it is there; there
-is nothing to turn on in PhoneBox.
+NikoDeck reads LibreHardwareMonitor's sensor list from `http://127.0.0.1:8085/data.json` whenever it is there; there
+is nothing to turn on in NikoDeck.
 
 1. Download the latest release from
    [LibreHardwareMonitor's releases](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor/releases), unzip it
    to a folder of its own and start `LibreHardwareMonitor.exe` **as administrator** (CPU temperatures and several GPU
    sensors need it).
-2. In its menu choose **Options › Remote Web Server › Run**. The port stays **8085** (PhoneBox only looks there).
+2. In its menu choose **Options › Remote Web Server › Run**. The port stays **8085** (NikoDeck only looks there).
 3. Check it in a browser on the PC: <http://127.0.0.1:8085/data.json> should show a long JSON text. Within a few
    seconds the CPU temperature, the CPU power (when your CPU reports a package power there) and the extra GPU values
    appear on the phone.
 4. To keep it running: **Options › Start Minimized**, **Minimize To Tray** and **Run On Windows Startup**.
 
-The web server answers on every network the PC is on. If Windows Firewall asks, PhoneBox only needs it on this
+The web server answers on every network the PC is on. If Windows Firewall asks, NikoDeck only needs it on this
 computer, so you can leave the network access unchecked. Menu names are those of recent LibreHardwareMonitor versions
 and may differ slightly in older ones.
 
@@ -250,12 +256,12 @@ Wi-Fi is off by default. To turn it on:
 2. In **General**, scroll down to **Wi-Fi & Tailscale** and turn on **Let the phone connect without the USB cable**.
 3. Click **Save**, then **Restart to apply** at the top of the page. The line next to **Pair a phone over Wi-Fi**
    says "Listening on port 8766" once it works.
-4. Allow PhoneBox through the firewall when Windows asks.
+4. Allow NikoDeck through the firewall when Windows asks.
 
 Then pair the phone in one of two ways:
 
 - **Without a cable:** click **Pair a phone over Wi-Fi**. The window shows a QR code that downloads the app and one
-  that pairs. Scan the second with the phone's camera, open the link and tap **Open in PhoneBox**; the phone asks you
+  that pairs. Scan the second with the phone's camera, open the link and tap **Open in NikoDeck**; the phone asks you
   to confirm a code that the window also shows. No developer options, USB debugging or adb needed. The QR code holds
   the PC's addresses, its certificate fingerprint and a one-time code (5 minutes, single use), never the key itself.
   A phone paired this way only uses Wi-Fi: plugging it into the PC does not wake it or open the panel, there is no
@@ -283,8 +289,8 @@ phone; over Wi-Fi the panel shows "plug in USB to update") and replaces its own 
 accepts an update signed with the same key as the installed app; the agent never uninstalls to force one.
 When GitHub turns away anonymous requests (it answers 503 / 504 now and then), the agent asks again with the
 [GitHub CLI](https://cli.github.com)'s token if `gh` is signed in; the token only goes to `api.github.com`.
-A Mac agent running from `PhoneBox.app` (the `.dmg` of a release) updates the same way, by replacing the whole app: it
-downloads the release's `PhoneBox-<version>-<rid>.dmg`, checks it against the release checksums and the new app's signature, swaps it
+A Mac agent running from `NikoDeck.app` (the `.dmg` of a release) updates the same way, by replacing the whole app: it
+downloads the release's `NikoDeck-<version>-<rid>.dmg`, checks it against the release checksums and the new app's signature, swaps it
 in and restarts. The app must sit in a folder you can write to, such as `~/Applications`.
 See the [changelog](../CHANGELOG.md).
 
@@ -339,5 +345,5 @@ key as the installed app — if you built the app yourself, keep using your own 
 
 <details><summary><b>Can I use it without root?</b></summary>
 
-Yes. PhoneBox needs no root on the phone and no admin rights on the PC.
+Yes. NikoDeck needs no root on the phone and no admin rights on the PC.
 </details>

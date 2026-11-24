@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-  Installs (or updates) PhoneBox on this computer and, optionally, on the connected phone.
+  Installs (or updates) NikoDeck on this computer and, optionally, on the connected phone.
 
 .DESCRIPTION
   1. Publishes the agent to a temporary staging folder.
-  2. Stops a running agent and installs the staged build in %LOCALAPPDATA%\PhoneBox\app.
+  2. Stops a running agent and installs the staged build in %LOCALAPPDATA%\NikoDeck\app.
   3. Optionally adds a Start-with-Windows shortcut.
   4. Optionally installs the panel APK on the connected phone: the newest of dist\ and the last build, rebuilt
      first when the app's sources are newer (or with -BuildApk).
@@ -23,8 +23,8 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot
 . (Join-Path $PSScriptRoot 'install-apk.ps1')   # also defines Expand-Text for the accented messages below
-$app = Join-Path $env:LOCALAPPDATA 'PhoneBox\app'
-$exe = Join-Path $app 'PhoneBoxAgent.exe'
+$app = Join-Path $env:LOCALAPPDATA 'NikoDeck\app'
+$exe = Join-Path $app 'NikoDeck.exe'
 
 if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { throw (Expand-Text '\u00c9 necess\u00e1rio o .NET 10 SDK: winget install Microsoft.DotNet.SDK.10') }
 $stage = Join-Path ([IO.Path]::GetTempPath()) ('phonebox-publish-' + [guid]::NewGuid().ToString('N'))
@@ -32,12 +32,12 @@ try {
     Write-Host '==> Publicando o agente'
     dotnet publish (Join-Path $root 'agent\PhoneBox.Agent') -c Release -f net10.0-windows10.0.19041.0 -o $stage --nologo -v q --disable-build-servers
     if ($LASTEXITCODE) { throw (Expand-Text "dotnet publish falhou (c\u00f3digo de sa\u00edda $LASTEXITCODE); o agente instalado n\u00e3o foi atualizado") }
-    if (-not (Test-Path -LiteralPath (Join-Path $stage 'PhoneBoxAgent.exe') -PathType Leaf)) {
+    if (-not (Test-Path -LiteralPath (Join-Path $stage 'NikoDeck.exe') -PathType Leaf)) {
         throw (Expand-Text 'publish falhou: o execut\u00e1vel do agente n\u00e3o foi encontrado na pasta tempor\u00e1ria')
     }
 
     Write-Host (Expand-Text '==> Encerrando o agente em execu\u00e7\u00e3o')
-    Get-Process PhoneBoxAgent, DeskAgent -ErrorAction SilentlyContinue | Stop-Process -Force
+    Get-Process NikoDeck, DeskAgent -ErrorAction SilentlyContinue | Stop-Process -Force
     Start-Sleep -Milliseconds 500
 
     Write-Host "==> Instalando em $app"
@@ -59,10 +59,10 @@ if ($programs -and (Test-Path $programs)) {
     # a shortcut that cannot be written must not stop the script before the agent is started again
     try {
         $shell = New-Object -ComObject WScript.Shell
-        $lnk = $shell.CreateShortcut((Join-Path $programs 'PhoneBox.lnk'))
+        $lnk = $shell.CreateShortcut((Join-Path $programs 'NikoDeck.lnk'))
         $lnk.TargetPath = $exe
         $lnk.WorkingDirectory = $app
-        $lnk.Description = 'Agente do PhoneBox'
+        $lnk.Description = 'Agente do NikoDeck'
         $lnk.Save()
     } catch {
         Write-Warning (Expand-Text "N\u00e3o foi poss\u00edvel criar o atalho no menu Iniciar: $($_.Exception.Message)")
@@ -72,10 +72,10 @@ if ($programs -and (Test-Path $programs)) {
 if ($Autostart) {
     Write-Host '==> Adicionando o atalho de "Iniciar com o Windows"'
     $shell = New-Object -ComObject WScript.Shell
-    $lnk = $shell.CreateShortcut((Join-Path $startup 'PhoneBox.lnk'))
+    $lnk = $shell.CreateShortcut((Join-Path $startup 'NikoDeck.lnk'))
     $lnk.TargetPath = $exe
     $lnk.WorkingDirectory = $app
-    $lnk.Description = 'Agente do PhoneBox'
+    $lnk.Description = 'Agente do NikoDeck'
     $lnk.Save()
 }
 
@@ -86,8 +86,8 @@ $launchError = $null
 try { Start-Process $exe -WorkingDirectory $app } catch { $launchError = $_ }
 if (-not $launchError) {
     Start-Sleep 2
-    try { Invoke-RestMethod http://127.0.0.1:8765/api/info -TimeoutSec 5 | Out-Null; Write-Host (Expand-Text 'O PhoneBox est\u00e1 em execu\u00e7\u00e3o. Configura\u00e7\u00f5es: http://127.0.0.1:8765  (ou pelo \u00edcone da bandeja)') }
-    catch { Write-Warning (Expand-Text "O agente n\u00e3o respondeu; veja $env:LOCALAPPDATA\PhoneBox\agent.log") }
+    try { Invoke-RestMethod http://127.0.0.1:8765/api/info -TimeoutSec 5 | Out-Null; Write-Host (Expand-Text 'O NikoDeck est\u00e1 em execu\u00e7\u00e3o. Configura\u00e7\u00f5es: http://127.0.0.1:8765  (ou pelo \u00edcone da bandeja)') }
+    catch { Write-Warning (Expand-Text "O agente n\u00e3o respondeu; veja $env:LOCALAPPDATA\NikoDeck\agent.log") }
 }
 
 if ($Apk) {
@@ -101,7 +101,7 @@ if ($Apk) {
     if (-not $adb) { throw (Expand-Text 'adb n\u00e3o encontrado: winget install Google.PlatformTools') }
 
     $built = Join-Path $root 'android\app\build\outputs\apk\release\app-release.apk'
-    $apkFile = @(Get-ChildItem (Join-Path $root 'dist') -Filter 'PhoneBox-*.apk' -ErrorAction SilentlyContinue) +
+    $apkFile = @(Get-ChildItem (Join-Path $root 'dist') -Filter 'NikoDeck-*.apk' -ErrorAction SilentlyContinue) +
         @(Get-Item $built -ErrorAction SilentlyContinue) | Sort-Object LastWriteTime -Descending | Select-Object -First 1
     if (Test-Path (Join-Path $root 'android\gradlew.bat')) {
         # in a source checkout, an APK from an older release must not win over newer app sources
@@ -124,7 +124,7 @@ if ($Apk) {
     $target = @('-s', $Serial)
     $out = Install-PhoneBoxApk -Adb $adb -ApkPath $apkFile.FullName -Serial $Serial
     $out | Select-Object -Last 1
-    & $adb @target shell am start -n net.oxog.phonebox.deskpanel/.MainActivity | Out-Null
+    & $adb @target shell am start -n com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.MainActivity | Out-Null
 }
 
 # the agent could not be started (see above): the phone step ran, the install still failed

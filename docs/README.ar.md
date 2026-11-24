@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -32,11 +32,11 @@
 راقب حالة الحاسوب وجلسات البرمجة بالذكاء الاصطناعي، وتحكّم بالموسيقى باللمس عبر USB أو Wi-Fi.</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>جرب العرض الحي</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>تنزيل</b></a>
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>جرب العرض الحي</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>تنزيل</b></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="ثلاثة هواتف Android تعرض صفحات الأتمتة والصفحة الرئيسية والمخطّط في PhoneBox"></p>
+<p align="center"><img src="hero-0.6.png" width="900" alt="ثلاثة هواتف Android تعرض صفحات الأتمتة والصفحة الرئيسية والمخطّط في NikoDeck"></p>
 
 ## ما يمكنك فعله
 
@@ -46,7 +46,7 @@
 - اعرض الساعات والطقس والتقويمات والملاحظات والوسائط وأدوات تحكّم Home Assistant.
 - أنشئ صفحاتك وأدواتك في المحرّر المرئي وعاين التغييرات قبل حفظها.
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="جولة في PhoneBox تعرض الإشعارات وطلبات الإذن والتبديل التلقائي بين الصفحات"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="جولة في NikoDeck تعرض الإشعارات وطلبات الإذن والتبديل التلقائي بين الصفحات"></a><br>
 <sub>جولة ببيانات تجريبية تعرض الإشعارات وطلبات الإذن والتبديل التلقائي بين الصفحات. <a href="tour-0.6.mp4">شاهد فيديو MP4</a></sub></p>
 
 ## البداية السريعة
@@ -58,13 +58,13 @@
 في Windows 10 أو 11 بمعمارية x64، نفّذ الأمر التالي في PowerShell.
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 في Linux أو macOS، نفّذ الأمر التالي من حسابك العادي.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 يتحقّق برنامج الإعداد من المجموع الاختباري للإصدار ويفتح الإعدادات. يمكنه أيضًا تثبيت تطبيق الهاتف عبر USB. شغّله مجددًا للتحديث أو الإصلاح مع الاحتفاظ بالإعدادات والأجهزة المقترنة.
@@ -78,7 +78,7 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 
 ## الخصوصية والأمن
 
-يوصل PhoneBox الهاتف بالحاسوب مباشرة. لا يتطلّب حسابًا ولا يرسل بيانات قياس الاستخدام. تتّصل بعض الأدوات الاختيارية بالخدمات التي تضبطها.
+يوصل NikoDeck الهاتف بالحاسوب مباشرة. لا يتطلّب حسابًا ولا يرسل بيانات قياس الاستخدام. تتّصل بعض الأدوات الاختيارية بالخدمات التي تضبطها.
 
 ## الوثائق
 
@@ -92,4 +92,4 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 
 ## الترخيص
 
-[يُوزّع PhoneBox بموجب ترخيص MIT.](../LICENSE)
+[يُوزّع NikoDeck بموجب ترخيص MIT.](../LICENSE)

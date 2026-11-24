@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="Biểu tượng PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="Biểu tượng NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -30,26 +30,26 @@
 
 <p align="center"><b>Biến một chiếc điện thoại Android cũ thành bảng điều khiển để bàn cho máy tính của bạn.</b><br>
 Thông số PC, các phiên lập trình bằng AI, nhạc và điều khiển cảm ứng qua USB hoặc Wi-Fi.<br>
-Windows, Linux và macOS. Không cần root, tài khoản PhoneBox hay dịch vụ đám mây.</p>
+Windows, Linux và macOS. Không cần root, tài khoản NikoDeck hay dịch vụ đám mây.</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>Dùng thử bản demo trực tiếp</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>Tải xuống</b></a> ·
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>Dùng thử bản demo trực tiếp</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>Tải xuống</b></a> ·
   <a href="#bắt-đầu-nhanh"><b>Bắt đầu nhanh</b></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml"><img src="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml/badge.svg" alt="Trạng thái bản dựng"></a>
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Bản phát hành mới nhất"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml"><img src="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml/badge.svg" alt="Trạng thái bản dựng"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><img src="https://img.shields.io/github/v/release/LordSigfrid/NikoDeck?label=release" alt="Bản phát hành mới nhất"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-7%2B-3ddc84" alt="Android 7+">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Giấy phép MIT"></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox trên ba chiếc điện thoại hiển thị các trang tự động hóa, trang chủ và lập kế hoạch"><br>
+<p align="center"><img src="hero-0.6.png" width="900" alt="NikoDeck trên ba chiếc điện thoại hiển thị các trang tự động hóa, trang chủ và lập kế hoạch"><br>
 <sub>Các bố cục ví dụ với dữ liệu demo.</sub></p>
 
-PhoneBox ghép nối một **ứng dụng Android** toàn màn hình với một **tác nhân máy tính (agent)** nhỏ gọn. Hãy xây dựng bảng điều khiển của bạn trong trình chỉnh sửa trực quan chạy trên trình duyệt: **124 widget**, **30 mẫu**, nhiều trang và xem trước trực tiếp. Kết nối nhiều điện thoại, mỗi chiếc với bố cục riêng, hoặc chuyển một chiếc điện thoại giữa các máy tính đã ghép nối.
+NikoDeck ghép nối một **ứng dụng Android** toàn màn hình với một **tác nhân máy tính (agent)** nhỏ gọn. Hãy xây dựng bảng điều khiển của bạn trong trình chỉnh sửa trực quan chạy trên trình duyệt: **124 widget**, **30 mẫu**, nhiều trang và xem trước trực tiếp. Kết nối nhiều điện thoại, mỗi chiếc với bố cục riêng, hoặc chuyển một chiếc điện thoại giữa các máy tính đã ghép nối.
 
 ## Bạn có thể làm gì
 
@@ -63,7 +63,7 @@ PhoneBox ghép nối một **ứng dụng Android** toàn màn hình với một
 
 Chạm vào một phiên AI để xem chi tiết về mô hình, thời gian và token của nó. Bật tùy chọn nhắc cấp quyền của Claude Code để trả lời **Cho phép (Allow)** hoặc **Từ chối (Deny)** ngay từ điện thoại. Tích hợp tùy chọn [CodexBar](GUIDE.md#widgets) bổ sung các nhà cung cấp hạn mức và tổng quan chi phí.
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="Chuyến tham quan PhoneBox hiển thị thông báo, lời nhắc cấp quyền của Claude Code và chuyển trang tự động"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="Chuyến tham quan NikoDeck hiển thị thông báo, lời nhắc cấp quyền của Claude Code và chuyển trang tự động"></a><br>
 <sub>Một chuyến tham quan với dữ liệu demo: thông báo, lời nhắc cấp quyền và chuyển trang tự động. <a href="tour-0.6.mp4">Xem bản MP4</a></sub></p>
 
 ## Bắt đầu nhanh
@@ -75,13 +75,13 @@ Bạn cần một chiếc **điện thoại Android 7+** và một máy tính đ
 **Windows 10/11 x64** — dán vào một cửa sổ PowerShell thông thường:
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 **Linux hoặc macOS** — chạy bằng tài khoản người dùng của chính bạn:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 Trình cài đặt sẽ tải bản phát hành mới nhất, kiểm tra mã băm SHA-256 của nó, đề xuất các thành phần phụ thuộc còn thiếu và tùy chọn khởi động cùng lúc đăng nhập, rồi mở trang cài đặt tại <http://127.0.0.1:8765>. Nó cũng có thể cài ứng dụng Android qua USB.
@@ -98,7 +98,7 @@ Hãy đọc các script trước khi chạy chúng: [Windows](../setup.ps1) · [
 
 | USB | Chỉ Wi-Fi |
 |---|---|
-| Bật **Tùy chọn nhà phát triển → Gỡ lỗi USB**, cắm cáp dữ liệu và chấp nhận lời nhắc cấp quyền trên điện thoại. Để trình cài đặt cài ứng dụng, hoặc dùng **Cài đặt → Chung → Cài ứng dụng điện thoại**. | Cài APK từ [bản phát hành mới nhất](https://github.com/ersinkoc/phonebox/releases/latest). Bật **Cài đặt → Chung → Wi-Fi & Tailscale**, khởi động lại agent khi được yêu cầu, rồi chọn **Ghép nối điện thoại qua Wi-Fi**. Quét mã QR ghép nối và xác nhận mã kiểm tra trùng khớp. |
+| Bật **Tùy chọn nhà phát triển → Gỡ lỗi USB**, cắm cáp dữ liệu và chấp nhận lời nhắc cấp quyền trên điện thoại. Để trình cài đặt cài ứng dụng, hoặc dùng **Cài đặt → Chung → Cài ứng dụng điện thoại**. | Cài APK từ [bản phát hành mới nhất](https://github.com/LordSigfrid/NikoDeck/releases/latest). Bật **Cài đặt → Chung → Wi-Fi & Tailscale**, khởi động lại agent khi được yêu cầu, rồi chọn **Ghép nối điện thoại qua Wi-Fi**. Quét mã QR ghép nối và xác nhận mã kiểm tra trùng khớp. |
 | Đánh thức và mở bảng điều khiển khi kết nối; hỗ trợ cập nhật ứng dụng qua adb. | Không cần adb hay tùy chọn nhà phát triển; cài bản cập nhật ứng dụng thủ công trừ khi bạn cấu hình USB về sau. |
 
 Để tự động dự phòng USB/Wi-Fi, hãy bật Wi-Fi và kết nối điện thoại qua USB một lần.
@@ -106,19 +106,19 @@ Hãy đọc các script trước khi chạy chúng: [Windows](../setup.ps1) · [
 
 ### 3. Tùy biến theo ý bạn
 
-Mở <http://127.0.0.1:8765> (hoặc nhấp đúp vào biểu tượng PhoneBox trên khay hệ thống Windows). Trong mục **Trang (Pages)**, chọn một mẫu, kéo và thay đổi kích thước các widget, rồi bấm **Lưu (Save)**. Dùng **Xem trước trực tiếp (Live preview)** để xem các chỉnh sửa chưa lưu với dữ liệu thật.
+Mở <http://127.0.0.1:8765> (hoặc nhấp đúp vào biểu tượng NikoDeck trên khay hệ thống Windows). Trong mục **Trang (Pages)**, chọn một mẫu, kéo và thay đổi kích thước các widget, rồi bấm **Lưu (Save)**. Dùng **Xem trước trực tiếp (Live preview)** để xem các chỉnh sửa chưa lưu với dữ liệu thật.
 Vuốt, chạm vào các chấm chỉ trang hoặc dùng phím âm lượng của điện thoại để di chuyển giữa các trang.
 
 <details>
 <summary><b>Các cách cài đặt khác</b></summary>
 
-- **Tải thủ công:** giải nén agent dành cho hệ điều hành của bạn từ [trang phát hành](https://github.com/ersinkoc/phonebox/releases/latest)
+- **Tải thủ công:** giải nén agent dành cho hệ điều hành của bạn từ [trang phát hành](https://github.com/LordSigfrid/NikoDeck/releases/latest)
   và chạy nó. Cài APK lên điện thoại. Mã kiểm tra và thông tin nguồn gốc bản dựng đi kèm với các tệp của bản phát hành.
 - **Scoop (Windows):**
 
   ```powershell
-  scoop bucket add phonebox https://github.com/ersinkoc/phonebox
-  scoop install main/adb phonebox/phonebox
+  scoop bucket add nikodeck https://github.com/LordSigfrid/NikoDeck
+  scoop install main/adb nikodeck/nikodeck
   ```
 
 - **Từ mã nguồn:** xem [hướng dẫn cài đặt](SETUP.md#other-ways-to-install) và [hướng dẫn phát triển](DEVELOPMENT.md).
@@ -176,7 +176,7 @@ Máy chủ cài đặt trên máy tính lắng nghe tại `127.0.0.1:8765`; USB 
 Wi-Fi tùy chọn dùng HTTPS trên cổng 8766 với chứng chỉ được ghim cố định và khóa đã ghép nối. Các endpoint cài đặt và ghép nối
 luôn ở cục bộ. Điện thoại yêu cầu các hành động đã cấu hình theo ID; lệnh và thông tin đăng nhập của các tích hợp luôn nằm trên máy tính.
 
-PhoneBox không có hệ thống đo lường từ xa (telemetry), phân tích hay tài khoản riêng. Các widget và tích hợp tùy chọn sẽ liên hệ với
+NikoDeck không có hệ thống đo lường từ xa (telemetry), phân tích hay tài khoản riêng. Các widget và tích hợp tùy chọn sẽ liên hệ với
 các dịch vụ bên ngoài để lấy dữ liệu thời tiết, hạn mức, GitHub và các dữ liệu khác, và agent sẽ kiểm tra bản cập nhật trên GitHub.
 Các nguồn cấp công khai được hỗ trợ có thể dự phòng qua agent bằng USB khi điện thoại không có internet.
 [Chính sách quyền riêng tư](../PRIVACY.md) liệt kê các kết nối ra ngoài và cách tắt chúng.
@@ -203,7 +203,7 @@ Ký mã miễn phí do [SignPath.io](https://about.signpath.io/) cung cấp, ch�
 [SignPath Foundation](https://signpath.org/) cấp.
 
 - **Agent Windows:** hồ sơ tại SignPath Foundation đang chờ duyệt; các bản phát hành chưa được ký cho đến khi được phê duyệt.
-  Đối tượng ký dự kiến là `PhoneBoxAgent.exe` trong tệp zip bản phát hành `win-x64`, được dựng bởi
+  Đối tượng ký dự kiến là `NikoDeck.exe` trong tệp zip bản phát hành `win-x64`, được dựng bởi
   [quy trình phát hành](../.github/workflows/release.yml). Mọi yêu cầu ký đều cần phê duyệt thủ công.
   Thông báo về runtime và thư viện đi kèm nằm trong [THIRD-PARTY-NOTICES.txt](../agent/PhoneBox.Agent/THIRD-PARTY-NOTICES.txt).
 - **Ứng dụng Android:** các APK bản phát hành dùng khóa ký riêng của dự án, độc lập với SignPath.
@@ -213,7 +213,7 @@ Ký mã miễn phí do [SignPath.io](https://about.signpath.io/) cung cấp, ch�
 
 ## Lời cảm ơn
 
-Những người đã thử nghiệm PhoneBox trên phần cứng của chính họ:
+Những người đã thử nghiệm NikoDeck trên phần cứng của chính họ:
 
 - [anandyakshit](https://github.com/anandyakshit): hỗ trợ Android 7, trên một chiếc điện thoại Android 7.1.1 ([#73](https://github.com/ersinkoc/phonebox/issues/73)).
 
@@ -235,11 +235,11 @@ Những người đã thử nghiệm PhoneBox trên phần cứng của chính h
 
 ## Lịch sử ngôi sao
 
-<a href="https://www.star-history.com/#ersinkoc/phonebox&Date">
+<a href="https://www.star-history.com/#LordSigfrid/NikoDeck&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date&theme=dark">
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date">
-    <img alt="Lịch sử ngôi sao của ersinkoc/phonebox" src="https://api.star-history.com/svg?repos=ersinkoc/phonebox&type=Date">
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date&theme=dark">
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date">
+    <img alt="Lịch sử ngôi sao của LordSigfrid/NikoDeck" src="https://api.star-history.com/svg?repos=LordSigfrid/NikoDeck&type=Date">
   </picture>
 </a>
 

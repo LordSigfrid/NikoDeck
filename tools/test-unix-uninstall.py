@@ -13,11 +13,11 @@ class UninstallTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='phonebox removal ') as directory:
             root = pathlib.Path(directory)
             home = root / 'home'
-            app = home / 'Library/Application Support/PhoneBox/app'
+            app = home / 'Library/Application Support/NikoDeck/app'
             app.mkdir(parents=True)
             settings = app.parent / 'settings.json'
             settings.write_text('{}', encoding='utf-8')
-            (app / 'PhoneBoxAgent').write_text('fixture', encoding='utf-8')
+            (app / 'NikoDeck').write_text('fixture', encoding='utf-8')
             fake_bin = root / 'bin'
             fake_bin.mkdir()
             calls = root / 'calls'

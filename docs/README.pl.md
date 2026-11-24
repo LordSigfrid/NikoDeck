@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="Ikona PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="Ikona NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -30,26 +30,26 @@
 
 <p align="center"><b>Zamień stary telefon z Androidem w biurkowy panel dla swojego komputera.</b><br>
 Statystyki PC, sesje kodowania AI, muzyka i sterowanie dotykowe przez USB lub Wi-Fi.<br>
-Windows, Linux i macOS. Bez roota, bez konta PhoneBox i bez chmury.</p>
+Windows, Linux i macOS. Bez roota, bez konta NikoDeck i bez chmury.</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>Wypróbuj demo</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>Pobierz</b></a> ·
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>Wypróbuj demo</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>Pobierz</b></a> ·
   <a href="#szybki-start"><b>Szybki start</b></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml"><img src="https://github.com/ersinkoc/phonebox/actions/workflows/build.yml/badge.svg" alt="Status budowania"></a>
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Najnowsze wydanie"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml"><img src="https://github.com/LordSigfrid/NikoDeck/actions/workflows/build.yml/badge.svg" alt="Status budowania"></a>
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><img src="https://img.shields.io/github/v/release/LordSigfrid/NikoDeck?label=release" alt="Najnowsze wydanie"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Licencja MIT"></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox na trzech telefonach"><br>
+<p align="center"><img src="hero-0.6.png" width="900" alt="NikoDeck na trzech telefonach"><br>
 <sub>Przykładowe układy z danymi demonstracyjnymi.</sub></p>
 
-PhoneBox łączy pełnoekranową **aplikację Android** z lekkim **agentem na komputer**. Zaprojektuj panel w edytorze wizualnym w przeglądarce: **123 widżetów**, **30 szablonów**, wiele stron i podgląd na żywo.
+NikoDeck łączy pełnoekranową **aplikację Android** z lekkim **agentem na komputer**. Zaprojektuj panel w edytorze wizualnym w przeglądarce: **123 widżetów**, **30 szablonów**, wiele stron i podgląd na żywo.
 
 ## Możliwości
 
@@ -68,13 +68,13 @@ PhoneBox łączy pełnoekranową **aplikację Android** z lekkim **agentem na ko
 **Windows 10/11 x64** (PowerShell):
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 **Linux lub macOS**:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 Ustawienia otworzą się pod adresem <http://127.0.0.1:8765>. Zobacz [przewodnik instalacji](SETUP.md).
@@ -83,7 +83,7 @@ Ustawienia otworzą się pod adresem <http://127.0.0.1:8765>. Zobacz [przewodnik
 
 | USB | Tylko Wi-Fi |
 |---|---|
-| Włącz **Opcje programistyczne → Debugowanie USB** i podłącz kabel. | Zainstaluj APK z [najnowszego wydania](https://github.com/ersinkoc/phonebox/releases/latest), włącz **Wi-Fi & Tailscale** i zeskanuj kod QR. |
+| Włącz **Opcje programistyczne → Debugowanie USB** i podłącz kabel. | Zainstaluj APK z [najnowszego wydania](https://github.com/LordSigfrid/NikoDeck/releases/latest), włącz **Wi-Fi & Tailscale** i zeskanuj kod QR. |
 
 ### 3. Dostosuj
 

@@ -1,7 +1,7 @@
 name: signing test
 
 # A trial run of the SignPath signing that release.yml uses, with the test certificate: it builds the Windows agent,
-# signs PhoneBoxAgent.exe and keeps the signed file as a workflow artifact for a week. Nothing is released.
+# signs NikoDeck.exe and keeps the signed file as a workflow artifact for a week. Nothing is released.
 
 on:
   workflow_dispatch:
@@ -34,7 +34,7 @@ jobs:
         run: dotnet publish agent/PhoneBox.Agent -c Release -f net10.0-windows10.0.19041.0 -r win-x64 --self-contained true -p:PublishSingleFile=true -o out --nologo
       - uses: ./.github/actions/sign-windows-agent
         with:
-          exe: out/PhoneBoxAgent.exe
+          exe: out/NikoDeck.exe
           signing-policy: ${{ inputs.signing-policy }}
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           trusted: ${{ inputs.signing-policy == 'release-signing' }}
@@ -42,10 +42,10 @@ jobs:
         shell: pwsh
         run: |
           $v = ([xml](Get-Content agent/PhoneBox.Agent/PhoneBox.Agent.csproj)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
-          python tools/smoke-agent.py out/PhoneBoxAgent.exe --version $v
+          python tools/smoke-agent.py out/NikoDeck.exe --version $v
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: signed-PhoneBoxAgent-${{ inputs.signing-policy }}
-          path: out/PhoneBoxAgent.exe
+          name: signed-NikoDeckAgent-${{ inputs.signing-policy }}
+          path: out/NikoDeck.exe
           retention-days: 7

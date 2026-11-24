@@ -9,7 +9,7 @@ import android.service.quicksettings.TileService
 import androidx.annotation.RequiresApi
 
 /**
- * Quick Settings tile (Edit tiles › PhoneBox, #180): tapping it closes the shade and brings the panel to the front.
+ * Quick Settings tile (Edit tiles › NikoDeck, #180): tapping it closes the shade and brings the panel to the front.
  * It only opens the app, so it has no state of its own.
  */
 // RequiresApi: the app may install below Android 7 (#184), where Quick Settings tiles don't exist

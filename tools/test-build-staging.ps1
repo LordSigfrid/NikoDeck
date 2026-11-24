@@ -34,7 +34,7 @@ try {
         try { & $scriptPath | Out-Null } catch { $message = $_.Exception.Message }
         if (-not $failing) {
             if ($message) { throw $message }
-            $zips = @(Get-ChildItem -LiteralPath (Join-Path $fixture 'dist') -Filter 'PhoneBoxAgent-*.zip')
+            $zips = @(Get-ChildItem -LiteralPath (Join-Path $fixture 'dist') -Filter 'NikoDeckAgent-*.zip')
             if ($zips.Count -ne 5) { throw 'Expected agent archives for five platforms' }
         } elseif ($message -notmatch '^publish failed for ') {
             throw "Expected a publish failure, got: $message"

@@ -39,7 +39,7 @@ jobs:
         run: python3 tools/test-agent-stream.py
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: phonebox-apk
+          name: nikodeck-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
 
   ui:
@@ -103,7 +103,7 @@ jobs:
       # the same build as the release (release.yml), so a pull request runs what ships
       - name: Publish agent (self-contained, single file)
         run: dotnet publish agent/PhoneBox.Agent -c Release -f ${{ matrix.tfm }} -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -o out --nologo
-      # The release signs with PhoneBox's own certificate (#269); here the same action signs with a throwaway one, so
+      # The release signs with NikoDeck's own certificate (#269); here the same action signs with a throwaway one, so
       # every change tests the step each release depends on, without a secret (pull requests from forks have none).
       - name: Throwaway signing certificate (macOS)
         id: cert
@@ -124,7 +124,7 @@ jobs:
         if: startsWith(matrix.rid, 'osx-')
         uses: ./.github/actions/sign-macos-agent
         with:
-          binary: out/PhoneBoxAgent
+          binary: out/NikoDeck
           p12-base64: ${{ steps.cert.outputs.p12 }}
           p12-password: ${{ steps.cert.outputs.password }}
       - name: Sign a different program with the same certificate
@@ -140,14 +140,14 @@ jobs:
       - name: Signature checks (macOS)
         if: startsWith(matrix.rid, 'osx-')
         run: |
-          if security find-certificate -c "PhoneBox Agent" >/dev/null 2>&1; then echo "::error::the signing keychain was left behind"; exit 1; fi
-          codesign --verify --strict --verbose=2 out/PhoneBoxAgent
-          requirement="$(codesign -d -r- out/PhoneBoxAgent 2>&1 | sed -n 's/^designated => //p')"
+          if security find-certificate -c "NikoDeck Agent" >/dev/null 2>&1; then echo "::error::the signing keychain was left behind"; exit 1; fi
+          codesign --verify --strict --verbose=2 out/NikoDeck
+          requirement="$(codesign -d -r- out/NikoDeck 2>&1 | sed -n 's/^designated => //p')"
           echo "Designated requirement: $requirement"
           codesign --verify --verbose=2 -R="$requirement" "$RUNNER_TEMP/other-build"
           # and an ad hoc signature (what releases had before) does not, or the check above proves nothing
           cp "$RUNNER_TEMP/other-build" "$RUNNER_TEMP/adhoc-build"
-          codesign --force --sign - --identifier net.oxog.phonebox.agent "$RUNNER_TEMP/adhoc-build"
+          codesign --force --sign - --identifier com.lordsigfrid.nikodeck.agent "$RUNNER_TEMP/adhoc-build"
           if codesign --verify -R="$requirement" "$RUNNER_TEMP/adhoc-build" 2>/dev/null; then echo "::error::an ad hoc build satisfies the requirement"; exit 1; fi
       # the disk image the release ships (release.yml), built and checked with the same throwaway certificate
       - name: Build the macOS app
@@ -155,31 +155,31 @@ jobs:
         run: |
           version="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' agent/PhoneBox.Agent/PhoneBox.Agent.csproj | head -n1)"
           echo "PHONEBOX_VERSION=$version" >> "$GITHUB_ENV"
-          tools/make-macos-dmg.sh app out "$version" "$RUNNER_TEMP/dmg/PhoneBox.app"
+          tools/make-macos-dmg.sh app out "$version" "$RUNNER_TEMP/dmg/NikoDeck.app"
       - name: Sign the macOS app (throwaway certificate)
         if: startsWith(matrix.rid, 'osx-')
         uses: ./.github/actions/sign-macos-agent
         with:
-          binary: ${{ runner.temp }}/dmg/PhoneBox.app
+          binary: ${{ runner.temp }}/dmg/NikoDeck.app
           p12-base64: ${{ steps.cert.outputs.p12 }}
           p12-password: ${{ steps.cert.outputs.password }}
       - name: Build and check the disk image
         if: startsWith(matrix.rid, 'osx-')
         run: |
-          tools/make-macos-dmg.sh dmg "$RUNNER_TEMP/dmg/PhoneBox.app" "$PHONEBOX_VERSION" "$RUNNER_TEMP/PhoneBox.dmg"
-          tools/check-macos-dmg.sh "$RUNNER_TEMP/PhoneBox.dmg" out/PhoneBoxAgent "$PHONEBOX_VERSION"
+          tools/make-macos-dmg.sh dmg "$RUNNER_TEMP/dmg/NikoDeck.app" "$PHONEBOX_VERSION" "$RUNNER_TEMP/NikoDeck.dmg"
+          tools/check-macos-dmg.sh "$RUNNER_TEMP/NikoDeck.dmg" out/NikoDeck "$PHONEBOX_VERSION"
       - name: Smoke test the single-file agent (Windows)
         if: matrix.rid == 'win-x64'
         shell: pwsh
         run: |
           $version = ([regex]'<Version>([^<]+)</Version>').Match((Get-Content -Raw agent/PhoneBox.Agent/PhoneBox.Agent.csproj)).Groups[1].Value
-          python tools/smoke-agent.py out/PhoneBoxAgent.exe --version $version
+          python tools/smoke-agent.py out/NikoDeck.exe --version $version
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - name: Smoke test (starts, serves the API)
         if: matrix.rid != 'win-x64'
         run: |
-          chmod +x out/PhoneBoxAgent
-          out/PhoneBoxAgent > agent.log 2>&1 &
+          chmod +x out/NikoDeck
+          out/NikoDeck > agent.log 2>&1 &
           for i in $(seq 1 30); do curl -sf http://127.0.0.1:8765/api/state > state.json && break; sleep 1; done
           sleep 4
           curl -sf http://127.0.0.1:8765/api/state > state.json
@@ -198,7 +198,7 @@ jobs:
           python3 -c "import json; s=json.load(open('state.json')); p=json.load(open('procs.json')); assert s['pc'] and s['pc']['cpu'] is not None and s['pc']['ramTotalGb'] > 0, s['pc']; assert p['groups'], p; print('cpu', s['pc']['cpu'], 'ram', s['pc']['ramUsedGb'], '/', s['pc']['ramTotalGb'], 'procs', p['total'])"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: phonebox-agent-${{ matrix.rid }}
+          name: nikodeck-agent-${{ matrix.rid }}
           path: out/
 
   artifact-transfer:

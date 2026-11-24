@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -32,11 +32,11 @@
 USB または Wi-Fi で接続し、PC の状態や AI コーディングセッション、音楽を表示。タッチ操作にも対応します。</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>ライブデモを試してみる</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>ダウンロード</b></a>
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>ライブデモを試してみる</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>ダウンロード</b></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="3 台の Android スマートフォンに自動化、ホーム、プランナーを表示した PhoneBox"></p>
+<p align="center"><img src="hero-0.6.png" width="900" alt="3 台の Android スマートフォンに自動化、ホーム、プランナーを表示した NikoDeck"></p>
 
 ## できること
 
@@ -46,7 +46,7 @@ USB または Wi-Fi で接続し、PC の状態や AI コーディングセッ�
 - 時計、天気、予定、メモ、メディア、Home Assistant の操作ボタンを表示する。
 - ビジュアルエディターでページやウィジェットを配置し、保存前にプレビューする。
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="通知、許可の確認、ページの自動切り替えを紹介する PhoneBox のデモ"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="通知、許可の確認、ページの自動切り替えを紹介する NikoDeck のデモ"></a><br>
 <sub>デモデータを使用。通知、許可の確認、ページの自動切り替えを紹介します。 <a href="tour-0.6.mp4">MP4 を見る</a></sub></p>
 
 ## クイックスタート
@@ -58,13 +58,13 @@ Android 5.0 以降のスマートフォン（Android 6 以降を推奨）と、�
 Windows 10/11 x64 では、PowerShell で次のコマンドを実行します。
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 Linux または macOS では、自分のユーザーアカウントで次のコマンドを実行します。
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 セットアップは配布ファイルのチェックサムを検証して設定画面を開きます。USB 経由でスマートフォンアプリをインストールすることもできます。再実行すると、設定やペアリング情報を保持したまま更新や修復ができます。
@@ -78,7 +78,7 @@ Windows のシステムトレイから設定を開くか、次のアドレスに
 
 ## プライバシーとセキュリティ
 
-PhoneBox はスマートフォンとパソコンを直接接続します。PhoneBox アカウントは不要で、利用状況データは送信しません。一部のオプションウィジェットは、設定した外部サービスに接続します。
+NikoDeck はスマートフォンとパソコンを直接接続します。NikoDeck アカウントは不要で、利用状況データは送信しません。一部のオプションウィジェットは、設定した外部サービスに接続します。
 
 ## ドキュメント
 
@@ -92,4 +92,4 @@ PhoneBox はスマートフォンとパソコンを直接接続します。Phone
 
 ## ライセンス
 
-[PhoneBox は MIT ライセンスで公開されています。](../LICENSE)
+[NikoDeck は MIT ライセンスで公開されています。](../LICENSE)

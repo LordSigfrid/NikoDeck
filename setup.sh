@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
-# Instalação do PhoneBox para Linux e macOS: instala a versão mais recente, tudo o que ela precisa e o app do celular.
+# Instalação do NikoDeck para Linux e macOS: instala a versão mais recente, tudo o que ela precisa e o app do celular.
 #
-#   curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
-#   curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash -s -- --no-phone
+#   curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash -s -- --no-phone
 #
 # Execute com o seu usuário, sem sudo: o sudo só é pedido para instalar pacotes, e sempre perguntando antes.
-# Executar de novo atualiza o PhoneBox ou repara a instalação; as configurações são mantidas.
+# Executar de novo atualiza o NikoDeck ou repara a instalação; as configurações são mantidas.
 #
 # Opções:
 #   --yes               responde a todas as perguntas com o padrão (sem interação)
 #   --no-phone          não instala o app em um celular via USB (para um celular só no Wi-Fi)
 #   --serial <id>       o celular a usar quando há vários conectados (veja "adb devices")
-#   --no-autostart      não inicia o PhoneBox ao entrar na sessão
+#   --no-autostart      não inicia o NikoDeck ao entrar na sessão
 #   --no-start          só instala; não inicia o agente
 #   --no-extras         não oferece os auxiliares opcionais (playerctl, xprintidle, nowplaying-cli ...)
 #   --version <x.y.z>   instala esta versão em vez da mais recente
 #   --dry-run           baixa e verifica tudo, mostra o que aconteceria e não altera nada
 set -euo pipefail
 
-repo="ersinkoc/phonebox"
-package="net.oxog.phonebox.deskpanel"
+repo="LordSigfrid/NikoDeck"
+package="com.lordsigfrid.nikodeck"
 settings_url="http://127.0.0.1:8765"
 
 yes=0; phone=1; serial=""; autostart=1; start=1; extras=1; version=""; dry=0
@@ -70,13 +70,13 @@ read_line() { # read_line "prompt" -> the answer on stdout (empty without a term
 }
 
 download() { # download url file
-  if have curl; then curl -fsSL --retry 3 --proto '=https' --proto-redir '=https' -A phonebox-setup -o "$2" "$1"
-  else wget -q --https-only -U phonebox-setup -O "$2" "$1"; fi
+  if have curl; then curl -fsSL --retry 3 --proto '=https' --proto-redir '=https' -A nikodeck-setup -o "$2" "$1"
+  else wget -q --https-only -U nikodeck-setup -O "$2" "$1"; fi
 }
 
 download_text() { # download_text url -> stdout
-  if have curl; then curl -fsSL --retry 2 --proto '=https' -A phonebox-setup "$1"
-  else wget -q --https-only -U phonebox-setup -O - "$1"; fi
+  if have curl; then curl -fsSL --retry 2 --proto '=https' -A nikodeck-setup "$1"
+  else wget -q --https-only -U nikodeck-setup -O - "$1"; fi
 }
 
 local_up() { # is the agent answering on this computer?
@@ -219,7 +219,7 @@ install_adb() {
     pacman) if sudo_note; then pkg_install android-tools android-udev || true; fi ;;
   esac
   if [ -n "$(find_adb)" ]; then return; fi
-  # no package manager (or it failed): Google's download, in a folder PhoneBox looks in
+  # no package manager (or it failed): Google's download, in a folder NikoDeck looks in
   local url dest
   if [ "$os" = osx ]; then url="https://dl.google.com/android/repository/platform-tools-latest-darwin.zip"; dest="$HOME/Library/Android/sdk"
   elif [ "$arch" = x64 ]; then url="https://dl.google.com/android/repository/platform-tools-latest-linux.zip"; dest="$HOME/Android/Sdk"
@@ -252,25 +252,25 @@ offer_extras() {
   if ask "Instalar agora?" y; then
     # shellcheck disable=SC2086 # one package name per word
     if sudo_note && pkg_install $missing; then ok "Instalados: $missing"
-    else caution "Alguns não puderam ser instalados (nem toda distribuição empacota todos); o PhoneBox funciona sem eles."; fi
+    else caution "Alguns não puderam ser instalados (nem toda distribuição empacota todos); o NikoDeck funciona sem eles."; fi
   fi
 }
 
 # ---- agent ------------------------------------------------------------------------------------------------------
-unit="$HOME/.config/systemd/user/phonebox.service"   # where scripts/uninstall.sh looks
-plist="$HOME/Library/LaunchAgents/net.oxog.phonebox.agent.plist"
+unit="$HOME/.config/systemd/user/nikodeck.service"   # where scripts/uninstall.sh looks
+plist="$HOME/Library/LaunchAgents/com.lordsigfrid.nikodeck.agent.plist"
 
 systemd_user() { have systemctl && systemctl --user show-environment >/dev/null 2>&1; }
 
 remove_autostart() {
   if [ "$os" = linux ] && [ -f "$unit" ]; then
-    systemctl --user disable phonebox.service >/dev/null 2>&1 || true
+    systemctl --user disable nikodeck.service >/dev/null 2>&1 || true
     rm -f "$unit"
-    info 'Serviço de login removido; o PhoneBox não inicia mais ao entrar na sessão.'
+    info 'Serviço de login removido; o NikoDeck não inicia mais ao entrar na sessão.'
   fi
   if [ "$os" = osx ] && [ -f "$plist" ]; then
     rm -f "$plist"
-    info 'Item de login removido; o PhoneBox não inicia mais ao entrar na sessão.'
+    info 'Item de login removido; o NikoDeck não inicia mais ao entrar na sessão.'
   fi
 }
 
@@ -283,18 +283,18 @@ systemd_quote() {
 xml_escape() { printf '%s' "$1" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
 
 stop_agent() {
-  if [ "$os" = linux ] && systemd_user; then systemctl --user stop phonebox.service 2>/dev/null || true; fi
+  if [ "$os" = linux ] && systemd_user; then systemctl --user stop nikodeck.service 2>/dev/null || true; fi
   if [ "$os" = osx ] && [ -f "$plist" ]; then launchctl unload "$plist" 2>/dev/null || true; fi
-  pkill -x PhoneBoxAgent 2>/dev/null || true
+  pkill -x NikoDeck 2>/dev/null || true
   local i=0
-  while pgrep -x PhoneBoxAgent >/dev/null 2>&1 && [ "$i" -lt 40 ]; do sleep 0.25; i=$((i + 1)); done
+  while pgrep -x NikoDeck >/dev/null 2>&1 && [ "$i" -lt 40 ]; do sleep 0.25; i=$((i + 1)); done
 }
 
 write_autostart() {
   if [ "$os" = linux ]; then
     if ! systemd_user; then
-      caution "Não há sessão de usuário do systemd aqui, então o PhoneBox não pode iniciar sozinho ao entrar na sessão."
-      caution "Em vez disso, adicione $app/PhoneBoxAgent aos aplicativos de inicialização do seu ambiente de trabalho."
+      caution "Não há sessão de usuário do systemd aqui, então o NikoDeck não pode iniciar sozinho ao entrar na sessão."
+      caution "Em vez disso, adicione $app/NikoDeck aos aplicativos de inicialização do seu ambiente de trabalho."
       return 1
     fi
     local unsafe=0
@@ -305,7 +305,7 @@ write_autostart() {
     case "$app" in *'"'*|*"'"*|*[\\]*) unsafe=1 ;; esac
     if [ "$unsafe" = 1 ]; then
       caution "O caminho da instalação ou das configurações contém \$, aspas, uma barra invertida ou uma quebra de linha, que não podem ser passados com segurança a um serviço do systemd;"
-      caution "em vez disso, adicione $app/PhoneBoxAgent aos aplicativos de inicialização do seu ambiente de trabalho."
+      caution "em vez disso, adicione $app/NikoDeck aos aplicativos de inicialização do seu ambiente de trabalho."
       remove_autostart   # an older unit would otherwise start the previous install at login and in start_agent
       return 1
     fi
@@ -318,11 +318,11 @@ write_autostart() {
     mkdir -p "$(dirname "$unit")"
     cat > "$unit" <<EOF
 [Unit]
-Description=PhoneBox agent (desk panel for an Android phone)
+Description=NikoDeck agent (desk panel for an Android phone)
 After=graphical-session.target
 
 [Service]
-ExecStart=$(systemd_quote "$app/PhoneBoxAgent")
+ExecStart=$(systemd_quote "$app/NikoDeck")
 Restart=on-failure
 RestartSec=5
 ${env_lines}
@@ -330,7 +330,7 @@ ${env_lines}
 WantedBy=default.target
 EOF
     systemctl --user daemon-reload
-    systemctl --user enable phonebox.service >/dev/null 2>&1
+    systemctl --user enable nikodeck.service >/dev/null 2>&1
     ok "Serviço de usuário do systemd: $unit"
   else
     mkdir -p "$(dirname "$plist")"
@@ -338,8 +338,8 @@ EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>Label</key><string>net.oxog.phonebox.agent</string>
-  <key>ProgramArguments</key><array><string>$(xml_escape "$app/PhoneBoxAgent")</string></array>
+  <key>Label</key><string>com.lordsigfrid.nikodeck.agent</string>
+  <key>ProgramArguments</key><array><string>$(xml_escape "$app/NikoDeck")</string></array>
   <key>EnvironmentVariables</key><dict>
     <key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
   </dict>
@@ -352,9 +352,9 @@ EOF
 }
 
 start_agent() {
-  if [ "$os" = linux ] && [ -f "$unit" ] && systemd_user; then systemctl --user restart phonebox.service && return; fi
+  if [ "$os" = linux ] && [ -f "$unit" ] && systemd_user; then systemctl --user restart nikodeck.service && return; fi
   if [ "$os" = osx ] && [ -f "$plist" ]; then launchctl load "$plist" 2>/dev/null && return; fi
-  nohup "$app/PhoneBoxAgent" >/dev/null 2>&1 &
+  nohup "$app/NikoDeck" >/dev/null 2>&1 &
   disown 2>/dev/null || true
 }
 
@@ -419,18 +419,18 @@ install_phone_app() { # install_phone_app apk serial -> 0 when installed
   level="$("$adb" -s "$device" shell getprop ro.build.version.sdk 2>/dev/null | tr -d '\r[:space:]')"
   case "$level" in ''|*[!0-9]*) level=0 ;; esac
   if [ "$level" -gt 0 ] && [ "$level" -lt 21 ]; then
-    caution "Este celular tem Android API $level; o PhoneBox precisa do Android 5.0 (API 21) ou mais recente. O app não foi instalado."
+    caution "Este celular tem Android API $level; o NikoDeck precisa do Android 5.0 (API 21) ou mais recente. O app não foi instalado."
     return 1
   fi
   info "Instalando $(basename "$apk") em $device (o celular pode pedir confirmação) ..."
   out="$("$adb" -s "$device" install -r "$apk" 2>&1)" || true
   case "$out" in
     *INSTALL_FAILED_UPDATE_INCOMPATIBLE*)
-      caution 'O celular tem um app PhoneBox assinado com outra chave (por exemplo, um que você mesmo compilou).'
-      caution 'Ele foi mantido como está, com seus dados. Para trocar pelo app oficial, desinstale o PhoneBox do celular'
+      caution 'O celular tem um app NikoDeck assinado com outra chave (por exemplo, um que você mesmo compilou).'
+      caution 'Ele foi mantido como está, com seus dados. Para trocar pelo app oficial, desinstale o NikoDeck do celular'
       caution '(isso apaga as configurações dele) e execute a instalação de novo.'
       return 1 ;;
-    *INSTALL_FAILED_VERSION_DOWNGRADE*) ok 'O celular já tem um app PhoneBox mais novo; ele foi mantido.'; return 0 ;;
+    *INSTALL_FAILED_VERSION_DOWNGRADE*) ok 'O celular já tem um app NikoDeck mais novo; ele foi mantido.'; return 0 ;;
     *INSTALL_FAILED_USER_RESTRICTED*|*INSTALL_FAILED_ABORTED*)
       caution 'O celular recusou a instalação. Confirme no celular; celulares Xiaomi / Redmi / POCO também precisam de'
       caution '"Instalar via USB" nas Opções do desenvolvedor. Depois execute a instalação de novo.'
@@ -438,8 +438,8 @@ install_phone_app() { # install_phone_app apk serial -> 0 when installed
     *Success*) ;;
     *) caution "Não foi possível instalar o app: $(printf '%s' "$out" | tr '\n' ' ')"; return 1 ;;
   esac
-  ok 'App PhoneBox instalado no celular'
-  "$adb" -s "$device" shell am start -n "$package/.MainActivity" >/dev/null 2>&1 || true
+  ok 'App NikoDeck instalado no celular'
+  "$adb" -s "$device" shell am start -n "$package/net.oxog.phonebox.deskpanel.MainActivity" >/dev/null 2>&1 || true
   return 0
 }
 
@@ -461,11 +461,11 @@ main() {
     shift
   done
 
-  printf '\n%sInstalação do PhoneBox%s\n' "$c_step" "$c_off"
+  printf '\n%sInstalação do NikoDeck%s\n' "$c_step" "$c_off"
   if [ "$dry" = 1 ]; then printf '%sSimulação: baixa e verifica tudo, sem alterar nada.%s\n' "$c_warn" "$c_off"; fi
 
   step 'Verificando este computador'
-  [ "$(id -u)" != 0 ] || die "não execute a instalação como root nem com sudo. O PhoneBox roda com o seu usuário (as configurações, a inicialização automática e o pareamento do celular pertencem à sua conta); a instalação pede o sudo sozinha quando instala pacotes."
+  [ "$(id -u)" != 0 ] || die "não execute a instalação como root nem com sudo. O NikoDeck roda com o seu usuário (as configurações, a inicialização automática e o pareamento do celular pertencem à sua conta); a instalação pede o sudo sozinha quando instala pacotes."
   case "$(uname -s)" in
     Linux) os=linux ;;
     Darwin) os=osx ;;
@@ -478,13 +478,13 @@ main() {
     case "$(uname -m)" in
       x86_64|amd64) arch=x64 ;;
       aarch64|arm64) arch=arm64 ;;
-      *) die "não existe build do PhoneBox para este processador ($(uname -m)); x64 e arm64 são suportados." ;;
+      *) die "não existe build do NikoDeck para este processador ($(uname -m)); x64 e arm64 são suportados." ;;
     esac
     if [ -f /etc/alpine-release ] || case "$(ldd --version 2>&1 || true)" in *musl*) true ;; *) false ;; esac; then
-      die "os builds do PhoneBox para Linux precisam da glibc; sistemas com musl, como o Alpine, ainda não são suportados."
+      die "os builds do NikoDeck para Linux precisam da glibc; sistemas com musl, como o Alpine, ainda não são suportados."
     fi
   fi
-  have curl || have wget || die "é preciso ter curl ou wget para baixar o PhoneBox."
+  have curl || have wget || die "é preciso ter curl ou wget para baixar o NikoDeck."
   have sha256sum || have shasum || die "é preciso ter sha256sum (coreutils) ou shasum para verificar o arquivo baixado."
   rid="$os-$arch"
   detect_pm
@@ -497,13 +497,13 @@ main() {
   ver="${tag#v}"
   printf '%s' "$ver" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || die "versão inesperada: '$tag'."
   base="https://github.com/$repo/releases/download/v$ver"
-  ok "PhoneBox $ver ($rid)"
+  ok "NikoDeck $ver ($rid)"
 
-  tmp="$(mktemp -d "${TMPDIR:-/tmp}/phonebox-setup.XXXXXX")"
+  tmp="$(mktemp -d "${TMPDIR:-/tmp}/nikodeck-setup.XXXXXX")"
   trap 'rm -rf "$tmp"' EXIT
 
-  step "Baixando o PhoneBox $ver"
-  local zip_name="PhoneBoxAgent-$ver-$rid.zip" sums
+  step "Baixando o NikoDeck $ver"
+  local zip_name="NikoDeckAgent-$ver-$rid.zip" sums
   sums="$tmp/SHA256SUMS-$ver.txt"
   download "$base/SHA256SUMS-$ver.txt" "$sums" || die "a versão $ver não foi encontrada ($base)."
   info "$zip_name (cerca de 45 MB) ..."
@@ -511,22 +511,22 @@ main() {
   check_sum "$tmp/$zip_name" "$sums" || die "não foi possível verificar o agente baixado. Nada foi instalado."
   check_provenance "$tmp/$zip_name"
   unzip_to "$tmp/$zip_name" "$tmp/agent"
-  chmod +x "$tmp/agent/PhoneBoxAgent"
+  chmod +x "$tmp/agent/NikoDeck"
   if [ "$os" = osx ]; then
     xattr -dr com.apple.quarantine "$tmp/agent" 2>/dev/null || true
-    # release binaries are signed (with PhoneBox's own certificate since 0.9.22, ad hoc before); Apple silicon refuses
+    # release binaries are signed (with NikoDeck's own certificate since 0.9.22, ad hoc before); Apple silicon refuses
     # to run a binary without any signature
-    codesign --verify "$tmp/agent/PhoneBoxAgent" >/dev/null 2>&1 || codesign --force --sign - "$tmp/agent/PhoneBoxAgent" >/dev/null 2>&1 || true
+    codesign --verify "$tmp/agent/NikoDeck" >/dev/null 2>&1 || codesign --force --sign - "$tmp/agent/NikoDeck" >/dev/null 2>&1 || true
   fi
   local out
-  if ! out="$("$tmp/agent/PhoneBoxAgent" --print-install-dir 2>&1)"; then
-    die "este sistema não consegue executar o build $rid do PhoneBox: $out"
+  if ! out="$("$tmp/agent/NikoDeck" --print-install-dir 2>&1)"; then
+    die "este sistema não consegue executar o build $rid do NikoDeck: $out"
   fi
   app="$(printf '%s\n' "$out" | tail -n1)"
-  case "$app" in /*/PhoneBox/app) ;; *) die "pasta de instalação inesperada informada pelo agente: $app" ;; esac
+  case "$app" in /*/NikoDeck/app) ;; *) die "pasta de instalação inesperada informada pelo agente: $app" ;; esac
   local installed=""
-  if [ -x "$app/PhoneBoxAgent" ]; then installed="present"; fi
-  if [ -f "$app/PhoneBoxAgent.dll" ]; then
+  if [ -x "$app/NikoDeck" ]; then installed="present"; fi
+  if [ -f "$app/NikoDeck.dll" ]; then
     info "Encontrada uma instalação a partir do código-fonte (scripts/install.sh): ela será substituída pela versão independente; as configurações ficam."
   elif [ -n "$installed" ]; then
     info "Encontrada uma instalação existente em $app: ela será substituída; as configurações ficam."
@@ -536,9 +536,9 @@ main() {
     info 'na primeira vez: permita que ele controle o Música ou o Spotify (Tocando agora) e, com o Wi-Fi ativado, aceite conexões de entrada.'
     # macOS ties the Accessibility permission to the signature's designated requirement: the same from release to
     # release since 0.9.22, but different from an older (ad hoc) build's, which changed with every build (#269)
-    if [ -n "$installed" ] && [ "$(designated "$app/PhoneBoxAgent")" != "$(designated "$tmp/agent/PhoneBoxAgent")" ]; then
+    if [ -n "$installed" ] && [ "$(designated "$app/NikoDeck")" != "$(designated "$tmp/agent/NikoDeck")" ]; then
       info 'Se você o autorizou em Acessibilidade (atalhos que pressionam teclas), autorize mais uma vez: o macOS não aplica'
-      info 'isso a este build. Em Ajustes do Sistema › Privacidade e Segurança › Acessibilidade, remova o PhoneBoxAgent com −'
+      info 'isso a este build. Em Ajustes do Sistema › Privacidade e Segurança › Acessibilidade, remova o NikoDeck com −'
       info 'e adicione-o de novo. As próximas atualizações mantêm a permissão.'
     fi
   fi
@@ -547,13 +547,13 @@ main() {
   adb="$(find_adb)"
   if [ -n "$adb" ]; then ok "$adb"
   else
-    caution 'O adb não está instalado. Sem ele o PhoneBox ainda funciona via Wi-Fi, mas não alcança o celular pelo USB'
+    caution 'O adb não está instalado. Sem ele o NikoDeck ainda funciona via Wi-Fi, mas não alcança o celular pelo USB'
     caution '(acordar o celular ao conectar, instalar e atualizar o app do celular, usar o USB quando o Wi-Fi cair).'
     if [ "$dry" = 1 ]; then info 'Ofereceria a instalação do adb.'
     elif ask 'Instalar o adb agora?' y; then
       install_adb
       adb="$(find_adb)"
-      if [ -n "$adb" ]; then ok "adb instalado: $adb"; else caution 'Não foi possível instalar o adb; o PhoneBox vai funcionar só via Wi-Fi até ele ser instalado.'; fi
+      if [ -n "$adb" ]; then ok "adb instalado: $adb"; else caution 'Não foi possível instalar o adb; o NikoDeck vai funcionar só via Wi-Fi até ele ser instalado.'; fi
     fi
   fi
 
@@ -564,8 +564,8 @@ main() {
 
   if [ "$dry" = 1 ]; then
     step 'Simulação concluída'
-    info "Encerraria o agente em execução e instalaria o PhoneBox $ver em $app (as configurações ficam)."
-    [ "$autostart" = 0 ] || info 'Perguntaria se o PhoneBox deve iniciar ao entrar na sessão.'
+    info "Encerraria o agente em execução e instalaria o NikoDeck $ver em $app (as configurações ficam)."
+    [ "$autostart" = 0 ] || info 'Perguntaria se o NikoDeck deve iniciar ao entrar na sessão.'
     [ "$phone" = 0 ] || info 'Ofereceria a instalação do app em um celular conectado via USB.'
     info 'Nada foi alterado.'
     return
@@ -582,11 +582,11 @@ main() {
     die "a instalação falhou; a versão anterior foi restaurada."
   fi
   rm -rf "$app.old"
-  ok "PhoneBox $ver instalado"
+  ok "NikoDeck $ver instalado"
 
   if [ "$autostart" = 1 ]; then
     step 'Iniciar ao entrar na sessão'
-    if ask 'Iniciar o PhoneBox quando você entrar na sessão?' y; then write_autostart || true
+    if ask 'Iniciar o NikoDeck quando você entrar na sessão?' y; then write_autostart || true
     else remove_autostart; fi
   else
     remove_autostart
@@ -596,14 +596,14 @@ main() {
   if [ "$phone" = 1 ]; then
     step 'App do celular'
     if [ -z "$adb" ]; then caution 'Pulado: o adb não está instalado.'
-    elif ask 'Instalar agora o app PhoneBox em um celular conectado via USB?' y; then
+    elif ask 'Instalar agora o app NikoDeck em um celular conectado via USB?' y; then
       info 'A depuração USB permite que um computador autorizado controle o celular. Autorize apenas os seus computadores;'
       info 'você pode revogá-los em Opções do desenvolvedor > "Revogar autorizações de depuração USB".'
       device="$(select_phone)"
       if [ -n "$device" ]; then
-        apk="$tmp/PhoneBox-$ver.apk"
-        if ! download "$base/PhoneBox-$ver.apk" "$apk"; then
-          caution "App do celular pulado: o download falhou ($base/PhoneBox-$ver.apk)."
+        apk="$tmp/NikoDeck-$ver.apk"
+        if ! download "$base/NikoDeck-$ver.apk" "$apk"; then
+          caution "App do celular pulado: o download falhou ($base/NikoDeck-$ver.apk)."
         elif ! check_sum "$apk" "$sums"; then
           caution 'App do celular pulado: não foi possível verificar o APK.'
         elif install_phone_app "$apk" "$device"; then
@@ -615,9 +615,9 @@ main() {
 
   if [ "$start" = 0 ]; then
     step 'Concluído (não iniciado)'
-    info "Inicie com $app/PhoneBoxAgent"
+    info "Inicie com $app/NikoDeck"
   else
-    step 'Iniciando o PhoneBox'
+    step 'Iniciando o NikoDeck'
     start_agent
     local i=0 up=0
     while [ "$i" -lt 30 ]; do
@@ -626,7 +626,7 @@ main() {
       i=$((i + 1))
     done
     if [ "$up" = 1 ]; then
-      ok "O PhoneBox está em execução: configurações em $settings_url"
+      ok "O NikoDeck está em execução: configurações em $settings_url"
       if [ "$os" = osx ]; then open "$settings_url" >/dev/null 2>&1 || true
       elif [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ] && have xdg-open; then (xdg-open "$settings_url" >/dev/null 2>&1 &) || true; fi
     else
@@ -635,13 +635,13 @@ main() {
   fi
 
   step 'Bom saber'
-  if [ "$phone_done" = 1 ]; then info 'Deixe o celular conectado: o PhoneBox acorda o celular e abre o painel.'
+  if [ "$phone_done" = 1 ]; then info 'Deixe o celular conectado: o NikoDeck acorda o celular e abre o painel.'
   elif [ "$phone" = 1 ]; then info 'App do celular depois: conecte o celular e use Configurações > Geral > Instalar app no celular, ou execute a instalação de novo.'; fi
   info 'Só Wi-Fi: instale o app pela página de versões no celular e, no computador, abra'
   info 'Configurações > Geral > Wi-Fi & Tailscale > Parear celular via Wi-Fi e escaneie o QR code.'
   if [ "$os" = linux ]; then info 'Com um firewall (ufw, firewalld), o Wi-Fi também precisa da porta TCP 8766 aberta na sua rede local.'; fi
-  info "Até o Wi-Fi ser ativado, o PhoneBox só escuta neste computador. Todas as conexões que ele faz: https://github.com/$repo/blob/main/PRIVACY.md"
-  info 'Atualizações: o PhoneBox se atualiza pelas Configurações. Execute a instalação de novo quando quiser para repará-lo.'
+  info "Até o Wi-Fi ser ativado, o NikoDeck só escuta neste computador. Todas as conexões que ele faz: https://github.com/$repo/blob/main/PRIVACY.md"
+  info 'Atualizações: o NikoDeck se atualiza pelas Configurações. Execute a instalação de novo quando quiser para repará-lo.'
   info "Desinstalar: curl -fsSL https://raw.githubusercontent.com/$repo/main/scripts/uninstall.sh | bash -s -- [--purge] [--apk]"
 }
 

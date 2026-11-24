@@ -393,7 +393,7 @@ test('an unknown share state offers no buttons', async ({ page }) => {
 test('a declined permission says so in the share view, and the buttons keep working', async ({ page }) => {
   await showShare(page, { answers: [{ url: 'share\\?', json: { ready: false, error: null } }] });
   await page.locator('.dc-btn.share').click();
-  await expect(page.locator('.w-discord .empty')).toHaveText('Approve PhoneBox in Discord to share your screen');
+  await expect(page.locator('.w-discord .empty')).toHaveText('Approve NikoDeck in Discord to share your screen');
   await page.locator('.dc-btn.mute').click();
   await expect(page.locator('.dc-btn.mute')).toHaveClass(/\bon\b/);
 });
@@ -545,7 +545,7 @@ test('an answer for a server already left does not replace the newer one', async
 test('a declined permission says so in the chat, and the buttons keep working', async ({ page }) => {
   await showChat(page, { answers: [{ url: 'discord/chat', json: { ready: false, error: null } }] });
   await page.locator('.dc-btn.chat').click();
-  await expect(page.locator('.w-discord .empty')).toHaveText('Approve PhoneBox in Discord to see the chat');
+  await expect(page.locator('.w-discord .empty')).toHaveText('Approve NikoDeck in Discord to see the chat');
   await page.locator('.dc-btn.mute').click();
   await expect(page.locator('.dc-btn.mute')).toHaveClass(/\bon\b/);
 });

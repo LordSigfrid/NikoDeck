@@ -10,11 +10,13 @@ fun signingValue(name: String): String? =
     (project.findProperty(name) as String?) ?: System.getenv(name)
 
 android {
+    // The Kotlin package stays net.oxog.phonebox.deskpanel (upstream PhoneBox); the installed app is NikoDeck, so it
+    // can sit next to an original PhoneBox install. The agent (UsbLink.Package, AdbReverse) uses the applicationId.
     namespace = "net.oxog.phonebox.deskpanel"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "net.oxog.phonebox.deskpanel"
+        applicationId = "com.lordsigfrid.nikodeck"
         minSdk = 21 // Android 5.0; see CONTRIBUTING.md before changing it
         targetSdk = 35
         versionCode = 50

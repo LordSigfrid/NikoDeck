@@ -17,7 +17,7 @@ people who proposed or prototyped something are credited in the [changelog](../C
 - **Discord login through the desktop app** ([#338](https://github.com/ersinkoc/phonebox/issues/338)): Discord refuses
   `AUTHORIZE` over IPC both without `redirect_uri` (0.9.24) and with it (0.9.25); the working combination is being
   tested against a real Discord client.
-- **Feeding PhoneBox from MQTT**: a bridge script and a guide example for pushed values and notifications
+- **Feeding NikoDeck from MQTT**: a bridge script and a guide example for pushed values and notifications
   ([#241](https://github.com/ersinkoc/phonebox/issues/241)).
 - **Rules for pushed values**: a "not updated for N seconds" condition, `>=` / `<=`, and a separate release threshold
   ([#242](https://github.com/ersinkoc/phonebox/issues/242), pull request
@@ -99,7 +99,7 @@ Agreed in principle, not being built in-house. Say so on the issue before starti
 
 - **Signed Windows agent** ([#56](https://github.com/ersinkoc/phonebox/issues/56),
   [#69](https://github.com/ersinkoc/phonebox/issues/69)): SignPath Foundation approved the project and the release
-  pipeline already signs `PhoneBoxAgent.exe`. The release certificate, which SignPath Foundation issues in its own
+  pipeline already signs `NikoDeck.exe`. The release certificate, which SignPath Foundation issues in its own
   name, is still pending on their side. The first release after it is issued ships a signed agent.
 - **Approving Antigravity tool permissions from the phone**
   ([#215](https://github.com/ersinkoc/phonebox/issues/215)): needs a documented Antigravity hook that waits for an

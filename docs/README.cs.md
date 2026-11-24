@@ -1,6 +1,6 @@
-<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="PhoneBox"></p>
+<p align="center"><img src="../agent/PhoneBox.Agent/phonebox.ico" width="72" alt="NikoDeck"></p>
 
-<h1 align="center">PhoneBox</h1>
+<h1 align="center">NikoDeck</h1>
 
 <p align="center">
   <a href="../README.md">English</a> ·
@@ -32,11 +32,11 @@
 Stav počítače, relace programování s AI, hudba a dotykové ovládání přes USB nebo Wi-Fi.</p>
 
 <p align="center">
-  <a href="https://ersinkoc.github.io/phonebox/"><b>Vyzkoušejte živé demo</b></a> ·
-  <a href="https://github.com/ersinkoc/phonebox/releases/latest"><b>Stáhnout</b></a>
+  <a href="https://lordsigfrid.github.io/NikoDeck/"><b>Vyzkoušejte živé demo</b></a> ·
+  <a href="https://github.com/LordSigfrid/NikoDeck/releases/latest"><b>Stáhnout</b></a>
 </p>
 
-<p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox zobrazující stránky automatizace, domova a plánovače na třech telefonech Android"></p>
+<p align="center"><img src="hero-0.6.png" width="900" alt="NikoDeck zobrazující stránky automatizace, domova a plánovače na třech telefonech Android"></p>
 
 ## Co můžete dělat
 
@@ -46,7 +46,7 @@ Stav počítače, relace programování s AI, hudba a dotykové ovládání pře
 - Zobrazit hodiny, počasí, kalendáře, poznámky, média a ovládací prvky Home Assistant.
 - Vytvářet stránky a widgety ve vizuálním editoru a prohlížet si změny před uložením.
 
-<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="PhoneBox prohlídka zobrazující oznámení, výzvy k povolení a automatické přepínání stránek"></a><br>
+<p align="center"><a href="tour-0.6.mp4"><img src="tour-0.6.gif" width="780" alt="NikoDeck prohlídka zobrazující oznámení, výzvy k povolení a automatické přepínání stránek"></a><br>
 <sub>Demo data: oznámení, výzvy k oprávnění a automatické přepínání stránek. <a href="tour-0.6.mp4">Podívejte se na MP4</a></sub></p>
 
 ## Rychlý start
@@ -58,13 +58,13 @@ Používejte telefon Android 5.0 nebo novější (doporučeno je Android 6 nebo 
 Ve Windows 10/11 x64 spusťte následující příkaz v PowerShellu.
 
 ```powershell
-irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 ```
 
 V Linuxu nebo macOS spusťte příkaz pod svým běžným uživatelským účtem.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.sh | bash
 ```
 
 Instalační skript ověří kontrolní součet vydání a otevře nastavení. Umí také nainstalovat mobilní aplikaci přes USB. Opětovným spuštěním aktualizujete nebo opravíte instalaci a zachováte nastavení i spárování.
@@ -78,7 +78,7 @@ Otevřete stránku nastavení z panelu Windows nebo navštivte níže uvedenou a
 
 ## Ochrana soukromí a bezpečnost
 
-PhoneBox propojuje telefon a počítač přímo. Nevyžaduje účet a neodesílá telemetrii. Některé volitelné widgety se připojují ke službám, které nastavíte.
+NikoDeck propojuje telefon a počítač přímo. Nevyžaduje účet a neodesílá telemetrii. Některé volitelné widgety se připojují ke službám, které nastavíte.
 
 ## Dokumentace
 
@@ -92,4 +92,4 @@ PhoneBox propojuje telefon a počítač přímo. Nevyžaduje účet a neodesíl�
 
 ## Licence
 
-[PhoneBox je vydán pod licencí MIT.](../LICENSE)
+[NikoDeck je vydán pod licencí MIT.](../LICENSE)

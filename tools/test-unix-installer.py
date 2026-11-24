@@ -50,7 +50,7 @@ class InstallerTests(unittest.TestCase):
             (repo / 'scripts').mkdir(parents=True)
             (repo / 'dist').mkdir()
             shutil.copyfile(INSTALLER, repo / 'scripts/install.sh')
-            apk = repo / 'dist/PhoneBox-fixture.apk'
+            apk = repo / 'dist/NikoDeck-fixture.apk'
             apk.write_bytes(b'installer test fixture')
             if newer_sources:
                 android = repo / 'android'
@@ -85,8 +85,8 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 mkdir -p "$output"
-printf '%s\n' '#!/bin/sh' 'printf "%s\\n" "$PHONEBOX_TEST_INSTALL_DIR"' > "$output/PhoneBoxAgent"
-chmod +x "$output/PhoneBoxAgent"
+printf '%s\n' '#!/bin/sh' 'printf "%s\\n" "$PHONEBOX_TEST_INSTALL_DIR"' > "$output/NikoDeck"
+chmod +x "$output/NikoDeck"
 ''')
             recorder = root / 'record-adb.py'
             recorder.write_text('''import json, os, pathlib, sys
@@ -115,7 +115,7 @@ print('Success')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(calls, [
             ['-s', 'fixture-device', 'install', '-r', apk],
-            ['-s', 'fixture-device', 'shell', 'am', 'start', '-n', 'net.oxog.phonebox.deskpanel/.MainActivity'],
+            ['-s', 'fixture-device', 'shell', 'am', 'start', '-n', 'com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.MainActivity'],
         ], result.stdout + result.stderr)
 
     def test_no_serial_installs_and_opens_the_phone_app(self):
@@ -123,7 +123,7 @@ print('Success')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(calls, [
             ['install', '-r', apk],
-            ['shell', 'am', 'start', '-n', 'net.oxog.phonebox.deskpanel/.MainActivity'],
+            ['shell', 'am', 'start', '-n', 'com.lordsigfrid.nikodeck/net.oxog.phonebox.deskpanel.MainActivity'],
         ], result.stdout + result.stderr)
 
     def test_newer_android_sources_are_built_before_install(self):

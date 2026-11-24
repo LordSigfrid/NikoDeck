@@ -10,7 +10,7 @@ public sealed class Tray(ILogger<Tray> log, AgentEndpoint endpoint) : IHostedSer
 {
     public Task StartAsync(CancellationToken ct)
     {
-        log.LogInformation("settings: {Url}  (no tray icon on this system; run PhoneBoxAgent again to open the settings)", endpoint.SettingsUrl);
+        log.LogInformation("settings: {Url}  (no tray icon on this system; run NikoDeck again to open the settings)", endpoint.SettingsUrl);
         return Task.CompletedTask;
     }
 

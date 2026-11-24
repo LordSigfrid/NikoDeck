@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Creates PhoneBox's own macOS code-signing certificate: self-signed, valid for 30 years, for code signing only.
+# Creates NikoDeck's own macOS code-signing certificate: self-signed, valid for 30 years, for code signing only.
 #
 # Why: an ad hoc signature changes with every build, and macOS ties the Accessibility permission (shortcuts that press
 # keys) to it, so every update lost the permission (#269). Signed with one fixed certificate, every release has the same
@@ -44,7 +44,7 @@ prompt = no
 distinguished_name = dn
 x509_extensions = ext
 [dn]
-CN = PhoneBox Agent (self-signed)
+CN = NikoDeck Agent (self-signed)
 [ext]
 basicConstraints = critical,CA:FALSE
 keyUsage = critical,digitalSignature
@@ -58,7 +58,7 @@ PHONEBOX_P12_PASSWORD="$(openssl rand -base64 24 | tr -d '\r\n')"
 export PHONEBOX_P12_PASSWORD
 printf '%s' "$PHONEBOX_P12_PASSWORD" > "$pwfile"
 # SHA1-3DES: the format macOS's "security import" reads (OpenSSL 3's default AES one is often refused)
-openssl pkcs12 -export -inkey "$work/key.pem" -in "$work/cert.pem" -name "PhoneBox Agent" \
+openssl pkcs12 -export -inkey "$work/key.pem" -in "$work/cert.pem" -name "NikoDeck Agent" \
   -keypbe PBE-SHA1-3DES -certpbe PBE-SHA1-3DES -macalg sha1 \
   -passout env:PHONEBOX_P12_PASSWORD -out "$p12"
 

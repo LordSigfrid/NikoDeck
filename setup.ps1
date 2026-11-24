@@ -1,24 +1,24 @@
 <#
 .SYNOPSIS
-  PhoneBox setup for Windows: installs the latest release, everything it needs, and the phone app.
+  NikoDeck setup for Windows: installs the latest release, everything it needs, and the phone app.
 
 .DESCRIPTION
   Run it from a normal PowerShell window (not "Run as administrator"):
 
-    irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1 | iex
+    irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1 | iex
 
   With options:
 
-    & ([scriptblock]::Create((irm https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.ps1))) -NoPhone
+    & ([scriptblock]::Create((irm https://raw.githubusercontent.com/LordSigfrid/NikoDeck/main/setup.ps1))) -NoPhone
 
-  What it does, asking first before anything outside the PhoneBox folders:
-    1. Checks this PC (Windows 10/11, x64) and finds the latest PhoneBox release.
+  What it does, asking first before anything outside the NikoDeck folders:
+    1. Checks this PC (Windows 10/11, x64) and finds the latest NikoDeck release.
     2. Downloads the agent and checks its SHA-256 checksum (and its build provenance when the GitHub CLI is signed in).
     3. Installs adb (Android platform tools) when it is missing: with winget, or from Google's download.
-    4. Installs the agent to %LOCALAPPDATA%\PhoneBox\app. Settings in %APPDATA%\PhoneBox are kept.
-    5. Adds a Start Menu shortcut, optionally starts PhoneBox with Windows, puts the app on a phone connected over USB, starts the agent and opens its settings.
+    4. Installs the agent to %LOCALAPPDATA%\NikoDeck\app. Settings in %APPDATA%\NikoDeck are kept.
+    5. Adds a Start Menu shortcut, optionally starts NikoDeck with Windows, puts the app on a phone connected over USB, starts the agent and opens its settings.
 
-  Running it again updates PhoneBox or repairs the installation.
+  Running it again updates NikoDeck or repairs the installation.
 
 .PARAMETER Yes
   Answer every question with its default: for unattended runs.
@@ -27,7 +27,7 @@
 .PARAMETER Serial
   The phone to use when several are connected (see "adb devices").
 .PARAMETER NoAutostart
-  Do not start PhoneBox with Windows.
+  Do not start NikoDeck with Windows.
 .PARAMETER NoStart
   Install only; do not start the agent.
 .PARAMETER Version
@@ -48,8 +48,9 @@ param(
     [switch]$AllowAdministrator
 )
 
-$Repo = 'ersinkoc/phonebox'
-$Package = 'net.oxog.phonebox.deskpanel'
+$Repo = 'LordSigfrid/NikoDeck'
+$Upstream = 'ersinkoc/phonebox'   # NikoDeck is based on PhoneBox; some known issues are tracked there
+$Package = 'com.lordsigfrid.nikodeck'
 $SettingsUrl = 'http://127.0.0.1:8765'
 
 # The messages are in Brazilian Portuguese, but this file stays ASCII: Windows PowerShell 5.1 reads a script without
@@ -98,20 +99,20 @@ function Invoke-Native([string]$File, [string[]]$Arguments) {
 }
 
 function Get-Download([string]$Url, [string]$Path) {
-    Invoke-WebRequest -UseBasicParsing -Uri $Url -OutFile $Path -Headers @{ 'User-Agent' = 'phonebox-setup' }
+    Invoke-WebRequest -UseBasicParsing -Uri $Url -OutFile $Path -Headers @{ 'User-Agent' = 'nikodeck-setup' }
 }
 
 function Get-LatestVersion {
     try {
         $release = Invoke-RestMethod -UseBasicParsing -Uri "https://api.github.com/repos/$Repo/releases/latest" `
-            -Headers @{ 'User-Agent' = 'phonebox-setup'; 'Accept' = 'application/vnd.github+json' } -TimeoutSec 30
+            -Headers @{ 'User-Agent' = 'nikodeck-setup'; 'Accept' = 'application/vnd.github+json' } -TimeoutSec 30
         if ($release.tag_name) { return [string]$release.tag_name }
     } catch { }
     # The API allows 60 requests an hour per address; the release page redirects to the newest tag as well.
     $request = [System.Net.HttpWebRequest]::Create("https://github.com/$Repo/releases/latest")
     $request.AllowAutoRedirect = $false
     $request.Method = 'HEAD'
-    $request.UserAgent = 'phonebox-setup'
+    $request.UserAgent = 'nikodeck-setup'
     $response = $request.GetResponse()
     try { $location = [string]$response.Headers['Location'] } finally { $response.Close() }
     if ($location -match '/tag/([^/?#]+)$') { return $Matches[1] }
@@ -184,7 +185,7 @@ function Install-Adb([string]$Temp) {
 }
 
 function Stop-PhoneBox {
-    $running = @(Get-Process PhoneBoxAgent, DeskAgent -ErrorAction SilentlyContinue)
+    $running = @(Get-Process NikoDeck, DeskAgent -ErrorAction SilentlyContinue)
     foreach ($process in $running) {
         try { $process.Kill(); [void]$process.WaitForExit(10000) } catch { }
     }
@@ -267,19 +268,19 @@ function Install-PhoneApp([string]$Adb, [string]$Apk, [string]$Device) {
     $sdkLevel = 0
     [void][int]::TryParse(("$((Invoke-Native $Adb @('-s', $Device, 'shell', 'getprop', 'ro.build.version.sdk')).Output)").Trim(), [ref]$sdkLevel)
     if ($sdkLevel -gt 0 -and $sdkLevel -lt 21) {
-        Write-Caution "Este celular tem Android API $sdkLevel; o PhoneBox precisa do Android 5.0 (API 21) ou mais recente. O app n\u00e3o foi instalado."
+        Write-Caution "Este celular tem Android API $sdkLevel; o NikoDeck precisa do Android 5.0 (API 21) ou mais recente. O app n\u00e3o foi instalado."
         return $false
     }
     Write-Info "Instalando $(Split-Path $Apk -Leaf) em $Device (o celular pode pedir confirma\u00e7\u00e3o) ..."
     $result = Invoke-Native $Adb @('-s', $Device, 'install', '-r', $Apk)
     $text = $result.Output -join ' '
     if ($text -match 'INSTALL_FAILED_UPDATE_INCOMPATIBLE') {
-        Write-Caution 'O celular tem um app PhoneBox assinado com outra chave (por exemplo, um que voc\u00ea mesmo compilou).'
-        Write-Caution 'Ele foi mantido como est\u00e1, com seus dados. Para trocar pelo app oficial, desinstale o PhoneBox do celular'
+        Write-Caution 'O celular tem um app NikoDeck assinado com outra chave (por exemplo, um que voc\u00ea mesmo compilou).'
+        Write-Caution 'Ele foi mantido como est\u00e1, com seus dados. Para trocar pelo app oficial, desinstale o NikoDeck do celular'
         Write-Caution '(isso apaga as configura\u00e7\u00f5es dele) e execute a instala\u00e7\u00e3o de novo.'
         return $false
     }
-    if ($text -match 'INSTALL_FAILED_VERSION_DOWNGRADE') { Write-Ok 'O celular j\u00e1 tem um app PhoneBox mais novo; ele foi mantido.'; return $true }
+    if ($text -match 'INSTALL_FAILED_VERSION_DOWNGRADE') { Write-Ok 'O celular j\u00e1 tem um app NikoDeck mais novo; ele foi mantido.'; return $true }
     if ($text -match 'INSTALL_FAILED_USER_RESTRICTED|INSTALL_FAILED_ABORTED') {
         Write-Caution 'O celular recusou a instala\u00e7\u00e3o. Confirme no celular; celulares Xiaomi / Redmi / POCO tamb\u00e9m precisam de'
         Write-Caution '"Instalar via USB" nas Op\u00e7\u00f5es do desenvolvedor. Depois execute a instala\u00e7\u00e3o de novo.'
@@ -289,8 +290,8 @@ function Install-PhoneApp([string]$Adb, [string]$Apk, [string]$Device) {
         Write-Caution "N\u00e3o foi poss\u00edvel instalar o app: $text"
         return $false
     }
-    Write-Ok 'App PhoneBox instalado no celular'
-    [void](Invoke-Native $Adb @('-s', $Device, 'shell', 'am', 'start', '-n', "$Package/.MainActivity"))
+    Write-Ok 'App NikoDeck instalado no celular'
+    [void](Invoke-Native $Adb @('-s', $Device, 'shell', 'am', 'start', '-n', "$Package/net.oxog.phonebox.deskpanel.MainActivity"))  # the activity keeps the upstream Kotlin package
     $true
 }
 
@@ -300,41 +301,41 @@ function Install-PhoneBox {
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
     Write-Host ''
-    Write-Host (Expand-Text 'Instala\u00e7\u00e3o do PhoneBox') -ForegroundColor Cyan
+    Write-Host (Expand-Text 'Instala\u00e7\u00e3o do NikoDeck') -ForegroundColor Cyan
     if ($DryRun) { Write-Host (Expand-Text 'Simula\u00e7\u00e3o: baixa e verifica tudo, sem alterar nada.') -ForegroundColor Yellow }
 
     Write-Step 'Verificando este PC'
     $architecture = if ($env:PROCESSOR_ARCHITEW6432) { $env:PROCESSOR_ARCHITEW6432 } else { $env:PROCESSOR_ARCHITECTURE }
     if ($architecture -eq 'ARM64') {
-        throw "Ainda n\u00e3o existe build do PhoneBox para Windows em ARM: o build x64 funcionaria, mas n\u00e3o conseguiria se atualizar. Pe\u00e7a em https://github.com/$Repo/issues."
+        throw "Ainda n\u00e3o existe build do NikoDeck para Windows em ARM: o build x64 funcionaria, mas n\u00e3o conseguiria se atualizar. Pe\u00e7a em https://github.com/$Repo/issues."
     }
-    if ($architecture -ne 'AMD64') { throw "O PhoneBox precisa do Windows de 64 bits (este PC informa $architecture)." }
+    if ($architecture -ne 'AMD64') { throw "O NikoDeck precisa do Windows de 64 bits (este PC informa $architecture)." }
     $build = [Environment]::OSVersion.Version.Build
-    if ($build -lt 19041) { Write-Caution "O PhoneBox foi feito para o Windows 10 vers\u00e3o 2004 (build 19041) ou mais recente; este PC tem o build $build, ent\u00e3o algumas partes podem n\u00e3o funcionar." }
+    if ($build -lt 19041) { Write-Caution "O NikoDeck foi feito para o Windows 10 vers\u00e3o 2004 (build 19041) ou mais recente; este PC tem o build $build, ent\u00e3o algumas partes podem n\u00e3o funcionar." }
     $identity = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
     if ($identity.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -and -not $AllowAdministrator) {
-        throw 'Execute a instala\u00e7\u00e3o em uma janela normal do PowerShell, sem "Executar como administrador". O PhoneBox roda com o seu usu\u00e1rio e n\u00e3o precisa de direitos de administrador; como administrador, ele iniciaria com direitos totais ou seria instalado na conta do administrador em vez da sua.'
+        throw 'Execute a instala\u00e7\u00e3o em uma janela normal do PowerShell, sem "Executar como administrador". O NikoDeck roda com o seu usu\u00e1rio e n\u00e3o precisa de direitos de administrador; como administrador, ele iniciaria com direitos totais ou seria instalado na conta do administrador em vez da sua.'
     }
     $scoop = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $HOME 'scoop' }
-    if (Test-Path (Join-Path $scoop 'apps\phonebox')) {
-        throw 'O PhoneBox est\u00e1 instalado pelo Scoop. Atualize com "scoop update phonebox". Para trocar para esta instala\u00e7\u00e3o, execute antes "scoop uninstall phonebox" (suas configura\u00e7\u00f5es ficam) e depois a instala\u00e7\u00e3o de novo; duas c\u00f3pias disputariam a mesma porta.'
+    if (Test-Path (Join-Path $scoop 'apps\nikodeck')) {
+        throw 'O NikoDeck est\u00e1 instalado pelo Scoop. Atualize com "scoop update nikodeck". Para trocar para esta instala\u00e7\u00e3o, execute antes "scoop uninstall nikodeck" (suas configura\u00e7\u00f5es ficam) e depois a instala\u00e7\u00e3o de novo; duas c\u00f3pias disputariam a mesma porta.'
     }
-    $app = Join-Path $env:LOCALAPPDATA 'PhoneBox\app'
-    $exe = Join-Path $app 'PhoneBoxAgent.exe'
+    $app = Join-Path $env:LOCALAPPDATA 'NikoDeck\app'
+    $exe = Join-Path $app 'NikoDeck.exe'
     $installed = $null
     if (Test-Path $exe) { $installed = ("$((Get-Item $exe).VersionInfo.ProductVersion)" -split '\+')[0] }
-    Write-Ok "Windows build $build, x64$(if ($installed) { ", PhoneBox $installed instalado" })"
+    Write-Ok "Windows build $build, x64$(if ($installed) { ", NikoDeck $installed instalado" })"
     # Smart App Control (Windows 11) blocks programs that are neither signed nor known to Microsoft: 1 on, 2 evaluation
     $smartAppControl = 0
     try { $smartAppControl = [int](Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\CI\Policy' -ErrorAction Stop).VerifiedAndReputablePolicyState } catch { }
     if ($smartAppControl -eq 1) {
         Write-Caution 'O Controle Inteligente de Aplicativos est\u00e1 ativado. Ele bloqueia programas que n\u00e3o s\u00e3o assinados nem conhecidos pela Microsoft, e'
-        Write-Caution 'o PhoneBoxAgent.exe ainda n\u00e3o tem assinatura de c\u00f3digo (a assinatura pela SignPath Foundation est\u00e1 pendente:'
-        Write-Caution "https://github.com/$Repo/issues/56), ent\u00e3o o Windows provavelmente vai impedir que ele inicie. Mesmo assim, ele ser\u00e1 instalado."
+        Write-Caution 'o NikoDeck.exe n\u00e3o tem assinatura de c\u00f3digo (veja a discuss\u00e3o no projeto original, o PhoneBox:'
+        Write-Caution "https://github.com/$Upstream/issues/56), ent\u00e3o o Windows provavelmente vai impedir que ele inicie. Mesmo assim, ele ser\u00e1 instalado."
         Write-Caution 'Mantenha o Controle Inteligente de Aplicativos ativado: em builds mais antigos do Windows, ele n\u00e3o pode ser reativado sem reinstalar o Windows.'
     } elseif ($smartAppControl -eq 2) {
         Write-Caution 'O Controle Inteligente de Aplicativos est\u00e1 em modo de avalia\u00e7\u00e3o: ainda n\u00e3o bloqueia nada. Se o Windows ativ\u00e1-lo depois, ele vai bloquear'
-        Write-Caution "o PhoneBoxAgent.exe at\u00e9 o agente ter assinatura de c\u00f3digo (pendente: https://github.com/$Repo/issues/56)."
+        Write-Caution "o NikoDeck.exe at\u00e9 o agente ter assinatura de c\u00f3digo (veja https://github.com/$Upstream/issues/56)."
     }
 
     Write-Step 'Procurando a vers\u00e3o'
@@ -342,15 +343,15 @@ function Install-PhoneBox {
     $ver = $tag.Trim().TrimStart('v')
     if ($ver -notmatch '^\d+\.\d+\.\d+$') { throw "Vers\u00e3o inesperada: '$tag'." }
     $base = "https://github.com/$Repo/releases/download/v$ver"
-    if ($installed -eq $ver) { Write-Ok "PhoneBox $ver (j\u00e1 instalado; ser\u00e1 reinstalado, as configura\u00e7\u00f5es ficam)" }
-    elseif ($installed) { Write-Ok "PhoneBox $ver (atualizando a partir da $installed; as configura\u00e7\u00f5es ficam)" }
-    else { Write-Ok "PhoneBox $ver" }
+    if ($installed -eq $ver) { Write-Ok "NikoDeck $ver (j\u00e1 instalado; ser\u00e1 reinstalado, as configura\u00e7\u00f5es ficam)" }
+    elseif ($installed) { Write-Ok "NikoDeck $ver (atualizando a partir da $installed; as configura\u00e7\u00f5es ficam)" }
+    else { Write-Ok "NikoDeck $ver" }
 
-    $temp = Join-Path ([IO.Path]::GetTempPath()) ('phonebox-setup-' + [guid]::NewGuid().ToString('N').Substring(0, 8))
+    $temp = Join-Path ([IO.Path]::GetTempPath()) ('nikodeck-setup-' + [guid]::NewGuid().ToString('N').Substring(0, 8))
     New-Item -ItemType Directory -Force $temp | Out-Null
     try {
-        Write-Step "Baixando o PhoneBox $ver"
-        $zipName = "PhoneBoxAgent-$ver-win-x64.zip"
+        Write-Step "Baixando o NikoDeck $ver"
+        $zipName = "NikoDeckAgent-$ver-win-x64.zip"
         $sums = Join-Path $temp "SHA256SUMS-$ver.txt"
         $zip = Join-Path $temp $zipName
         try { Get-Download "$base/SHA256SUMS-$ver.txt" $sums } catch { throw "A vers\u00e3o $ver n\u00e3o foi encontrada ($base). $($_.Exception.Message)" }
@@ -365,33 +366,33 @@ function Install-PhoneBox {
         $extract = Join-Path $temp 'agent'
         Expand-Archive -LiteralPath $zip -DestinationPath $extract -Force
         Get-ChildItem $extract -Recurse -File | Unblock-File
-        if (-not (Test-Path (Join-Path $extract 'PhoneBoxAgent.exe'))) {
-            throw "O PhoneBoxAgent.exe sumiu do arquivo baixado: provavelmente um antiv\u00edrus o removeu. Veja https://github.com/$Repo/issues/69 e restaure-o da quarentena, ou adicione uma exce\u00e7\u00e3o, e depois execute a instala\u00e7\u00e3o de novo."
+        if (-not (Test-Path (Join-Path $extract 'NikoDeck.exe'))) {
+            throw "O NikoDeck.exe sumiu do arquivo baixado: provavelmente um antiv\u00edrus o removeu. Veja https://github.com/$Upstream/issues/69 e restaure-o da quarentena, ou adicione uma exce\u00e7\u00e3o, e depois execute a instala\u00e7\u00e3o de novo."
         }
 
         Write-Step 'Verificando o adb (necess\u00e1rio para a conex\u00e3o USB com o celular)'
         $adb = Find-Adb
         if ($adb) { Write-Ok $adb }
         else {
-            Write-Caution 'O adb n\u00e3o est\u00e1 instalado. Sem ele o PhoneBox ainda funciona via Wi-Fi, mas n\u00e3o alcan\u00e7a o celular pelo USB'
+            Write-Caution 'O adb n\u00e3o est\u00e1 instalado. Sem ele o NikoDeck ainda funciona via Wi-Fi, mas n\u00e3o alcan\u00e7a o celular pelo USB'
             Write-Caution '(acordar o celular ao conectar, instalar e atualizar o app do celular, usar o USB quando o Wi-Fi cair).'
             if ($DryRun) { Write-Info 'Ofereceria a instala\u00e7\u00e3o do adb.' }
             elseif (Read-YesNo 'Instalar o adb agora?') {
                 $adb = Install-Adb $temp
-                if ($adb) { Write-Ok "adb instalado: $adb" } else { Write-Caution 'N\u00e3o foi poss\u00edvel instalar o adb; o PhoneBox vai funcionar s\u00f3 via Wi-Fi at\u00e9 ele ser instalado.' }
+                if ($adb) { Write-Ok "adb instalado: $adb" } else { Write-Caution 'N\u00e3o foi poss\u00edvel instalar o adb; o NikoDeck vai funcionar s\u00f3 via Wi-Fi at\u00e9 ele ser instalado.' }
             }
         }
 
         $owner = Get-PortOwner 8765
-        if ($owner -and $owner -ne 'PhoneBoxAgent' -and $owner -ne 'DeskAgent') {
-            Write-Caution "A porta 8765 est\u00e1 em uso por $owner. O PhoneBox precisa dessa porta; feche o $owner ou o PhoneBox n\u00e3o vai iniciar."
+        if ($owner -and $owner -ne 'NikoDeck' -and $owner -ne 'DeskAgent') {
+            Write-Caution "A porta 8765 est\u00e1 em uso por $owner. O NikoDeck precisa dessa porta; feche o $owner ou o NikoDeck n\u00e3o vai iniciar."
         }
 
         if ($DryRun) {
             Write-Step 'Simula\u00e7\u00e3o conclu\u00edda'
-            Write-Info "Encerraria o agente em execu\u00e7\u00e3o e instalaria o PhoneBox $ver em $app (as configura\u00e7\u00f5es em $env:APPDATA\PhoneBox ficam)."
-            Write-Info 'Adicionaria um atalho do PhoneBox ao menu Iniciar.'
-            if (-not $NoAutostart) { Write-Info 'Perguntaria se o PhoneBox deve iniciar com o Windows.' }
+            Write-Info "Encerraria o agente em execu\u00e7\u00e3o e instalaria o NikoDeck $ver em $app (as configura\u00e7\u00f5es em $env:APPDATA\NikoDeck ficam)."
+            Write-Info 'Adicionaria um atalho do NikoDeck ao menu Iniciar.'
+            if (-not $NoAutostart) { Write-Info 'Perguntaria se o NikoDeck deve iniciar com o Windows.' }
             if (-not $NoPhone) { Write-Info 'Ofereceria a instala\u00e7\u00e3o do app em um celular conectado via USB.' }
             Write-Info 'Nada foi alterado.'
             return
@@ -414,21 +415,21 @@ function Install-PhoneBox {
                 Remove-Item -Force -ErrorAction SilentlyContinue
         } catch {
             if (Test-Path $old) { try { Copy-Item (Join-Path $old '*') $app -Recurse -Force } catch { } }
-            throw "A instala\u00e7\u00e3o falhou e a vers\u00e3o anterior foi restaurada: $($_.Exception.Message). Feche o PhoneBox (\u00edcone da bandeja > Sair) e execute a instala\u00e7\u00e3o de novo."
+            throw "A instala\u00e7\u00e3o falhou e a vers\u00e3o anterior foi restaurada: $($_.Exception.Message). Feche o NikoDeck (\u00edcone da bandeja > Sair) e execute a instala\u00e7\u00e3o de novo."
         }
         Remove-Item $old -Recurse -Force -ErrorAction SilentlyContinue
-        Write-Ok "PhoneBox $ver instalado; as configura\u00e7\u00f5es ficam em $env:APPDATA\PhoneBox"
+        Write-Ok "NikoDeck $ver instalado; as configura\u00e7\u00f5es ficam em $env:APPDATA\NikoDeck"
 
         $programs = [Environment]::GetFolderPath('Programs')
         if ($programs -and (Test-Path $programs)) {
             try {
                 $shell = New-Object -ComObject WScript.Shell
-                $startLink = $shell.CreateShortcut((Join-Path $programs 'PhoneBox.lnk'))
+                $startLink = $shell.CreateShortcut((Join-Path $programs 'NikoDeck.lnk'))
                 $startLink.TargetPath = $exe
                 $startLink.WorkingDirectory = $app
-                $startLink.Description = 'Agente do PhoneBox'
+                $startLink.Description = 'Agente do NikoDeck'
                 $startLink.Save()
-                Write-Ok 'Adicionado ao menu Iniciar (pesquise "PhoneBox" para abri-lo quando quiser)'
+                Write-Ok 'Adicionado ao menu Iniciar (pesquise "NikoDeck" para abri-lo quando quiser)'
             } catch {
                 Write-Caution "N\u00e3o foi poss\u00edvel criar o atalho no menu Iniciar: $($_.Exception.Message)"
             }
@@ -436,7 +437,7 @@ function Install-PhoneBox {
 
         $startup = [Environment]::GetFolderPath('Startup')
         Remove-Item (Join-Path $startup 'DeskAgent.lnk') -ErrorAction SilentlyContinue   # the pre-PhoneBox prototype
-        $shortcut = Join-Path $startup 'PhoneBox.lnk'
+        $shortcut = Join-Path $startup 'NikoDeck.lnk'
         if ($NoAutostart) {
             if (Test-Path $shortcut) {
                 Remove-Item $shortcut -Force
@@ -444,12 +445,12 @@ function Install-PhoneBox {
             }
         } else {
             Write-Step 'Iniciar com o Windows'
-            if (Read-YesNo 'Iniciar o PhoneBox quando voc\u00ea entrar no Windows?') {
+            if (Read-YesNo 'Iniciar o NikoDeck quando voc\u00ea entrar no Windows?') {
                 $shell = New-Object -ComObject WScript.Shell
                 $link = $shell.CreateShortcut($shortcut)
                 $link.TargetPath = $exe
                 $link.WorkingDirectory = $app
-                $link.Description = 'Agente do PhoneBox'
+                $link.Description = 'Agente do NikoDeck'
                 $link.Save()
                 Write-Ok 'Adicionado \u00e0 pasta Inicializar (desative em Gerenciador de Tarefas > Aplicativos de inicializa\u00e7\u00e3o)'
             } elseif (Test-Path $shortcut) {
@@ -463,7 +464,7 @@ function Install-PhoneBox {
             Write-Step 'App do celular'
             if (-not $adb) {
                 Write-Caution 'Pulado: o adb n\u00e3o est\u00e1 instalado.'
-            } elseif (Read-YesNo 'Instalar agora o app PhoneBox em um celular conectado via USB?') {
+            } elseif (Read-YesNo 'Instalar agora o app NikoDeck em um celular conectado via USB?') {
                 Write-Info 'A depura\u00e7\u00e3o USB permite que um computador autorizado controle o celular. Autorize apenas os seus computadores;'
                 Write-Info 'voc\u00ea pode revog\u00e1-los em Op\u00e7\u00f5es do desenvolvedor > "Revogar autoriza\u00e7\u00f5es de depura\u00e7\u00e3o USB".'
                 $device = Select-Phone $adb
@@ -471,8 +472,8 @@ function Install-PhoneBox {
                     # The phone app is optional: a failed download or checksum skips it, and the agent (already
                     # installed and stopped for the update) still starts below.
                     try {
-                        $apk = Join-Path $temp "PhoneBox-$ver.apk"
-                        Get-Download "$base/PhoneBox-$ver.apk" $apk
+                        $apk = Join-Path $temp "NikoDeck-$ver.apk"
+                        Get-Download "$base/NikoDeck-$ver.apk" $apk
                         Assert-Checksum $apk $sums
                         $phoneDone = Install-PhoneApp $adb $apk $device
                     } catch {
@@ -486,7 +487,7 @@ function Install-PhoneBox {
             Write-Step 'Conclu\u00eddo (n\u00e3o iniciado)'
             Write-Info "Inicie com $exe"
         } else {
-            Write-Step 'Iniciando o PhoneBox'
+            Write-Step 'Iniciando o NikoDeck'
             $blocked = $false
             try {
                 Start-Process -FilePath $exe -WorkingDirectory $app -ErrorAction Stop
@@ -499,13 +500,13 @@ function Install-PhoneBox {
                 $groupPolicy = & $says 1260  # AppLocker or a software restriction policy
                 if (-not ($appControl -or $groupPolicy)) { throw }
                 $blocked = $true
-                Write-Caution "O Windows n\u00e3o deixou o PhoneBoxAgent.exe iniciar: $why"
+                Write-Caution "O Windows n\u00e3o deixou o NikoDeck.exe iniciar: $why"
                 if ($appControl -and $smartAppControl -eq 1) {
-                    Write-Caution 'O PhoneBox est\u00e1 instalado, mas o Controle Inteligente de Aplicativos n\u00e3o vai execut\u00e1-lo at\u00e9 o agente ter assinatura de c\u00f3digo.'
-                    Write-Caution "A assinatura est\u00e1 pendente: https://github.com/$Repo/issues/56. Mantenha o Controle Inteligente de Aplicativos ativado."
+                    Write-Caution 'O NikoDeck est\u00e1 instalado, mas o Controle Inteligente de Aplicativos n\u00e3o vai execut\u00e1-lo at\u00e9 o agente ter assinatura de c\u00f3digo.'
+                    Write-Caution "A assinatura est\u00e1 pendente: https://github.com/$Upstream/issues/56. Mantenha o Controle Inteligente de Aplicativos ativado."
                 } else {
-                    Write-Caution 'O PhoneBox est\u00e1 instalado, mas uma pol\u00edtica deste computador n\u00e3o permite que ele seja executado. Em um computador'
-                    Write-Caution 'do trabalho ou da escola, pe\u00e7a ao administrador para liberar o PhoneBoxAgent.exe.'
+                    Write-Caution 'O NikoDeck est\u00e1 instalado, mas uma pol\u00edtica deste computador n\u00e3o permite que ele seja executado. Em um computador'
+                    Write-Caution 'do trabalho ou da escola, pe\u00e7a ao administrador para liberar o NikoDeck.exe.'
                 }
             }
             $up = $false
@@ -514,14 +515,14 @@ function Install-PhoneBox {
                 try { Invoke-RestMethod -UseBasicParsing "$SettingsUrl/api/info" -TimeoutSec 2 | Out-Null; $up = $true } catch { }
             }
             if ($up) {
-                Write-Ok "O PhoneBox est\u00e1 em execu\u00e7\u00e3o: configura\u00e7\u00f5es em $SettingsUrl (tamb\u00e9m pelo \u00edcone da bandeja)"
+                Write-Ok "O NikoDeck est\u00e1 em execu\u00e7\u00e3o: configura\u00e7\u00f5es em $SettingsUrl (tamb\u00e9m pelo \u00edcone da bandeja)"
                 try { Start-Process $SettingsUrl } catch { }
             } elseif ($blocked) {
                 # explained above
             } elseif (-not (Test-Path $exe)) {
-                Write-Caution "O PhoneBoxAgent.exe foi removido, provavelmente por um antiv\u00edrus. Veja https://github.com/$Repo/issues/69."
+                Write-Caution "O NikoDeck.exe foi removido, provavelmente por um antiv\u00edrus. Veja https://github.com/$Upstream/issues/69."
             } else {
-                Write-Caution "O agente n\u00e3o respondeu. Log dele: $env:LOCALAPPDATA\PhoneBox\agent.log"
+                Write-Caution "O agente n\u00e3o respondeu. Log dele: $env:LOCALAPPDATA\NikoDeck\agent.log"
                 if ($smartAppControl -eq 1) {
                     Write-Caution 'O Controle Inteligente de Aplicativos pode t\u00ea-lo bloqueado: veja Seguran\u00e7a do Windows > Controle de aplicativos e do navegador, e o aviso acima.'
                 }
@@ -529,15 +530,15 @@ function Install-PhoneBox {
         }
 
         Write-Step 'Bom saber'
-        if ($phoneDone) { Write-Info 'Deixe o celular conectado: o PhoneBox acorda o celular e abre o painel.' }
+        if ($phoneDone) { Write-Info 'Deixe o celular conectado: o NikoDeck acorda o celular e abre o painel.' }
         elseif (-not $NoPhone) {
             Write-Info "App do celular depois: conecte o celular e use Configura\u00e7\u00f5es > Geral > Instalar app no celular, ou execute a instala\u00e7\u00e3o de novo."
         }
         Write-Info 'S\u00f3 Wi-Fi: instale o app pela p\u00e1gina de vers\u00f5es no celular e, no computador, abra'
         Write-Info 'Configura\u00e7\u00f5es > Geral > Wi-Fi & Tailscale > Parear celular via Wi-Fi e escaneie o QR code.'
-        Write-Info 'Quando voc\u00ea ativar o Wi-Fi, o Windows vai pedir para liberar o PhoneBox no firewall: permita apenas redes privadas.'
-        Write-Info "At\u00e9 l\u00e1, o PhoneBox s\u00f3 escuta neste computador. Todas as conex\u00f5es que ele faz: https://github.com/$Repo/blob/main/PRIVACY.md"
-        Write-Info 'Atualiza\u00e7\u00f5es: o PhoneBox se atualiza pelas Configura\u00e7\u00f5es. Execute a instala\u00e7\u00e3o de novo quando quiser para repar\u00e1-lo.'
+        Write-Info 'Quando voc\u00ea ativar o Wi-Fi, o Windows vai pedir para liberar o NikoDeck no firewall: permita apenas redes privadas.'
+        Write-Info "At\u00e9 l\u00e1, o NikoDeck s\u00f3 escuta neste computador. Todas as conex\u00f5es que ele faz: https://github.com/$Repo/blob/main/PRIVACY.md"
+        Write-Info 'Atualiza\u00e7\u00f5es: o NikoDeck se atualiza pelas Configura\u00e7\u00f5es. Execute a instala\u00e7\u00e3o de novo quando quiser para repar\u00e1-lo.'
         Write-Info "Desinstalar: & ([scriptblock]::Create((irm https://raw.githubusercontent.com/$Repo/main/scripts/uninstall.ps1))) [-Purge] [-Apk]"
     } finally {
         Remove-Item $temp -Recurse -Force -ErrorAction SilentlyContinue

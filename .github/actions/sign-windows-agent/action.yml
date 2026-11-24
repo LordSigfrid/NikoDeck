@@ -1,12 +1,12 @@
 name: Sign the Windows agent
 description: >
-  Authenticode-signs PhoneBoxAgent.exe through SignPath Foundation and puts the signed file back in place. Only
-  PhoneBoxAgent.exe is ours; the other PE file in the publish folder (aspnetcorev2_inprocess.dll) is Microsoft's and
+  Authenticode-signs NikoDeck.exe through SignPath Foundation and puts the signed file back in place. Only
+  NikoDeck.exe is ours; the other PE file in the publish folder (aspnetcorev2_inprocess.dll) is Microsoft's and
   already signed. The job needs `actions: read`.
 
 inputs:
   exe:
-    description: Path of PhoneBoxAgent.exe; it is replaced by the signed file.
+    description: Path of NikoDeck.exe; it is replaced by the signed file.
     required: true
   signing-policy:
     description: SignPath signing policy slug (release-signing, or test-signing for a trial run).
@@ -26,7 +26,7 @@ runs:
       id: unsigned
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
-        name: unsigned-PhoneBoxAgent-${{ inputs.signing-policy }}
+        name: unsigned-NikoDeckAgent-${{ inputs.signing-policy }}
         path: ${{ inputs.exe }}
         if-no-files-found: error
         retention-days: 1
@@ -51,10 +51,10 @@ runs:
         EXE: ${{ inputs.exe }}
         TRUSTED: ${{ inputs.trusted }}
       run: |
-        $signed = Join-Path 'signpath-signed' 'PhoneBoxAgent.exe'
-        if (-not (Test-Path $signed)) { throw "SignPath returned no PhoneBoxAgent.exe: $(Get-ChildItem -Recurse signpath-signed | Out-String)" }
+        $signed = Join-Path 'signpath-signed' 'NikoDeck.exe'
+        if (-not (Test-Path $signed)) { throw "SignPath returned no NikoDeck.exe: $(Get-ChildItem -Recurse signpath-signed | Out-String)" }
         $sig = Get-AuthenticodeSignature $signed
-        if (-not $sig.SignerCertificate) { throw "PhoneBoxAgent.exe came back unsigned ($($sig.Status))" }
+        if (-not $sig.SignerCertificate) { throw "NikoDeck.exe came back unsigned ($($sig.Status))" }
         "Signer: $($sig.SignerCertificate.Subject)"
         "Status: $($sig.Status) $($sig.StatusMessage)"
         "Timestamp: $($sig.TimeStamperCertificate.Subject)"

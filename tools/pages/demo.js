@@ -1,4 +1,4 @@
-// PhoneBox web demo: answers the panel's and the settings page's API calls in the browser with made-up data,
+// NikoDeck web demo: answers the panel's and the settings page's API calls in the browser with made-up data,
 // so both run on a static site (GitHub Pages) without a phone or an agent. Load it before app.js / the settings script.
 // The panel and the settings page talk through a BroadcastChannel: layout changes and test notifications show up live.
 (() => {
@@ -89,7 +89,7 @@
         artTint: true, autoBrightness: false, nightWhenDark: false, nightWhenUnreachable: false, unreachableNightDelayMin: 5, proximityWake: true, pin: false, homeScreen: false, keepAwake: true, openOnConnect: true, followComputerLock: false,
         homePage: null, switchCountdownSec: 3, touchGraceSec: 20, minDwellSec: 15, holdMaxMin: 30 },
       lan: { enabled: true, port: 8766, token: 'demo', webhookToken: 'demo-webhook-key' },
-      updates: { auto: true, repo: 'ersinkoc/phonebox' },
+      updates: { auto: true, repo: 'LordSigfrid/NikoDeck' },
       claude: { phoneApprovals: true, timeoutSec: 90, onlyWhenAway: false },
       antigravity: { sessions: false, shareSessionTitles: false },
       opencode: { phoneApprovals: false, sessions: false, timeoutSec: 90, onlyWhenAway: false, alwaysCountdownSec: 10, watchWsl: false, shareSessionTitles: false },
@@ -880,7 +880,7 @@
       // runs the rule's action once, like the agent's Test button
       const r = parse(body) || {};
       if (r.then === 'goto' && r.page) emit('goto', { page: r.page, rule: r.id || 'test', name: r.name || null, priority: r.priority ?? 5, countdown: r.countdownSec ?? null, hold: false });
-      else if (r.then === 'notify') emit('notify', { title: r.name || 'PhoneBox', text: (r.text || 'test').replace('{detail}', 'test'), level: r.level || 'info' });
+      else if (r.then === 'notify') emit('notify', { title: r.name || 'NikoDeck', text: (r.text || 'test').replace('{detail}', 'test'), level: r.level || 'info' });
       else if (r.then === 'push' && r.key) {
         const value = r.pushValue ?? true;
         setPush(r.key, value);
@@ -937,13 +937,13 @@
         [0, 22].flatMap((x) => [0, 22].filter((y) => !(x === 22 && y === 22)).map((y) => `<rect x="${x}" y="${y}" width="7" height="7" fill="#000"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="#fff"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" fill="#000"/>`)).join('')
       }<text x="14.5" y="16" font-size="3" text-anchor="middle" font-family="sans-serif">${label}</text></svg>`;
       return json({ enabled: true, pc: 'DEMO-PC', hosts: ['192.168.1.20', '100.101.102.103'], port: 8766, expiresAt: now() + 300e3, claims: 0, attempt: 1, check: 'DE40 0001',
-        link: 'https://ersinkoc.github.io/phonebox/pair/#v=1&pc=DEMO-PC&fp=demo&port=8766&h=192.168.1.20&c=demo',
-        qr: box('demo pairing'), app: 'https://github.com/ersinkoc/phonebox/releases/latest', appQr: box('demo app') });
+        link: 'https://lordsigfrid.github.io/NikoDeck/pair/#v=1&pc=DEMO-PC&fp=demo&port=8766&h=192.168.1.20&c=demo',
+        qr: box('demo pairing'), app: 'https://github.com/LordSigfrid/NikoDeck/releases/latest', appQr: box('demo app') });
     }
     if (path === '/api/pair/status') return json({ claims: 0 });
     if (path === '/api/pair/cancel' && method === 'POST') return json({});
     if (path === '/api/lan') return json({ configured: true, active: true, port: 8766, restartNeeded: false, hosts: ['192.168.1.20', '100.101.102.103'], fingerprint: 'demo' });
-    if (path === '/api/update') return json({ status: { agentVersion: VERSION, appVersion: VERSION, latest: VERSION, releaseUrl: 'https://github.com/ersinkoc/phonebox/releases/latest', agentUpdate: false, appUpdate: false,
+    if (path === '/api/update') return json({ status: { agentVersion: VERSION, appVersion: VERSION, latest: VERSION, releaseUrl: 'https://github.com/LordSigfrid/NikoDeck/releases/latest', agentUpdate: false, appUpdate: false,
       lastCheck: now() - 3600e3, state: 'idle', error: null }, auto: (await config()).updates?.auto !== false, installed: true });
     if (path === '/api/claude/hook') return json({ installed: false, path: '~/.claude/settings.json' });
     if (method !== 'GET') return json({ ok: true });
@@ -954,6 +954,8 @@
     const url = new URL(typeof input === 'string' ? input : input.url, location.href);
     const i = url.pathname.indexOf('/api/');
     if (url.origin !== location.origin || i < 0) return realFetch(input, init);
+    // the Visor's uploaded media: the demo has none, so a spec that sets visorMediaRev mocks it on the network
+    if (url.pathname.slice(i).startsWith('/api/visor-media')) return realFetch(input, init);
     return handle((init.method || 'GET').toUpperCase(), url.pathname.slice(i), url.searchParams, init.body, new Headers(init.headers || {}));
   };
 

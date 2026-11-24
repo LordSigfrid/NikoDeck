@@ -1,4 +1,4 @@
-PhoneBox agent: third-party software
+NikoDeck agent: third-party software
 
 The release agent is self-contained: it includes the .NET runtime and ASP.NET Core, QRCoder, and on Windows also
 Windows Forms, the C#/WinRT projection (WinRT.Runtime, Microsoft.Windows.SDK.NET) and NAudio.

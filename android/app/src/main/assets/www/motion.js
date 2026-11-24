@@ -1,4 +1,4 @@
-// PhoneBox desk panel: the short, one-off animations (page turns, values, gauges, bars). A leaf module with no imports,
+// NikoDeck desk panel: the short, one-off animations (page turns, values, gauges, bars). A leaf module with no imports,
 // so main.js and the widgets can both use it without an import cycle.
 // Only transform, opacity and a gauge's stroke-dashoffset move, through the Web Animations API: nothing here runs a
 // frame once its animation is over (a running animation costs a frame on every display refresh, see the status pulses).

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GitHub Copilot CLI -> PhoneBox: shows whether a Copilot CLI session is working, has finished its turn or needs your
+GitHub Copilot CLI -> NikoDeck: shows whether a Copilot CLI session is working, has finished its turn or needs your
 attention, through the webhook API. Copilot CLI runs it from its hooks; see docs/COPILOT-CLI.md.
 
     copilot-cli-bridge.py working|finished|attention [--notify] [--check]
@@ -8,7 +8,7 @@ attention, through the webhook API. Copilot CLI runs it from its hooks; see docs
     --notify   also show a notification on the phone
     --check    for trying it by hand: report what happened and exit 1 on failure (hooks stay silent and exit 0)
 
-Only the state reaches PhoneBox, which shows how long ago it arrived. The hook input on stdin (prompt, folder, session)
+Only the state reaches NikoDeck, which shows how long ago it arrived. The hook input on stdin (prompt, folder, session)
 is read and thrown away, never parsed. Only the Python standard library is used.
 
 Settings (environment variables):
@@ -129,7 +129,7 @@ def main(argv):
         if notify:
             post(dest, "/api/notify", {"title": TITLE, "text": value, "level": level})
     except (BridgeError, OSError, ValueError, http.client.HTTPException) as e:
-        # A hook must never get in the way of Copilot CLI: when PhoneBox is not running, the hook just does nothing.
+        # A hook must never get in the way of Copilot CLI: when NikoDeck is not running, the hook just does nothing.
         if check:
             print(f"copilot-cli-bridge: {e}", file=sys.stderr)
             return 1

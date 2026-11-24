@@ -51,7 +51,7 @@ try {
                 $outIdx = [Array]::IndexOf($args, '-o')
                 $stageDir = $args[$outIdx + 1]
                 New-Item -ItemType Directory -Path $stageDir -Force | Out-Null
-                Set-Content -LiteralPath (Join-Path $stageDir 'PhoneBoxAgent.exe') -Value 'staged' -Encoding ascii
+                Set-Content -LiteralPath (Join-Path $stageDir 'NikoDeck.exe') -Value 'staged' -Encoding ascii
                 $global:LASTEXITCODE = 0
             }
             function global:Get-Process { param([string[]]$Name, $ErrorAction) $state.Order.Add('stop'); return @() }

@@ -37,10 +37,10 @@
         <value>Nenhum celular conectado</value>
     </data>
     <data xml:space="preserve" name="tooltipConnected">
-        <value>PhoneBox — celular conectado</value>
+        <value>NikoDeck — celular conectado</value>
     </data>
     <data xml:space="preserve" name="tooltipWaiting">
-        <value>PhoneBox — aguardando o celular</value>
+        <value>NikoDeck — aguardando o celular</value>
     </data>
     <data xml:space="preserve" name="autostartError">
         <value>Não foi possível alterar o atalho de inicialização: {0}</value>

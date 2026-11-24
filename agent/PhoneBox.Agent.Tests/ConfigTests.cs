@@ -574,7 +574,7 @@ public class ConfigConcurrencyTests
     [InlineData("\"pt-br\"", "pt-BR")] // any case still normalizes to the canonical pt-BR, not a lowercase copy
     [InlineData("\"zh-hant\"", "zh-Hant")]
     [InlineData("\"AR\"", "ar")]
-    [InlineData("\"xx\"", "pt-BR")]    // a language PhoneBox does not have: the default
+    [InlineData("\"xx\"", "pt-BR")]    // a language NikoDeck does not have: the default
     [InlineData("null", "pt-BR")]
     [InlineData("\"\"", "pt-BR")]
     [InlineData("\"AUTO\"", "auto")]   // following the phone is a choice of its own
