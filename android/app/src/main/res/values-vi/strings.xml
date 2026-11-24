@@ -15,4 +15,8 @@
     <string name="pair_failed_certificate">Máy tính này có chứng chỉ khác với mã QR. Hãy bắt đầu ghép nối lại.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">Bảng điều khiển không thể chạy trên điện thoại này: Android không khởi động được WebView. Một số điện thoại Android 5 không chạy được các phiên bản WebView mà NikoDeck cần.</string>
+    <string name="location_title">Thời tiết tại nơi có điện thoại?</string>
+    <string name="location_message">NikoDeck có thể hiển thị thời tiết tại nơi điện thoại này đang ở. Android sẽ hỏi vị trí gần đúng của điện thoại; NikoDeck làm tròn đến khoảng 1 km và chỉ gửi đến trình NikoDeck trên máy tính của bạn. Để tắt, hãy dùng cài đặt trên máy tính: Chung › Thời tiết.</string>
+    <string name="location_continue">Tiếp tục</string>
+    <string name="location_not_now">Để sau</string>
 </resources>

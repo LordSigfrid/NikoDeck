@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">कंप्यूटर का सर्टिफ़िकेट QR कोड में दिए गए सर्टिफ़िकेट से अलग है। फिर से पेयरिंग शुरू करें।</string>
     <string name="ok">ठीक है</string>
     <string name="webview_failed">इस फ़ोन पर पैनल नहीं चल सकता: Android अपना WebView शुरू नहीं कर सका। कुछ Android 5 फ़ोन वे WebView संस्करण नहीं चला सकते जिनकी NikoDeck को ज़रूरत है।</string>
+    <string name="location_title">फ़ोन जहाँ है वहाँ का मौसम?</string>
+    <string name="location_message">NikoDeck वहाँ का मौसम दिखा सकता है जहाँ यह फ़ोन है। Android फ़ोन की अनुमानित लोकेशन माँगेगा; NikoDeck उसे लगभग 1 किमी तक गोल करके सिर्फ़ आपके कंप्यूटर पर NikoDeck एजेंट को भेजता है। इसे बंद करने के लिए कंप्यूटर की सेटिंग इस्तेमाल करें: सामान्य › मौसम।</string>
+    <string name="location_continue">जारी रखें</string>
+    <string name="location_not_now">अभी नहीं</string>
 </resources>

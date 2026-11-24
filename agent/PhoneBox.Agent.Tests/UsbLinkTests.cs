@@ -45,6 +45,7 @@ public class UsbLinkTests
     [InlineData("POST", "/api/approvals/a1")]
     [InlineData("POST", "/api/trackpad")]
     [InlineData("POST", "/api/phone/battery")]
+    [InlineData("POST", "/api/phone/location")]
     [InlineData("GET", "/api/pair")]   // the phone keeps its Wi-Fi pairing data current over USB
     [InlineData("GET", "/api/proxy")]  // the panel's feed proxy
     public void TheAppsKeyOpensThePhoneApi(string method, string path)

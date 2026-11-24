@@ -4,7 +4,7 @@ NikoDeck has no accounts, no servers of its own, no telemetry, no analytics and 
 receives any data from you. This page lists every place the agent (on your computer) and the Android app (on your
 phone) connect to, so you can see exactly what leaves your machine and turn it off.
 
-Last updated: 2026-11-20 (NikoDeck 0.9.6).
+Last updated: 2026-11-24 (after NikoDeck 1.0.0).
 
 ## What stays on your devices
 
@@ -28,8 +28,20 @@ Last updated: 2026-11-20 (NikoDeck 0.9.6).
   `~/Library/Application Support/NikoDeck` (macOS).
 - **Phone app**: caches (weather, rates, widget state) in its own app storage. The app asks for `INTERNET`,
   `VIBRATE` and `ACCESS_NETWORK_STATE` (only to tell which network is Wi-Fi when the Wake button sends its packet; Android
-  grants it without a prompt), and for the microphone (`RECORD_AUDIO`) only when a Dictation widget's button is tapped for
-  the first time.
+  grants it without a prompt), for the microphone (`RECORD_AUDIO`) only when a Dictation widget's button is tapped for
+  the first time, and for approximate location (`ACCESS_COARSE_LOCATION`, never precise or background location) only
+  while the weather follows the phone (below).
+- **Phone location for the weather** (on by default; **Settings › General › Weather › Use the phone's location**):
+  while the panel is open, the phone app asks Android for its approximate location at most every 30 minutes, through
+  Android's own location service (no Google Play services). Android asks for the permission once, after the app says
+  why; if you refuse, nothing is sent and the app doesn't ask again (allow Location for NikoDeck in Android's app
+  settings to change your mind). The coordinates are rounded to two decimals (about 1 km) on the phone and go only to
+  this computer's NikoDeck agent, over the same USB or paired Wi-Fi link as everything else. The town name comes from
+  Android's Geocoder on the phone, which may ask the phone's location services provider (on most phones Google) with
+  the rounded coordinates; without a Geocoder the coordinates are shown instead. The agent saves the place in
+  `config.json` as the weather location (only when it moved about 1 km or the town changed) and logs the town name,
+  never the coordinates. Turning the switch off stops it; the last place stays as the weather location until you
+  change it.
 - **Computer data shown on the panel** (CPU, GPU, memory, disks, processes, media, volume, AI coding sessions and
   quotas, Docker / Podman, OBS) is read locally and goes only to your phone: over the USB cable (`adb reverse` to
   `127.0.0.1`, with a key only the NikoDeck app has) or, after pairing, over Wi-Fi / Tailscale with a pinned certificate and a key. On Linux, an Intel GPU's
@@ -110,7 +122,7 @@ identifies your GitHub account to GitHub.
 |---|---|---|---|
 | Update check | `api.github.com` (release info), `github.com` (downloads) | The repository name; with `gh` signed in and only when GitHub turns away an anonymous request, your GitHub CLI token, to `api.github.com` only | **Settings › General › Updates › Install new releases automatically** turns off installing. The check every 6 hours stays; it sends nothing about you |
 | Network latency (ping metric, "ping high" rule) | `1.1.1.1` (Cloudflare DNS) by default, an ICMP echo every 5 seconds | An empty ping packet | From 0.9.6: empty **Settings › General › Ping**, or enter another host. 0.9.5 and earlier: not switchable; block ICMP to `1.1.1.1` in your firewall |
-| Weather (phone) | `api.open-meteo.com`, every 15 minutes | The coordinates of the city you chose (Tallinn by default), and the forecast model when one is picked in **Settings › General › Weather** | From 0.9.6: asked only while a page has a widget that shows the weather (weather, forecast, sun & moon, a clock with its weather line, or a Custom HTML widget, which gets the weather too); remove those, or turn off the clock's weather line. 0.9.5 and earlier: asked while the panel runs; choose a city you are comfortable sharing in **Settings › General › Weather** |
+| Weather (phone) | `api.open-meteo.com`, every 15 minutes | The coordinates of the city you chose (Tallinn by default) or, with **Use the phone's location** on, the phone's rounded location (about 1 km), and the forecast model when one is picked in **Settings › General › Weather** | From 0.9.6: asked only while a page has a widget that shows the weather (weather, forecast, sun & moon, a clock with its weather line, or a Custom HTML widget, which gets the weather too); remove those, or turn off the clock's weather line. 0.9.5 and earlier: asked while the panel runs; choose a city you are comfortable sharing in **Settings › General › Weather** |
 | Air quality widget (phone) | `air-quality-api.open-meteo.com`, while the widget is on a page | The same coordinates | Remove the widget |
 | City search (settings page) | `geocoding-api.open-meteo.com` | The city name you type, only when you search | Don't search |
 | Claude quota | `api.anthropic.com/api/oauth/usage`, every 3 minutes after a successful check (sooner after a failed one, as often as every 30 seconds while the network is down; less often when Anthropic asks it to wait; agents running on this computer share one schedule) while Claude Code is signed in on this computer, whether or not a page shows a quota widget | The OAuth token Claude Code stores in `~/.claude/.credentials.json`, or on macOS, when that file doesn't exist, the "Claude Code-credentials" item from the default keychain search list (normally the login Keychain), read with `security find-generic-password`; read-only, NikoDeck never refreshes it. Only the Claude Code command-line sign-in is used; the Claude Desktop app's own sign-in is never read | No switch yet: it stops when Claude Code is signed out on this computer |

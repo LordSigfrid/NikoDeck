@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">このコンピュータは QR コードと異なる証明書を持っています。ペアリングを再開してください。</string>
     <string name="ok">OK</string>
     <string name="webview_failed">このスマートフォンではパネルを実行できません。Android が WebView を起動できませんでした。一部の Android 5 端末では、NikoDeck に必要な WebView のバージョンを実行できません。</string>
+    <string name="location_title">スマートフォンのある場所の天気を表示しますか？</string>
+    <string name="location_message">NikoDeck はこのスマートフォンのある場所の天気を表示できます。Android がおおよその位置情報の許可を求めます。NikoDeck は位置を約 1 km に丸め、コンピューター上の NikoDeck エージェントにだけ送ります。オフにするには、コンピューターの設定（一般 › 天気）を使います。</string>
+    <string name="location_continue">続ける</string>
+    <string name="location_not_now">今はしない</string>
 </resources>

@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">El ordenador tiene un certificado diferente al código QR. Comience a emparejar de nuevo.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">El panel no puede funcionar en este teléfono: Android no pudo iniciar su WebView. Algunos teléfonos con Android 5 no pueden ejecutar las versiones de WebView que necesita NikoDeck.</string>
+    <string name="location_title">¿El tiempo donde está el teléfono?</string>
+    <string name="location_message">NikoDeck puede mostrar el tiempo del lugar donde está este teléfono. Android pedirá la ubicación aproximada del teléfono; NikoDeck la redondea a unos 1 km y la envía solo al agente de NikoDeck en tu ordenador. Para desactivarlo, usa los ajustes en el ordenador: General › Tiempo.</string>
+    <string name="location_continue">Continuar</string>
+    <string name="location_not_now">Ahora no</string>
 </resources>

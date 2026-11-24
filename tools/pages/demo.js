@@ -82,7 +82,8 @@
         spotifyToken: null, spotifyDevice: null, mixerExecutable: null, mixerLibrary: null, spotifyClientId: null, spotifyRefreshToken: null,
         plexUrl: null, plexToken: null, plexPlayerUrl: 'http://127.0.0.1:32500' },
       deviceSerial: null, adbPath: null,
-      weather: { city: 'Tallinn', lat: 59.437, lon: 24.745, unit: 'celsius', model: '' },
+      // auto: the agent's default is on (follow the phone's location); the demo has no phone to follow, so the city stays editable
+      weather: { auto: false, city: 'Tallinn', lat: 59.437, lon: 24.745, unit: 'celsius', model: '' },
       night: { enabled: false, start: '00:30', end: '07:30', brightness: 0.02 },
       display: { appearance: null, language: TEST ? 'en' : 'pt-BR', showSeconds: true, hour12: false, idleReturnSec: 0, vibrate: true, volumeKeys: true, orientation: 'landscape', theme: 'niko', accent: '#00afff',
         pixelShift: false, idleDimMin: 0,

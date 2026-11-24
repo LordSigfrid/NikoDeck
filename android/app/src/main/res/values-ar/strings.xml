@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">شهادة الكمبيوتر تختلف عن الشهادة في رمز QR. ابدأ الاقتران من جديد.</string>
     <string name="ok">موافق</string>
     <string name="webview_failed">لا يمكن تشغيل اللوحة على هذا الهاتف: تعذّر على Android تشغيل WebView. بعض هواتف Android 5 لا تستطيع تشغيل إصدارات WebView التي يحتاجها NikoDeck.</string>
+    <string name="location_title">الطقس حيث يوجد الهاتف؟</string>
+    <string name="location_message">يمكن لـ NikoDeck عرض الطقس في المكان الذي يوجد فيه هذا الهاتف. سيطلب Android الموقع التقريبي للهاتف؛ يقرّبه NikoDeck إلى نحو 1 كم ويرسله فقط إلى وكيل NikoDeck على الكمبيوتر. لإيقاف ذلك، استخدم الإعدادات على الكمبيوتر: عام › الطقس.</string>
+    <string name="location_continue">متابعة</string>
+    <string name="location_not_now">ليس الآن</string>
 </resources>

@@ -437,6 +437,8 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.oled.lead": "OLEDスクリーンは、同じページを何時間も表示するために。AMOLEDブラックテーマと夜間スクリーンも役立ちます。",
       "s.oled.idleDimHint": "何も押さないでタッチすると明るくなり、ページスイッチや通知、許可プロンプトも同様です。",
       "s.weather.openMeteoHint": "電話は Open-Meteo にこの場所を問い合わせるのは、ページが天気を使ったウィジェット（天気、予報、日月、時計と天気線、カスタム HTML）を持っている場合のみです。",
+      "s.weather.auto": "スマートフォンの位置情報を使う（自動）",
+      "s.weather.autoHint": "スマートフォンのアプリはおおよその位置（約 1 km に丸めたもの）をこのコンピューターにだけ送り、天気はその位置に合わせて変わります。Android は位置情報の許可を一度だけ求めます。拒否した場合は、Android のアプリ設定で NikoDeck の位置情報を許可してください。オンの間、下の都市と座標には最後に受け取った位置が表示されます。",
       "s.display.orientationHint": "ページを横長にデザインします。縦長ではパネルがウィジェットを自動的に上から下へ並べます。タブレットは同じページを使用しますが、大きくなります。",
       "s.rules.countdown": "ページ切り替えは、携帯電話でカウントダウンし、使用中に待ちます。",
       "s.rules.pausedUntil": "ルールは {time} まで一時停止します。",

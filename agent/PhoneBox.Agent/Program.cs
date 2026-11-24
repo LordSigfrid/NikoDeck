@@ -792,6 +792,22 @@ app.MapPost("/api/rules/test", (RuleConfig rule, RuleEngine rules) =>
 
 // The phone reports its battery (charge guard); the settings show the guard's state and can switch the power to test it.
 app.MapPost("/api/phone/battery", (int level, bool plugged, double? temp, string? source, string? usb) => { ChargeGuard.Report(level, plugged, temp, source, usb); return Results.Ok(); });
+// The phone app's approximate location for the weather (Settings › General › Weather › automatic, PhoneLocation). The
+// app's own code posts it as a small JSON body (not the panel through the WebView proxy, which forwards no body), so the
+// coordinates stay out of URLs. The log names the town only, never the coordinates.
+app.MapPost("/api/phone/location", async (HttpRequest req, ConfigStore cfg, ILogger<Program> log) =>
+{
+    if (req.ContentType?.StartsWith("application/json") != true) return Results.StatusCode(415);
+    if (req.HttpContext.Features.Get<Microsoft.AspNetCore.Http.Features.IHttpMaxRequestBodySizeFeature>() is { IsReadOnly: false } limit)
+        limit.MaxRequestBodySize = 1024;
+    PhoneLocation.Report? report = null;
+    try { report = await req.ReadFromJsonAsync<PhoneLocation.Report>(PhoneLocation.JsonOpts); }
+    catch (Exception e) when (e is JsonException or BadHttpRequestException or IOException or InvalidOperationException) { }
+    PhoneLocation.Result r;
+    lock (IconCommit) r = PhoneLocation.Apply(cfg, report);
+    if (r.Updated) log.LogInformation("weather location updated from the phone: {City}", r.City ?? "(no town name)");
+    return r.Status == 200 ? Results.Ok(new { updated = r.Updated, reason = r.Reason }) : Results.Json(new { error = r.Error }, statusCode: r.Status);
+});
 app.MapGet("/api/charge", (ChargeGuard guard) => Results.Json(guard.Status()));
 app.MapPost("/api/charge/test", async (string action, ChargeGuard guard, ConfigStore cfg) =>
 {

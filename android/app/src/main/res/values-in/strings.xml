@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">Sertifikat komputer berbeda dari yang tercantum pada kode QR. Mulai lagi penyandingan.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">Panel tidak bisa berjalan di ponsel ini: Android tidak dapat memulai WebView. Beberapa ponsel Android 5 tidak dapat menjalankan versi WebView yang dibutuhkan NikoDeck.</string>
+    <string name="location_title">Cuaca di lokasi ponsel?</string>
+    <string name="location_message">NikoDeck dapat menampilkan cuaca di tempat ponsel ini berada. Android akan meminta lokasi perkiraan ponsel; NikoDeck membulatkannya hingga sekitar 1 km dan hanya mengirimnya ke agen NikoDeck di komputer Anda. Untuk mematikannya, gunakan setelan di komputer: Umum › Cuaca.</string>
+    <string name="location_continue">Lanjutkan</string>
+    <string name="location_not_now">Nanti saja</string>
 </resources>

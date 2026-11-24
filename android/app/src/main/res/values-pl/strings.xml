@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">Komputer ma inny certyfikat niż kod QR. Rozpocznij parowanie ponownie.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">Panel nie może działać na tym telefonie: Android nie zdołał uruchomić WebView. Niektóre telefony z Androidem 5 nie obsługują wersji WebView, których potrzebuje NikoDeck.</string>
+    <string name="location_title">Pogoda tam, gdzie jest telefon?</string>
+    <string name="location_message">NikoDeck może pokazywać pogodę w miejscu, w którym jest ten telefon. Android poprosi o przybliżoną lokalizację telefonu; NikoDeck zaokrągla ją do około 1 km i wysyła tylko do agenta NikoDeck na Twoim komputerze. Aby to wyłączyć, użyj ustawień na komputerze: Ogólne › Pogoda.</string>
+    <string name="location_continue">Dalej</string>
+    <string name="location_not_now">Nie teraz</string>
 </resources>

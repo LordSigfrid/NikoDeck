@@ -437,6 +437,8 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.oled.lead": "시간 동안 같은 페이지를 보여주는 OLED 스크린을 위해. AMOLED 블랙 테마와 야간 화면도 도움이됩니다.",
       "s.oled.idleDimHint": "터치 한번으로 아무것도 누르지 않고 다시 밝아집니다. 페이지 스위치, 알림 및 권한 프롬프트도 마찬가지입니다.",
       "s.weather.openMeteoHint": "페이지가 날씨를 사용하는 위젯 (날씨, 예보, 태양 & 달, 그것의 날씨 선과 시계, 사용자 정의 HTML)을 가지고있는 동안 전화는 오픈 - 메테오에 대한이 위치에 대해 요청합니다.",
+      "s.weather.auto": "휴대폰 위치 사용 (자동)",
+      "s.weather.autoHint": "휴대폰 앱은 대략적인 위치(약 1 km로 반올림)를 이 컴퓨터에만 보내며, 날씨가 그 위치를 따라갑니다. Android는 위치 권한을 한 번 묻습니다. 거부했다면 Android 앱 설정에서 NikoDeck의 위치를 허용하세요. 켜져 있는 동안 아래의 도시와 좌표는 마지막으로 받은 위치를 보여 줍니다.",
       "s.display.orientationHint": "가로 방향으로 페이지를 디자인하지만 세로 방향에서는 위젯을 자동으로 배열합니다. 태블릿은 더 큰 크기의 동일한 페이지만 사용합니다.",
       "s.rules.countdown": "페이지 전환은 휴대폰에서 카운트다운을 시작하고 사용하는 동안 기다립니다(일반 › 페이지전환).",
       "s.rules.pausedUntil": "규칙은 {time} 까지 일시 정지됩니다.",

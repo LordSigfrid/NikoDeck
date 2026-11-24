@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">Bilgisayarın sertifikası QR kodundaki sertifikayla eşleşmiyor. Eşleştirmeyi yeniden başlatın.</string>
     <string name="ok">Tamam</string>
     <string name="webview_failed">Panel bu telefonda çalışamıyor: Android, WebView\'i başlatamadı. Bazı Android 5 telefonlar NikoDeck\'in ihtiyaç duyduğu WebView sürümlerini çalıştıramıyor.</string>
+    <string name="location_title">Telefonun bulunduğu yerin hava durumu?</string>
+    <string name="location_message">NikoDeck bu telefonun bulunduğu yerin hava durumunu gösterebilir. Android telefonun yaklaşık konumunu isteyecek; NikoDeck bunu yaklaşık 1 km\'ye yuvarlar ve yalnızca bilgisayarınızdaki NikoDeck ajanına gönderir. Kapatmak için bilgisayardaki ayarları kullanın: Genel › Hava durumu.</string>
+    <string name="location_continue">Devam</string>
+    <string name="location_not_now">Şimdi değil</string>
 </resources>

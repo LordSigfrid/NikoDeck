@@ -7,8 +7,9 @@
   // Path to adb.exe (null = searched in PATH, the Android SDK and winget locations)
   "adbPath": null,
 
-  // Weather location (Open-Meteo, no API key required) and the temperature unit: "celsius" or "fahrenheit"
-  "weather": { "city": "Tallinn", "lat": 59.437, "lon": 24.745, "unit": "celsius", "model": "" },
+  // Weather location (Open-Meteo, no API key required) and the temperature unit: "celsius" or "fahrenheit".
+  // "auto": follow the phone's approximate location (the phone app asks Android for it; false keeps the city below)
+  "weather": { "auto": true, "city": "Tallinn", "lat": 59.437, "lon": 24.745, "unit": "celsius", "model": "" },
 
   // Claude Code chats in the sessions widget. Both are off, because they come from your prompts: "shareSessionTitles" shows each
   // chat's title on the phone (without it only the folder name is shown and no title is read); "shareConversation" lets the phone

@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">Il computer dispone di un certificato diverso da quello indicato dal codice QR.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">Il pannello non può funzionare su questo telefono: Android non è riuscito ad avviare la sua WebView. Alcuni telefoni Android 5 non possono eseguire le versioni di WebView di cui NikoDeck ha bisogno.</string>
+    <string name="location_title">Meteo dove si trova il telefono?</string>
+    <string name="location_message">NikoDeck può mostrare il meteo del luogo in cui si trova questo telefono. Android chiederà la posizione approssimativa del telefono; NikoDeck la arrotonda a circa 1 km e la invia solo all’agente NikoDeck sul tuo computer. Per disattivarlo, usa le impostazioni sul computer: Generale › Meteo.</string>
+    <string name="location_continue">Continua</string>
+    <string name="location_not_now">Non ora</string>
 </resources>
