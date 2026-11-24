@@ -37,8 +37,29 @@ jobs:
           $issues | Format-Table -AutoSize | Out-String -Width 200
           if ($issues) { throw "PSScriptAnalyzer: $($issues.Count) error(s)" }
 
+  # The install jobs download the latest published release; a fork has none until its first release, so they wait.
+  release:
+    name: Published release
+    runs-on: ubuntu-latest
+    outputs:
+      exists: ${{ steps.latest.outputs.exists }}
+    steps:
+      - id: latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          if gh api "repos/$REPO/releases/latest" --jq .tag_name >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::$REPO has no published release yet: the installers are tested once the first one is out"
+          fi
+
   windows:
     name: setup.ps1 (Windows PowerShell 5.1)
+    needs: release
+    if: needs.release.outputs.exists == 'true'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -67,6 +88,8 @@ jobs:
 
   unix:
     name: setup.sh (${{ matrix.os }})
+    needs: release
+    if: needs.release.outputs.exists == 'true'
     strategy:
       fail-fast: false
       matrix:
