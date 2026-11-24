@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">컴퓨터의 인증서가 QR 코드의 인증서와 다릅니다. 페어링을 다시 시작하세요.</string>
     <string name="ok">확인</string>
     <string name="webview_failed">이 휴대폰에서는 패널을 실행할 수 없습니다. Android가 WebView를 시작하지 못했습니다. 일부 Android 5 휴대폰은 NikoDeck에 필요한 WebView 버전을 실행할 수 없습니다.</string>
+    <string name="location_title">휴대폰이 있는 곳의 날씨를 볼까요?</string>
+    <string name="location_message">NikoDeck은 이 휴대폰이 있는 곳의 날씨를 보여 줄 수 있습니다. Android가 휴대폰의 대략적인 위치를 요청합니다. NikoDeck은 위치를 약 1 km로 반올림하여 컴퓨터의 NikoDeck 에이전트에만 보냅니다. 끄려면 컴퓨터의 설정(일반 › 날씨)을 사용하세요.</string>
+    <string name="location_continue">계속</string>
+    <string name="location_not_now">나중에</string>
 </resources>

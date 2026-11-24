@@ -437,6 +437,8 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.oled.lead": "Untuk layar OLED yang menampilkan halaman yang sama selama berjam-jam. Tema hitam AMOLED dan layar malam juga membantu.",
       "s.oled.idleDimHint": "Sentuh membuatnya terang lagi tanpa menekan apapun; jadi lakukan pengganti halaman, pemberitahuan dan prompt izin.",
       "s.weather.openMeteoHint": "Ponsel meminta Open-Meteo untuk lokasi ini hanya ketika halaman memiliki widget yang menggunakan cuaca (waktu, ramalan, matahari dan bulan, jam dengan garis cuacanya, HTML Custom).",
+      "s.weather.auto": "Gunakan lokasi ponsel (otomatis)",
+      "s.weather.autoHint": "Aplikasi ponsel mengirim lokasi perkiraannya (dibulatkan sekitar 1 km) hanya ke komputer ini, dan cuaca mengikutinya. Android meminta izin lokasi sekali; jika ditolak, izinkan Lokasi untuk NikoDeck di setelan aplikasi Android. Selama ini aktif, kota dan koordinat di bawah menampilkan lokasi terakhir yang diterima.",
       "s.display.orientationHint": "Anda merancang halaman dalam bentuk lanskap; dalam bentuk potret panel mengatur widget sendiri, dari atas ke bawah. Tablet menggunakan halaman yang sama, hanya lebih besar.",
       "s.rules.countdown": "Page switches menghitung mundur di telepon dan menunggu saat Anda menggunakannya (General › Page switching).",
       "s.rules.pausedUntil": "Aturan dihentikan sampai {time} .",

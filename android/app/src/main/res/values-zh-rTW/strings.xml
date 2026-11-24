@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">電腦的憑證與 QR 碼中的憑證不符。請重新開始配對。</string>
     <string name="ok">確定</string>
     <string name="webview_failed">面板無法在這支手機上執行：Android 無法啟動 WebView。部分 Android 5 手機無法執行 NikoDeck 需要的 WebView 版本。</string>
+    <string name="location_title">顯示手機所在地的天氣？</string>
+    <string name="location_message">NikoDeck 可以顯示這支手機所在地的天氣。Android 會要求手機的大略位置；NikoDeck 會將其精確到約 1 公里，並且只傳送給你電腦上的 NikoDeck 代理程式。如需關閉，請使用電腦上的設定：一般 › 天氣。</string>
+    <string name="location_continue">繼續</string>
+    <string name="location_not_now">暫不</string>
 </resources>

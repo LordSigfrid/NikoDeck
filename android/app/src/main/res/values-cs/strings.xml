@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">Certifikát počítače se liší od certifikátu v QR kódu. Spusťte párování znovu.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">Panel na tomto telefonu nepoběží: Android nedokázal spustit WebView. Některé telefony s Androidem 5 nezvládnou verze WebView, které NikoDeck potřebuje.</string>
+    <string name="location_title">Počasí tam, kde je telefon?</string>
+    <string name="location_message">NikoDeck může ukazovat počasí tam, kde je tento telefon. Android požádá o přibližnou polohu telefonu; NikoDeck ji zaokrouhlí asi na 1 km a pošle ji jen agentovi NikoDeck v počítači. Vypnout to můžete v nastavení na počítači: Obecné › Počasí.</string>
+    <string name="location_continue">Pokračovat</string>
+    <string name="location_not_now">Teď ne</string>
 </resources>

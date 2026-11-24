@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">ใบรับรองของคอมพิวเตอร์ไม่ตรงกับข้อมูลในรหัส QR โปรดเริ่มจับคู่ใหม่</string>
     <string name="ok">ตกลง</string>
     <string name="webview_failed">แผงไม่สามารถทำงานบนโทรศัพท์เครื่องนี้ได้: Android ไม่สามารถเริ่ม WebView ได้ โทรศัพท์ Android 5 บางรุ่นไม่สามารถใช้ WebView เวอร์ชันที่ NikoDeck ต้องการได้</string>
+    <string name="location_title">แสดงสภาพอากาศตรงที่โทรศัพท์อยู่ไหม</string>
+    <string name="location_message">NikoDeck แสดงสภาพอากาศของที่ที่โทรศัพท์เครื่องนี้อยู่ได้ Android จะขอตำแหน่งโดยประมาณของโทรศัพท์ NikoDeck จะปัดเศษเป็นประมาณ 1 กม. และส่งไปยังเอเจนต์ NikoDeck บนคอมพิวเตอร์ของคุณเท่านั้น หากต้องการปิด ให้ใช้การตั้งค่าบนคอมพิวเตอร์: ทั่วไป › สภาพอากาศ</string>
+    <string name="location_continue">ดำเนินการต่อ</string>
+    <string name="location_not_now">ไว้ทีหลัง</string>
 </resources>

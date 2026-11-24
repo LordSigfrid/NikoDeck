@@ -139,6 +139,13 @@ public sealed class AgentConfig
 
 public sealed class WeatherConfig
 {
+    /// <summary>
+    /// Follow the phone's location (<see cref="PhoneLocation"/>): City, Lat and Lon are then what the phone app last
+    /// reported. On by default, also for settings saved before this option existed (a missing field reads as true):
+    /// the panel sits next to this computer, the location goes nowhere but here and to Open-Meteo (which already got
+    /// the chosen city's coordinates), and nothing is sent until Android's own permission prompt has been accepted.
+    /// </summary>
+    public bool Auto { get; set; } = true;
     public string City { get; set; } = "Tallinn";
     public double Lat { get; set; } = 59.437;
     public double Lon { get; set; } = 24.745;

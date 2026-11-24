@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">De computer heeft een ander certificaat dan de code QR. Begin opnieuw met koppelen.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">Het paneel kan niet op deze telefoon draaien: Android kon zijn WebView niet starten. Sommige Android 5-telefoons kunnen de WebView-versies die NikoDeck nodig heeft niet uitvoeren.</string>
+    <string name="location_title">Weer waar de telefoon is?</string>
+    <string name="location_message">NikoDeck kan het weer tonen op de plek waar deze telefoon is. Android vraagt om de geschatte locatie van de telefoon; NikoDeck rondt die af op ongeveer 1 km en stuurt die alleen naar de NikoDeck-agent op je computer. Uitzetten doe je in de instellingen op de computer: Algemeen › Weer.</string>
+    <string name="location_continue">Doorgaan</string>
+    <string name="location_not_now">Niet nu</string>
 </resources>

@@ -437,6 +437,8 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.oled.lead": "Pro OLED obrazovky, které zobrazují stejnou stránku po celé hodiny, pomáhá také černý motiv AMOLED a noční obrazovka.",
       "s.oled.idleDimHint": "Dotykem ji opět rozsvítíte, aniž byste cokoli stiskli; stejně tak přepnutí stránky, oznámení a výzva k povolení.",
       "s.weather.openMeteoHint": "Telefon požádá Open-Meteo o tuto polohu pouze tehdy, když stránka má widget, který používá počasí (počasí, předpověď, slunce a měsíc, hodiny s jeho počasí čáry, Custom HTML).",
+      "s.weather.auto": "Používat polohu telefonu (automaticky)",
+      "s.weather.autoHint": "Aplikace v telefonu posílá svou přibližnou polohu (zaokrouhlenou asi na 1 km) jen do tohoto počítače a počasí se jí řídí. Android se jednou zeptá na oprávnění k poloze; pokud bylo odmítnuto, povolte Polohu pro NikoDeck v nastavení aplikací Androidu. Dokud je to zapnuté, město a souřadnice níže ukazují poslední přijatou polohu.",
       "s.display.orientationHint": "Stránky navrhujete v orientaci na šířku, v orientaci na výšku panel widgety uspořádá sám odshora dolů. Tablety používají stejné stránky, jen jsou větší.",
       "s.rules.countdown": "Přepínače stránek odpočítávají v telefonu a čekají, dokud je nepoužijete (Obecné › Přepínání stránek).",
       "s.rules.pausedUntil": "Pravidla jsou pozastavena do {time} .",

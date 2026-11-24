@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">Сертифікат комп’ютера відрізняється від сертифіката в QR-коді. Почніть створення пари ще раз.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">Панель не може працювати на цьому телефоні: Android не зміг запустити WebView. Деякі телефони з Android 5 не можуть запускати версії WebView, потрібні NikoDeck.</string>
+    <string name="location_title">Погода там, де телефон?</string>
+    <string name="location_message">NikoDeck може показувати погоду там, де перебуває цей телефон. Android запитає приблизне місцезнаходження телефона; NikoDeck округлює його приблизно до 1 км і надсилає лише агенту NikoDeck на вашому комп’ютері. Щоб вимкнути це, скористайтеся налаштуваннями на комп’ютері: Загальні › Погода.</string>
+    <string name="location_continue">Продовжити</string>
+    <string name="location_not_now">Не зараз</string>
 </resources>

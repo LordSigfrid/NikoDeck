@@ -13,4 +13,8 @@
     <string name="pair_failed_certificate">O computador tem um certificado diferente do código QR. Inicie o emparelhamento novamente.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">O painel não pode funcionar neste telemóvel: o Android não conseguiu iniciar o WebView. Alguns telemóveis com Android 5 não conseguem executar as versões do WebView de que o NikoDeck precisa.</string>
+    <string name="location_title">Meteorologia onde está o telemóvel?</string>
+    <string name="location_message">O NikoDeck pode mostrar a meteorologia do local onde este telemóvel está. O Android vai pedir a localização aproximada do telemóvel; o NikoDeck arredonda-a para cerca de 1 km e envia-a apenas para o agente NikoDeck no seu computador. Para desligar, use as definições no computador: Geral › Meteorologia.</string>
+    <string name="location_continue">Continuar</string>
+    <string name="location_not_now">Agora não</string>
 </resources>

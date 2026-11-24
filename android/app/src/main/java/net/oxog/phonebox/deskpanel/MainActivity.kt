@@ -75,6 +75,10 @@ class MainActivity : Activity(), SensorEventListener {
     private var destroyed = false
     private val dictation by lazy { Dictation(this) { script -> if (!destroyed) web.evaluateJavascript(script, null) } }
     private lateinit var link: AgentLink
+    /** Settings › Weather › automatic: the phone's approximate location for the weather (coarse only).
+     *  Through [locationLazy] so onPause/onDestroy can tell whether it was ever created. */
+    private val locationLazy = lazy { PhoneLocation(this, link, panelPreferences, ::askLocation) }
+    private val location by locationLazy
     private lateinit var stream: AgentStream
     @Volatile private var resumed = false
     @Volatile private var volumeKeysFlipPages = true
@@ -177,6 +181,21 @@ class MainActivity : Activity(), SensorEventListener {
             .setPositiveButton(context.getString(R.string.pair_positive)) { _, _ -> pair(pairing, context) }
             .setNegativeButton(context.getString(R.string.pair_negative), null)
             .setOnDismissListener { hideSystemUi() }
+            .show()
+            .pairingButtons(context)
+    }
+
+    /** Before Android's location prompt: why the app asks, in the panel's language. Dismissed counts as "Not now". */
+    private fun askLocation(answer: (Boolean) -> Unit) {
+        if (isFinishing || isDestroyed) return
+        val context = pairingContext()
+        var answered = false
+        AlertDialog.Builder(this)
+            .setTitle(context.getString(R.string.location_title))
+            .setMessage(context.getString(R.string.location_message))
+            .setPositiveButton(context.getString(R.string.location_continue)) { _, _ -> answered = true; answer(true) }
+            .setNegativeButton(context.getString(R.string.location_not_now)) { _, _ -> answered = true; answer(false) }
+            .setOnDismissListener { hideSystemUi(); if (!answered) answer(false) }
             .show()
             .pairingButtons(context)
     }
@@ -329,6 +348,7 @@ class MainActivity : Activity(), SensorEventListener {
         web.onResume()
         web.evaluateJavascript("window.onAppPause && window.onAppPause(false)", null) // the panel catches up at once
         stream.start()
+        location.resume()
         hideSystemUi()
         sensors?.getDefaultSensor(Sensor.TYPE_LIGHT)?.let { sensors?.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL) }
         sensors?.getDefaultSensor(Sensor.TYPE_PROXIMITY)?.let { sensors?.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL) }
@@ -338,6 +358,8 @@ class MainActivity : Activity(), SensorEventListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Dictation.PERMISSION_REQUEST)
             dictation.onPermission(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
+        if (requestCode == PhoneLocation.PERMISSION_REQUEST)
+            location.onPermission(grantResults.firstOrNull()?.let { it == PackageManager.PERMISSION_GRANTED })
     }
 
     override fun onPause() {
@@ -345,6 +367,7 @@ class MainActivity : Activity(), SensorEventListener {
         dictation.cancel(0) // the microphone is never left open behind another app or a dark screen
         sensors?.unregisterListener(this)
         stream.stop()
+        if (locationLazy.isInitialized()) location.pause()
         // WebView.onPause() leaves JavaScript running: tell the panel to stop polling and refreshing while nobody sees it
         if (hasWeb) {
             web.evaluateJavascript("window.onAppPause && window.onAppPause(true)", null)
@@ -359,6 +382,7 @@ class MainActivity : Activity(), SensorEventListener {
         dictation.cancel(0)
         sensors?.unregisterListener(this)
         stream.stop()
+        if (locationLazy.isInitialized()) location.close() // never created just to be closed
         link.trackpadSocket.close()
         link.close()
         if (hasWeb) {
@@ -565,6 +589,10 @@ class MainActivity : Activity(), SensorEventListener {
                 stream.stop(); if (resumed) stream.start(); if (hasWeb) web.reload()
             }
         }
+
+        /** Whether the agent's settings have the weather follow the phone's location (PhoneLocation). */
+        @JavascriptInterface
+        fun setAutoLocation(key: String, on: Boolean) { if (ok(key)) location.setAuto(on) }
 
         @JavascriptInterface
         fun forgetPc(key: String, id: String) { if (ok(key)) link.forget(id) }

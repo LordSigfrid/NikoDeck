@@ -31,6 +31,8 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.oled.lead": "Saatlerce aynı sayfayı gösteren OLED ekranları için AMOLED siyah tema ve gece ekranı da yardımcı oluyor.",
       "s.oled.idleDimHint": "Bir dokunma, herhangi bir şeye basmadan tekrar aydınlatır; aynı şekilde bir sayfa değiştirme, bir bildirim ve izin promptu.",
       "s.weather.openMeteoHint": "Telefon, sadece bir sayfa havayı kullanan bir widget (hava durumu, tahmin, güneş ve ay, hava çizgisi ile saat, Özel HTML) olduğunda bu konum için Open-Meteo'ya soruyor.",
+      "s.weather.auto": "Telefonun konumunu kullan (otomatik)",
+      "s.weather.autoHint": "Telefon uygulaması yaklaşık konumunu (yaklaşık 1 km'ye yuvarlanmış) yalnızca bu bilgisayara gönderir ve hava durumu onu izler. Android konum iznini bir kez sorar; reddedildiyse Android'in uygulama ayarlarında NikoDeck için Konum'a izin verin. Bu açıkken aşağıdaki şehir ve koordinatlar alınan son konumu gösterir.",
       "s.display.orientationHint": "Yatay olarak sayfalar tasarlıyorsunuz; dikey olarak panel widget'ları kendiliğinden, yukarıdan aşağıya düzenler. Tabletler aynı sayfaları kullanıyor, sadece daha büyük.",
       "s.rules.countdown": "Sayfa geçiş telefonda geri sayım yapar ve onu kullanırken bekleyin (Genel › Sayfa geçişi).",
       "s.rules.pausedUntil": "Kural {time}'ye kadar durdurulur.",

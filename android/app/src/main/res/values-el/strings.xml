@@ -15,4 +15,8 @@
     <string name="pair_failed_certificate">Ο υπολογιστής έχει διαφορετικό πιστοποιητικό από τον κωδικό QR. Ξεκινήστε ξανά τη σύζευξη.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">Ο πίνακας δεν μπορεί να λειτουργήσει σε αυτό το τηλέφωνο: το Android δεν μπόρεσε να ξεκινήσει το WebView. Ορισμένα τηλέφωνα με Android 5 δεν μπορούν να τρέξουν τις εκδόσεις WebView που χρειάζεται το NikoDeck.</string>
+    <string name="location_title">Καιρός εκεί που είναι το τηλέφωνο;</string>
+    <string name="location_message">Το NikoDeck μπορεί να δείχνει τον καιρό εκεί που βρίσκεται αυτό το τηλέφωνο. Το Android θα ζητήσει την κατά προσέγγιση τοποθεσία του τηλεφώνου· το NikoDeck τη στρογγυλεύει σε περίπου 1 km και τη στέλνει μόνο στον agent του NikoDeck στον υπολογιστή σας. Για να το απενεργοποιήσετε, χρησιμοποιήστε τις ρυθμίσεις στον υπολογιστή: Γενικά › Καιρός.</string>
+    <string name="location_continue">Συνέχεια</string>
+    <string name="location_not_now">Όχι τώρα</string>
 </resources>

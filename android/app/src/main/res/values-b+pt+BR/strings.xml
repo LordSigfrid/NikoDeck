@@ -15,4 +15,8 @@
     <string name="pair_failed_certificate">O computador tem um certificado diferente do QR code. Inicie o pareamento novamente.</string>
     <string name="ok">OK</string>
     <string name="webview_failed">O painel não funciona neste celular: o Android não conseguiu iniciar o WebView. Alguns celulares com Android 5 não rodam as versões do WebView de que o NikoDeck precisa.</string>
+    <string name="location_title">Clima onde o celular está?</string>
+    <string name="location_message">O NikoDeck pode mostrar o clima de onde este celular está. O Android vai pedir a localização aproximada do celular; o NikoDeck a arredonda para cerca de 1 km e a envia só para o agente NikoDeck no seu computador. Para desligar, use as configurações no computador: Geral › Clima.</string>
+    <string name="location_continue">Continuar</string>
+    <string name="location_not_now">Agora não</string>
 </resources>

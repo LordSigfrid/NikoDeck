@@ -16,4 +16,9 @@
     <string name="ok">OK</string>
     <!-- Shown instead of the panel when Android cannot start its WebView (#385). -->
     <string name="webview_failed">The panel can\'t run on this phone: Android could not start its WebView. Some Android 5 phones can\'t run the WebView versions NikoDeck needs.</string>
+    <!-- Before Android's location prompt (Settings › General › Weather › automatic, PhoneLocation.kt). -->
+    <string name="location_title">Weather where the phone is?</string>
+    <string name="location_message">NikoDeck can show the weather for where this phone is. Android will ask for the phone\'s approximate location; NikoDeck rounds it to about 1 km and sends it only to the NikoDeck agent on your computer. To turn this off, use the computer\'s settings: General › Weather.</string>
+    <string name="location_continue">Continue</string>
+    <string name="location_not_now">Not now</string>
 </resources>

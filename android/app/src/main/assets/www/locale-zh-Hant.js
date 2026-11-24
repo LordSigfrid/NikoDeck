@@ -437,6 +437,8 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.oled.lead": "对于OLED屏幕显示同一页数小时. AMOLED黑色主题和夜间屏幕也有帮助.",
       "s.oled.idleDimHint": "觸摸一下就會亮起來，不用按任何東西；同樣也可以切換頁面、通知和權限提示。",
       "s.weather.openMeteoHint": "只有在頁面有使用天氣的小部件(天氣、預報、太陽和月亮、帶有天氣線的時鐘、自定義 HTML)時,手機才會要求 Open-Meteo 提供此位置。",
+      "s.weather.auto": "使用手機的位置（自動）",
+      "s.weather.autoHint": "手機應用程式只會把大略位置（精確到約 1 公里）傳送到這台電腦，天氣隨之更新。Android 會詢問一次位置權限；如果已拒絕，請在 Android 的應用程式設定中為 NikoDeck 允許「位置」。開啟時，下方的城市和座標顯示最近收到的位置。",
       "s.display.orientationHint": "您可以以横向设计页面;在纵向模式下,面板会自动排列小部件,从上到下。 平板电脑使用相同的页面,只是更大了。",
       "s.rules.countdown": "页面切换在手机上进行倒数,并等待您使用它(一般 › 页面切換 ) 。",
       "s.rules.pausedUntil": "規則停止運作直到 {time} 。",
