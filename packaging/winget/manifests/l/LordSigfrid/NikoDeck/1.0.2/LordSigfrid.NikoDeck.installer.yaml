@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+PackageIdentifier: LordSigfrid.NikoDeck
+PackageVersion: 1.0.2
+InstallerType: zip
+NestedInstallerType: portable
+NestedInstallerFiles:
+- RelativeFilePath: NikoDeck.exe
+  PortableCommandAlias: nikodeck
+Dependencies:
+  PackageDependencies:
+  - PackageIdentifier: Google.PlatformTools
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/LordSigfrid/NikoDeck/releases/download/v1.0.2/NikoDeckAgent-1.0.2-win-x64.zip
+  InstallerSha256: 61DF7750536AC6E3A0DD8BCA2A9515456FEE91EC0C82592D6A02D233CCBF8BCC
+ManifestType: installer
+ManifestVersion: 1.6.0
