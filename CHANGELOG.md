@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.3 — 2026-11-24
 
 **Panel**
 - **Settings › Display › Network speed in megabits (Mbps)**: the Network, Download and Upload metrics in bits per
