@@ -1,5 +1,5 @@
 {
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "NikoDeck agent: turns an old Android phone into a desk panel for this PC (widgets, AI coding sessions, music, webhooks).",
     "homepage": "https://github.com/LordSigfrid/NikoDeck",
     "license": "MIT",
@@ -13,8 +13,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v1.0.2/NikoDeckAgent-1.0.2-win-x64.zip",
-            "hash": "61df7750536ac6e3a0dd8bca2a9515456fee91ec0c82592d6a02d233ccbf8bcc"
+            "url": "https://github.com/LordSigfrid/NikoDeck/releases/download/v1.0.3/NikoDeckAgent-1.0.3-win-x64.zip",
+            "hash": "7c4b2ac9548eea4f22bf26afb7c9a5d54128f9d890a3381dc1e6277b374f92ab"
         }
     },
     "bin": [
