@@ -410,6 +410,7 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.display.h24": "24시간 (14:05)",
       "s.display.h12": "12시간 (오후 2시 05분)",
       "s.display.showSeconds": "시계에 초 보이기",
+      "s.display.netBits": "네트워크 속도를 메가비트(Mbps)로 표시 (인터넷 요금제와 같은 단위)",
       "s.display.vibrate": "세션이 끝나거나 입력이 필요할 때 진동",
       "s.display.finishToast": "세션이 끝날 때 메시지 보이기",
       "s.display.finishSound": "세션이 끝날 때 소리 재생",

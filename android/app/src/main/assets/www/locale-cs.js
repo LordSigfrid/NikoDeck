@@ -410,6 +410,7 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.display.h24": "24 hodin (14:05)",
       "s.display.h12": "12 hodin (14:05)",
       "s.display.showSeconds": "Zobrazení sekund na hodinách",
+      "s.display.netBits": "Rychlost sítě v megabitech (Mb/s), jako u internetových tarifů",
       "s.display.vibrate": "Vibrace, když relace končí nebo potřebuje vstup",
       "s.display.finishToast": "Zobrazit zprávu při ukončení relace",
       "s.display.finishSound": "Zvuk při ukončení relace",
