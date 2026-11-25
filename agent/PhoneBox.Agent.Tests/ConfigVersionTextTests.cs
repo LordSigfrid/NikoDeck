@@ -32,6 +32,24 @@ public sealed class ConfigVersionTextTests : IDisposable
     }
 
     [Fact]
+    public void ASaveAlwaysMovesTheVersionForward()
+    {
+        // A save within the same clock tick as the last write gave the same write time, so panels missed the change
+        // (PhoneLocationTests failed that way on CI). A file whose time is ahead of the clock makes that certain here.
+        var path = Path.Combine(_dir, "config.json");
+        File.WriteAllText(path, "{}");
+        File.SetLastWriteTimeUtc(path, DateTime.UtcNow.AddHours(1));
+        var store = new ConfigStore(path);
+        var before = store.Version;
+        Assert.Null(store.Save("{}"));
+        Assert.True(store.Version > before);
+        var second = store.Version;
+        Assert.Null(store.Save("{}"));
+        Assert.True(store.Version > second);
+        Assert.Equal(File.GetLastWriteTimeUtc(path).Ticks, store.Version); // what a fresh read of the file says too
+    }
+
+    [Fact]
     public void ARoundedVersionIsRefused()
     {
         // the old behaviour, for the record: what JSON.parse makes of the number is not the version any more

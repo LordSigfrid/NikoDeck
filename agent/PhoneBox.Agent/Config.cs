@@ -679,10 +679,21 @@ public sealed partial class ConfigStore(string path)
             var tmp = path + ".tmp";
             // owner-only on macOS/Linux: the file holds the Wi-Fi, webhook and Home Assistant keys
             AppPaths.WriteAllTextPrivate(tmp, JsonSerializer.Serialize(cfg, WriteOpts));
+            var previous = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
             if (File.Exists(path)) AppPaths.CopyPrivate(path, path + ".bak");
             File.Move(tmp, path, overwrite: true);
+            // The write time is the version panels compare. Two writes within one tick of the system clock (a fast disk,
+            // or a save right after the file was made) get the same time, and a panel would miss the change: the
+            // version must always move forward.
+            var stamp = File.GetLastWriteTimeUtc(path);
+            if (stamp <= previous)
+            {
+                stamp = previous.AddTicks(1);
+                File.SetLastWriteTimeUtc(path, stamp);
+                stamp = File.GetLastWriteTimeUtc(path);
+            }
             _config = cfg;
-            _stamp = _seen = File.GetLastWriteTimeUtc(path);
+            _stamp = _seen = stamp;
             savedVersion = _seen.Ticks;
         }
         return null;
