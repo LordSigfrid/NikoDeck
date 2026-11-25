@@ -134,7 +134,7 @@ export let pushVersion = null;
 export const D = { state: null, quotas: null, work: null, procs: null, push: {}, weather: null, calendar: null, notes: store.get('notes', []) };
 
 export const HIST = 90;
-export const hist = { cpu: [], gpu: [], ram: [], vram: [], down: [], up: [], ping: [], gputemp: [], cputemp: [], hotspot: [], gpupower: [], gpuclock: [], cpupower: [] };
+export const hist = { cpu: [], gpu: [], ram: [], vram: [], down: [], up: [], ping: [], gputemp: [], cputemp: [], hotspot: [], gpupower: [], gpuclock: [], cpupower: [], fps: [] };
 export const pushHist = (k, v) => { const a = hist[k]; a.push(v ?? 0); if (a.length > HIST) a.shift(); };
 
 // ---------------------------------------------------------------- helpers
@@ -623,6 +623,14 @@ export const METRICS = {
     sub: (s) => (s.pc?.cpuTemp == null ? tp('needs LibreHardwareMonitor') : shortCpu(s.pc?.cpuName)) },
   cpupower: { label: 'CPU POWER', name: 'CPU power', color: '#a3e635', unit: 'W', max: () => Math.max(...hist.cpupower, 50), val: (s) => s.pc?.cpuPower,
     sub: (s) => (s.pc?.cpuPower != null ? shortCpu(s.pc?.cpuName) : s.os === 'windows' ? tp('needs LibreHardwareMonitor') : tp('No power data')) },
+  // the program in front: the agent counts the frames DXGI / Direct3D 9 programs present (Windows only)
+  fps: { label: 'FPS', name: 'Frame rate', color: '#22c55e', unit: 'FPS', max: () => Math.max(60, ...hist.fps) * 1.1, val: (s) => s.pc?.fps?.value,
+    sub: (s) => {
+      const f = s.pc?.fps;
+      if (s.os && s.os !== 'windows') return tp('Windows only');
+      if (f?.state === 'denied') return tp('needs permission');
+      return f?.value == null ? tp('No game in front') : f.app || '';
+    } },
 };
 
 export function metricText(m, s) {
@@ -2661,6 +2669,7 @@ export function applyState(s, replayGen = null) {
       pushHist('gpupower', pc.gpu?.power ?? pc.gpu?.powerPct);
       pushHist('gpuclock', pc.gpu?.clock);
       pushHist('cpupower', pc.cpuPower);
+      pushHist('fps', pc.fps?.value);
     }
   }
   emit('state');

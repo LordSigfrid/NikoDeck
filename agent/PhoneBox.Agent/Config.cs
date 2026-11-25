@@ -128,6 +128,15 @@ public sealed class AgentConfig
     public bool ShowCodexQuota() => Widgets(enabledPagesOnly: true)
         .Any(w => w.Type is "codexbar" or "quotas" && WidgetIncludesProvider(w, "codex"));
 
+    /// <summary>
+    /// True when an enabled page (including enabled Smart Stack children) shows the frame rate: a metric tile or gauge
+    /// set to "fps", or a chart with an "fps" series. Only then does the agent run its trace session.
+    /// </summary>
+    public bool ShowFps() => Widgets(enabledPagesOnly: true).Any(w =>
+        (w.Type is "stat" or "gauge" && w.Str("metric") == "fps")
+        || (w.Type == "chart" && w.Opt("metrics") is { ValueKind: JsonValueKind.Array } series
+            && series.EnumerateArray().Any(e => e.ValueKind == JsonValueKind.String && e.GetString() == "fps")));
+
     private bool WidgetIncludesProvider(WidgetConfig w, string id)
     {
         if (w.Opt("providers") is { ValueKind: JsonValueKind.Array } arr)
