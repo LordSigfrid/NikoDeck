@@ -214,6 +214,8 @@ public sealed class DisplayConfig
     /// it is a distinct entry from pt, not a variant of it, so it must survive a save in this exact form.</summary>
     internal static readonly string[] Languages = ["auto", "en", "tr", "de", "fr", "es", "it", "pt", "pt-BR", "nl", "pl", "ru", "el", "vi", "zh", "ja", "ko", "id", "th", "uk", "hi", "cs", "ar", "zh-Hant"];
     public bool ShowSeconds { get; set; } = true;
+    /// <summary>Network speeds in bits per second (Mbps, as internet plans are sold) instead of bytes (MB/s).</summary>
+    public bool NetBits { get; set; }
     /// <summary>false ("14:05", default), true ("2:05 PM") or "auto" (follow the phone).</summary>
     [JsonConverter(typeof(Hour12JsonConverter))]
     public string Hour12 { get; set; } = "false";

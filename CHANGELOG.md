@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.3 — 2026-11-24
+
+**Panel**
+- **Settings › Display › Network speed in megabits (Mbps)**: the Network, Download and Upload metrics in bits per
+  second, the unit internet plans are sold in (off by default: MB/s as before).
+- Discord: in a narrow widget the channel name keeps its room, and the buttons move together to a row under it, instead
+  of the name being cut down to its first letter.
+
 ## 1.0.2 — 2026-11-24
 
 **Games**

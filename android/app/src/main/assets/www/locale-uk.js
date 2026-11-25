@@ -410,6 +410,7 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.display.h24": "24 години (14: 05)",
       "s.display.h12": "12- годинний (2: 05)",
       "s.display.showSeconds": "Показувати секунди на годиннику",
+      "s.display.netBits": "Швидкість мережі в мегабітах (Мбіт/с), як у тарифах інтернету",
       "s.display.vibrate": "Вібрувати, коли сеанс завершується або потребує вводу",
       "s.display.finishToast": "Показувати повідомлення, коли сеанс завершується",
       "s.display.finishSound": "Звук, коли сеанс завершується",

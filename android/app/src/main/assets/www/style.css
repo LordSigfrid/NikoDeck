@@ -945,11 +945,13 @@ html.beat-4 .obs-pill.on .obs-led { box-shadow: 0 0 34px rgba(239, 68, 68, .9); 
 .obs-scenes { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); grid-auto-rows: minmax(38px, 1fr); gap: 6px; overflow: hidden; }
 .obs-sc { border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .05); color: var(--text); border-radius: 10px; font: inherit; font-size: 13px; padding: 4px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .obs-sc.cur { background: rgba(167, 139, 250, .22); border-color: rgba(167, 139, 250, .55); font-weight: 600; }
-.dc-top { display: flex; align-items: center; gap: 6px; }
-.dc-where { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+/* The channel name keeps room for about seven letters: in a narrow widget the buttons move, as one group, to a second
+   row instead of squeezing the name down to its first letter. A wide widget keeps everything on one row. */
+.dc-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.dc-where { flex: 1 1 auto; font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: min(100%, 7em); }
 .dc-kind { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
-.dc-btn { margin-inline-start: auto; border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .05); color: var(--text); border-radius: 10px; font-size: 18px; padding: 5px 9px; }
-.dc-btn + .dc-btn { margin-left: 0; }
+.dc-btns { display: flex; gap: 6px; margin-inline-start: auto; max-width: 100%; }
+.dc-btn { border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .05); color: var(--text); border-radius: 10px; font-size: 18px; padding: 5px 9px; }
 .dc-btn.on { background: rgba(239, 68, 68, .22); border-color: rgba(239, 68, 68, .5); }
 .dc-btn:disabled { opacity: .7; }
 .dc-btn:active { transform: scale(.95); }

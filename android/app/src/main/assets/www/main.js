@@ -448,6 +448,14 @@ export const fmtHM = (d) => fmtClock(d.getHours(), d.getMinutes());
 export const fmtTime = (ms) => { const s = Math.max(0, Math.floor(ms / 1000)); return Math.floor(s / 60) + ':' + pad(s % 60); };
 export function fmtRate(bps) {
   if (bps == null) return ['—', ''];
+  // Settings › Display: network speed in bits per second, the unit internet plans are sold in (1 MB/s = 8 Mbps)
+  if (cfg.display?.netBits) {
+    const b = bps * 8;
+    if (b >= 1e9) return [(b / 1e9).toFixed(1), 'Gbps'];
+    if (b >= 1e6) return [(b / 1e6).toFixed(b >= 1e8 ? 0 : 1), 'Mbps'];
+    if (b >= 1e3) return [(b / 1e3).toFixed(0), 'kbps'];
+    return [Math.round(b).toString(), 'bps'];
+  }
   if (bps >= 1e9) return [(bps / 1e9).toFixed(1), 'GB/s'];
   if (bps >= 1e6) return [(bps / 1e6).toFixed(bps >= 1e8 ? 0 : 1), 'MB/s'];
   if (bps >= 1e3) return [(bps / 1e3).toFixed(0), 'KB/s'];

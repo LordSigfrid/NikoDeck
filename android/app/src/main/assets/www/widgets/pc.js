@@ -388,11 +388,13 @@ W.discord = {
       const kids = [h('div', 'dc-top',
         h('span', 'dc-where', s.channelName ? `${s.channelName}` : t('w.discord.notInChannel')),
         s.channelKind ? h('span', 'dc-kind', s.channelKind) : null,
-        btn('mute', emo(s.muted ? '🔇' : '🎙️'), s.muted, 'mute'), btn('deaf', emo(s.deafened ? '🔕' : '🎧'), s.deafened, 'deafen'),
-        s.inputMode ? btn('mode', emo(ptt ? '✋' : '🗣️'), ptt, 'inputmode') : null,
-        chatBtn,
-        s.channelId ? btn('leave', emo('📞'), false, 'leave') : null,
-        shareBtn())];
+        // one group: in a narrow widget the buttons move under the channel name together, not one by one
+        h('div', 'dc-btns',
+          btn('mute', emo(s.muted ? '🔇' : '🎙️'), s.muted, 'mute'), btn('deaf', emo(s.deafened ? '🔕' : '🎧'), s.deafened, 'deafen'),
+          s.inputMode ? btn('mode', emo(ptt ? '✋' : '🗣️'), ptt, 'inputmode') : null,
+          chatBtn,
+          s.channelId ? btn('leave', emo('📞'), false, 'leave') : null,
+          shareBtn()))];
       // Push to talk without a key in Discord: nobody hears you, and nothing else on screen says so.
       if (ptt && !s.pttKey) kids.push(h('div', 'dc-warn', t('w.discord.pttNoKey')));
       if (shareOpen) { box.replaceChildren(...kids, ...shareView()); return; }

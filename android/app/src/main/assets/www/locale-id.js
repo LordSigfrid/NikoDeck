@@ -410,6 +410,7 @@ window.PhoneBoxLocaleData = Object.assign(window.PhoneBoxLocaleData || {}, {
       "s.display.h24": "24 jam (14:05)",
       "s.display.h12": "12 jam (2:05 PM)",
       "s.display.showSeconds": "Tampilkan detik pada jam",
+      "s.display.netBits": "Kecepatan jaringan dalam megabit (Mbps), seperti paket internet",
       "s.display.vibrate": "Berikan getaran ketika sesi berakhir atau memerlukan masukan",
       "s.display.finishToast": "Tampilkan pesan ketika sesi berakhir",
       "s.display.finishSound": "Suara ketika sesi berakhir",
