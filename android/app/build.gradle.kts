@@ -19,8 +19,8 @@ android {
         applicationId = "com.lordsigfrid.nikodeck"
         minSdk = 21 // Android 5.0; see CONTRIBUTING.md before changing it
         targetSdk = 35
-        versionCode = 52
-        versionName = "1.0.1"
+        versionCode = 53
+        versionName = "1.0.2"
     }
 
     signingConfigs {

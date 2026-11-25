@@ -206,6 +206,7 @@ deletes the settings, and `-Apk` / `--apk` removes the app from the connected ph
 | CPU temperature | LibreHardwareMonitor | ✓ (hwmon) | — |
 | CPU power | LibreHardwareMonitor | RAPL, where the agent may read it (most distributions allow only root) | — |
 | GPU load, VRAM, temperature | Any vendor (Windows GPU counters); NVIDIA adds power, fan and clocks (`nvidia-smi`), AMD / Intel add them with LibreHardwareMonitor | NVIDIA (`nvidia-smi`), AMD (`amdgpu` sysfs), Intel (`i915` / `xe`: load and clock) | Apple silicon (`ioreg`) |
+| Game frame rate (FPS) | DirectX games (Direct3D 9 to 12), with permission (see below) | — | — |
 | Now playing + controls | ✓ (apps in Windows' media controls) | ✓ (MPRIS via `playerctl`) | System media, including browser video, with `nowplaying-cli`; Spotify and Music fallback |
 | Volume | ✓ | ✓ (`wpctl` / `pactl`) | ✓ |
 | Processes, end one / all | ✓ | ✓ (your own) | ✓ (your own) |
@@ -247,6 +248,26 @@ is nothing to turn on in NikoDeck.
 The web server answers on every network the PC is on. If Windows Firewall asks, NikoDeck only needs it on this
 computer, so you can leave the network access unchecked. Menu names are those of recent LibreHardwareMonitor versions
 and may differ slightly in older ones.
+
+#### Game frame rate (FPS) on Windows
+
+Choose **Frame rate (FPS)** in a Metric tile, Gauge or Chart. The tile shows the frame rate of the window in front and
+its title; with no game in front (or a game that drew nothing in the last few seconds) it says so.
+
+The agent counts the frames that programs present through DirectX (Direct3D 9, 10, 11 and 12), the way PresentMon
+does: a real-time Windows event trace that reads only who presented a frame and when. It runs only while an enabled
+page shows the frame rate. Vulkan and OpenGL games present through the graphics kernel instead and are not counted.
+
+Windows starts such a trace only for administrators running elevated and for members of the built-in **Performance
+Log Users** group. NikoDeck runs as you, without elevation, so until you are in that group the tile says it needs
+permission. To add yourself once, in a PowerShell window opened **as administrator**:
+
+```powershell
+Add-LocalGroupMember -SID S-1-5-32-559 -Member $env:USERNAME
+```
+
+(`S-1-5-32-559` is the group in every Windows language.) Then sign out of Windows and back in; the agent tries again
+every 30 seconds. To undo it: `Remove-LocalGroupMember -SID S-1-5-32-559 -Member $env:USERNAME`.
 
 ## Wi-Fi & Tailscale
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.2 — 2026-11-24
+
+**Games**
+- Frame rate (FPS) of the game in front, on Windows: the Metric tile, Gauge and Chart widgets have a new **Frame rate
+  (FPS)** choice, with the game's window title underneath. The agent counts the frames that DirectX programs (Direct3D
+  9 to 12) present, through a Windows event trace that runs only while an enabled page shows the frame rate. Vulkan
+  and OpenGL games are not counted yet. Windows allows the trace only to administrators and members of the
+  "Performance Log Users" group; otherwise the tile says it needs permission. See SETUP.md.
+
+**Fixes**
+- Two settings saves within the same tick of the clock could keep the same version, so a panel could miss the second
+  change. A save now always moves the version forward.
+
 ## 1.0.1 — 2026-11-24
 
 **Weather**

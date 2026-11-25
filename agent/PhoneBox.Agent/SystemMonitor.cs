@@ -21,9 +21,16 @@ public sealed record GpuInfo(string Name, double? Util, double? Temp, double? Po
 
 public sealed record DiskInfo(string Name, double UsedGb, double TotalGb);
 
+/// <summary>
+/// The frame rate of the program in front (Windows). State: "ok", "denied" (the agent may not start a trace session:
+/// the user is neither an administrator nor in "Performance Log Users"), "unsupported" or "error". Value is null when
+/// the program in front showed no frame in the last second.
+/// </summary>
+public sealed record FpsInfo(double? Value, string? App, string State);
+
 public sealed record PcSnapshot(double? Cpu, double? CpuTemp, string CpuName, double RamUsedGb, double RamTotalGb,
     GpuInfo? Gpu, double NetDownBps, double NetUpBps, IReadOnlyList<DiskInfo> Disks, long UptimeSec,
-    IReadOnlyList<GpuInfo>? Gpus = null, double? CpuPower = null);
+    IReadOnlyList<GpuInfo>? Gpus = null, double? CpuPower = null, FpsInfo? Fps = null);
 
 /// <summary>Samples CPU, RAM, network, disk and GPU metrics once a second.</summary>
 public sealed partial class SystemMonitor(ILogger<SystemMonitor> log, ConfigStore? config = null) : BackgroundService
@@ -38,6 +45,11 @@ public sealed partial class SystemMonitor(ILogger<SystemMonitor> log, ConfigStor
     private double? _cpuTemp;
     private double? _cpuPower; // package watts: LibreHardwareMonitor on Windows, RAPL on Linux; none on macOS
     private double? _appleGpuTemp; // macOS: the GPU's temperature from the SMC, added to the ioreg GPU
+#if WINDOWS
+    private volatile FpsInfo? _fps; // only while an enabled page shows the FPS metric
+#else
+    private const FpsInfo? _fps = null; // the trace session is Windows-only
+#endif
     private IReadOnlyList<DiskInfo> _disks = [];
 
     public PcSnapshot? Snapshot() => _snap;
@@ -46,6 +58,9 @@ public sealed partial class SystemMonitor(ILogger<SystemMonitor> log, ConfigStor
     {
         _ = Task.Run(() => GpuLoop(ct), ct);
         _ = Task.Run(() => CpuTempLoop(ct), ct);
+#if WINDOWS
+        _ = Task.Run(() => FpsLoop(ct), ct);
+#endif
 
         var (idle0, total0) = CpuTimes();
         var net0 = NetBytes(Chosen());
@@ -85,9 +100,87 @@ public sealed partial class SystemMonitor(ILogger<SystemMonitor> log, ConfigStor
                 Disks: _disks,
                 UptimeSec: Environment.TickCount64 / 1000,
                 Gpus: gpus,
-                CpuPower: _cpuPower);
+                CpuPower: _cpuPower,
+                Fps: _fps);
         }
     }
+
+    /// <summary>
+    /// The frames whose time stamps fall in the second that ends at the latest one (the stamps are in time order, as
+    /// the trace delivers them; <paramref name="second"/> is one second in their unit).
+    /// </summary>
+    internal static int FramesInLastSecond(IReadOnlyCollection<long> stamps, long second)
+    {
+        if (stamps.Count == 0) return 0;
+        var latest = stamps.Last();
+        return stamps.Count(t => t > latest - second);
+    }
+
+    /// <summary>
+    /// The frame rate of the program in front. A program in front that showed no frame lately (a desktop app sitting
+    /// still, or a Vulkan / OpenGL game) has no value, and its name is left out.
+    /// </summary>
+    internal static FpsInfo PickFps(int? frames, uint foreground, string? app) =>
+        foreground == 0 || frames is not > 0
+            ? new FpsInfo(null, null, "ok")
+            : new FpsInfo(frames, string.IsNullOrWhiteSpace(app) ? null : app.Trim(), "ok");
+
+#if WINDOWS
+    // The trace session runs only while an enabled page shows the FPS metric: it costs a little for every frame any
+    // program draws. A session Windows refused (no permission) is tried again every 30 seconds.
+    private async Task FpsLoop(CancellationToken ct)
+    {
+        FrameCounter? counter = null;
+        long retryAt = 0;
+        string? reported = null;
+        try
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                await Task.Delay(1000, ct);
+                if (config?.Get().ShowFps() != true)
+                {
+                    counter?.Dispose();
+                    counter = null;
+                    _fps = null;
+                    retryAt = 0;
+                    continue;
+                }
+                if (counter is { Running: false })
+                {
+                    counter.Dispose();
+                    counter = null;
+                    _fps = new FpsInfo(null, null, "error");
+                    retryAt = Environment.TickCount64 + 30_000;
+                }
+                if (counter is null)
+                {
+                    if (Environment.TickCount64 < retryAt) continue;
+                    var c = new FrameCounter();
+                    var state = c.Start();
+                    if (state != "ok")
+                    {
+                        c.Dispose();
+                        _fps = new FpsInfo(null, null, state);
+                        retryAt = Environment.TickCount64 + 30_000;
+                        if (reported != state) log.LogWarning("fps: trace session not started ({State})", state);
+                        reported = state;
+                        continue;
+                    }
+                    if (reported is not null) log.LogInformation("fps: trace session started");
+                    reported = null;
+                    counter = c;
+                    continue;
+                }
+                var (pid, title) = FrameCounter.Foreground();
+                _fps = PickFps(pid == 0 ? null : counter.FramesPerSecond(pid), pid, title);
+            }
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex) { log.LogWarning("fps: {Msg}", ex.Message); }
+        finally { counter?.Dispose(); }
+    }
+#endif
 
     private Task GpuLoop(CancellationToken ct)
     {
